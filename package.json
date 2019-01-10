@@ -1,0 +1,49 @@
+{
+  "name": "contentstack-mongodb-content-connector",
+  "author": "Contentstack Ecosystem",
+  "version": "1.0.0",
+  "description": "Store Contentstack's data in mongodb",
+  "main": "dist",
+  "dependencies": {
+    "debug": "^4.1.0",
+    "lodash": "^4.17.11",
+    "mongodb": "3.1.10"
+  },
+  "devDependencies": {
+    "@types/debug": "0.0.31",
+    "@types/lodash": "4.14.119",
+    "@types/mongodb": "^3.1.17",
+    "@types/node": "10.12.12",
+    "eslint": "5.10.0",
+    "tslint": "5.11.0",
+    "typescript": "3.2.2"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build-ts": "npm run clean && tsc",
+    "watch-ts": "npm run clean && tsc -w",
+    "compile": "tsc",
+    "prepare": "npm run compile",
+    "pretest": "npm run clean && npm run compile",
+    "start": "dist",
+    "tslint": "npx tslint -c tslint.json 'src/**/*.ts'"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "keywords": [
+    "contentstack",
+    "connector",
+    "mongodb",
+    "utility"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contentstack/contentstack-sync.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/contentstack/contentstack-sync/issues"
+  },
+  "homepage": "https://www.contentstack.com/"
+}
