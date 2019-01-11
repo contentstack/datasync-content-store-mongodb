@@ -1,10 +1,5 @@
-import {
-  stringify,
-} from './stringify'
-
-const mandatoryACMethods = ['download', 'delete', 'unpublish']
-const mandatoryUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid']
-const mandatoryRemoveKeys = ['content_type_uid', 'locale', 'uid']
+const requiredUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid']
+const requiredRemoveKeys = ['content_type_uid', 'locale', 'uid']
 
 export const validateConfig = (config) => {
   if (typeof config['content-connector'].options !== 'object' || Object.keys(config['content-connector'].options).length
@@ -16,9 +11,10 @@ export const validateConfig = (config) => {
 }
 
 export const validateAssetConnectorInstance = (instance) => {
-  mandatoryACMethods.forEach((methodName) => {
-    if (!(methodName in instance)) {
-      throw new Error(`${stringify(instance)} connector does not have ${methodName}`)
+  const keys = ['download', 'delete', 'unpublish']
+  keys.forEach((fn) => {
+    if (!(fn in instance) && typeof instance.fn !== 'function') {
+      throw new Error(`${JSON.stringify(instance)} connector does not have ${fn}`)
     }
   })
 }
@@ -34,7 +30,7 @@ export const validateMongodbConfig = (config: any = {}) => {
 }
 
 export const validateAssetPublish = (asset) => {
-  mandatoryUpsertKeys.forEach((key) => {
+  requiredUpsertKeys.forEach((key) => {
     if (!(key in asset)) {
       throw new Error(`${key} is missing in asset publish!`)
     }
@@ -42,7 +38,7 @@ export const validateAssetPublish = (asset) => {
 }
 
 export const validateEntryPublish = (entry) => {
-  mandatoryUpsertKeys.forEach((key) => {
+  requiredUpsertKeys.forEach((key) => {
     if (!(key in entry)) {
       throw new Error(`${key} is missing in entry publish!`)
     }
@@ -50,7 +46,7 @@ export const validateEntryPublish = (entry) => {
 }
 
 export const validateEntryRemove = (entry) => {
-  mandatoryRemoveKeys.forEach((key) => {
+  requiredRemoveKeys.forEach((key) => {
     if (!(key in entry)) {
       throw new Error(`${key} is missing in entry unpublish/delete!`)
     }
@@ -58,7 +54,7 @@ export const validateEntryRemove = (entry) => {
 }
 
 export const validateAssetUnpublish = (asset) => {
-  mandatoryRemoveKeys.forEach((key) => {
+  requiredRemoveKeys.forEach((key) => {
     if (!(key in asset)) {
       throw new Error(`${key} is missing in asset unpublish!`)
     }
@@ -66,7 +62,7 @@ export const validateAssetUnpublish = (asset) => {
 }
 
 export const validateAssetDelete = (asset) => {
-  mandatoryRemoveKeys.forEach((key) => {
+  requiredRemoveKeys.forEach((key) => {
     if (!(key in asset)) {
       throw new Error(`${key} is missing in asset delete!`)
     }
@@ -74,7 +70,8 @@ export const validateAssetDelete = (asset) => {
 }
 
 export const validateContentTypeDelete = (contentType) => {
-  mandatoryRemoveKeys.forEach((key) => {
+  const keys = ['content_type_uid', 'uid']
+  keys.forEach((key) => {
     if (!(key in contentType)) {
       throw new Error(`${key} is missing in content type delete!`)
     }

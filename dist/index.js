@@ -23,7 +23,7 @@ exports.setConfig = (config) => {
     appConfig = config;
 };
 exports.setCustomLogger = (logger) => {
-    logger_1.createLogger(logger);
+    logger_1.setLogger(logger);
 };
 exports.getConfig = () => {
     return appConfig;
@@ -35,10 +35,10 @@ exports.start = (config, connector, logger) => {
             validations_1.validateConfig(appConfig);
             assetConnectorInstance = assetConnectorInstance || connector;
             validations_1.validateAssetConnectorInstance(assetConnectorInstance);
-            logger_1.createLogger(logger);
+            logger_1.setLogger(logger);
             return connection_1.connect(appConfig).then((mongo) => {
-                const mongoClient = new mongodb_1.Mongodb(mongo, assetConnectorInstance);
-                return resolve(mongoClient);
+                exports.mongoClient = new mongodb_1.Mongodb(mongo, assetConnectorInstance);
+                return resolve(exports.mongoClient);
             }).catch(reject);
         }
         catch (error) {

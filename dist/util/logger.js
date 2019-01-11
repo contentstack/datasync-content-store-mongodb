@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const validations_1 = require("./validations");
-exports.createLogger = (customLogger) => {
+exports.setLogger = (customLogger) => {
     if (exports.logger) {
         return exports.logger;
     }

@@ -3,10 +3,10 @@ import { validateLogger } from './validations'
 /**
  * @summary Creates a logger instance
  * @example
- *    const log = createLogger(instance)
+ *    const log = setLogger(instance)
  *    log.info('Hello world!')
  */
-export const createLogger = (customLogger?) => {
+export const setLogger = (customLogger?) => {
   if (logger) {
     return logger
   } else if (!validateLogger(customLogger) && !customLogger) {

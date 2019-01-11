@@ -3,7 +3,7 @@ import { merge } from 'lodash'
 import { connect } from './connection'
 import { config as internalConfig } from './defaults'
 import { Mongodb } from './mongodb'
-import { createLogger } from './util/logger'
+import { setLogger } from './util/logger'
 
 import {
   validateAssetConnectorInstance,
@@ -31,14 +31,16 @@ export const setConfig = (config) => {
  * @description Set custom logger for logging
  * @param {Object} instance - Custom logger instance
  */
-export const setCustomLogger = (logger) => {
-  createLogger(logger)
+export const setCustomLogger = (logger?) => {
+  setLogger(logger)
 }
 
 export const getConfig = () => {
 
   return appConfig
 }
+
+export let mongoClient
 
 export const start = (config, connector, logger?) => {
 
@@ -48,10 +50,10 @@ export const start = (config, connector, logger?) => {
       validateConfig(appConfig)
       assetConnectorInstance = assetConnectorInstance || connector
       validateAssetConnectorInstance(assetConnectorInstance)
-      createLogger(logger)
+      setLogger(logger)
 
       return connect(appConfig).then((mongo) => {
-        const mongoClient = new Mongodb(mongo, assetConnectorInstance)
+        mongoClient = new Mongodb(mongo, assetConnectorInstance)
 
         return resolve(mongoClient)
       }).catch(reject)

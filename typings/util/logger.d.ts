@@ -1,2 +1,2 @@
-export declare const createLogger: (customLogger?: any) => any;
+export declare const setLogger: (customLogger?: any) => any;
 export declare let logger: any;

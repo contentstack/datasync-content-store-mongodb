@@ -2,9 +2,7 @@ export declare class Mongodb {
     assetConnector: any;
     db: any;
     client: any;
-    private assetCollectionName;
-    private entryCollectionName;
-    private contentTypeCollectionName;
+    private collectionName;
     constructor(mongodb: any, connector: any);
     publish(data: any): Promise<{}>;
     publishAsset(data: any): Promise<{}>;

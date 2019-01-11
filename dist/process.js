@@ -5,6 +5,7 @@
 * MIT Licensed
 */
 Object.defineProperty(exports, "__esModule", { value: true });
+const _1 = require("./");
 const logger_1 = require("./util/logger");
 const handleExit = (signal) => {
     const killDuration = (process.env.KILLDURATION) ? calculateKillDuration() : 15000;
@@ -23,6 +24,7 @@ const calculateKillDuration = () => {
     return killDuration;
 };
 const abort = () => {
+    _1.mongoClient.close();
     process.abort();
 };
 process.on('SIGTERM', handleExit);

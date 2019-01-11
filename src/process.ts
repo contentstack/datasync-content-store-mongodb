@@ -9,6 +9,7 @@
  * @note 'SIGSTOP' cannot have a listener installed.
  */
 
+import { mongoClient } from './'
 import { logger } from './util/logger'
 
 /**
@@ -49,6 +50,8 @@ const calculateKillDuration = () => {
  * @description Aborts the current application
  */
 const abort = () => {
+  // close mongodb connection before exitting
+  mongoClient.close()
   process.abort()
 }
 

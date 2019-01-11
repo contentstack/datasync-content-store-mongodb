@@ -1,9 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const stringify_1 = require("./stringify");
-const mandatoryACMethods = ['download', 'delete', 'unpublish'];
-const mandatoryUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid'];
-const mandatoryRemoveKeys = ['content_type_uid', 'locale', 'uid'];
+const requiredUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid'];
+const requiredRemoveKeys = ['content_type_uid', 'locale', 'uid'];
 exports.validateConfig = (config) => {
     if (typeof config['content-connector'].options !== 'object' || Object.keys(config['content-connector'].options).length
         === 0) {
@@ -14,9 +12,10 @@ exports.validateConfig = (config) => {
     }
 };
 exports.validateAssetConnectorInstance = (instance) => {
-    mandatoryACMethods.forEach((methodName) => {
-        if (!(methodName in instance)) {
-            throw new Error(`${stringify_1.stringify(instance)} connector does not have ${methodName}`);
+    const keys = ['download', 'delete', 'unpublish'];
+    keys.forEach((fn) => {
+        if (!(fn in instance) && typeof instance.fn !== 'function') {
+            throw new Error(`${JSON.stringify(instance)} connector does not have ${fn}`);
         }
     });
 };
@@ -32,42 +31,43 @@ exports.validateMongodbConfig = (config = {}) => {
     }
 };
 exports.validateAssetPublish = (asset) => {
-    mandatoryUpsertKeys.forEach((key) => {
+    requiredUpsertKeys.forEach((key) => {
         if (!(key in asset)) {
             throw new Error(`${key} is missing in asset publish!`);
         }
     });
 };
 exports.validateEntryPublish = (entry) => {
-    mandatoryUpsertKeys.forEach((key) => {
+    requiredUpsertKeys.forEach((key) => {
         if (!(key in entry)) {
             throw new Error(`${key} is missing in entry publish!`);
         }
     });
 };
 exports.validateEntryRemove = (entry) => {
-    mandatoryRemoveKeys.forEach((key) => {
+    requiredRemoveKeys.forEach((key) => {
         if (!(key in entry)) {
             throw new Error(`${key} is missing in entry unpublish/delete!`);
         }
     });
 };
 exports.validateAssetUnpublish = (asset) => {
-    mandatoryRemoveKeys.forEach((key) => {
+    requiredRemoveKeys.forEach((key) => {
         if (!(key in asset)) {
             throw new Error(`${key} is missing in asset unpublish!`);
         }
     });
 };
 exports.validateAssetDelete = (asset) => {
-    mandatoryRemoveKeys.forEach((key) => {
+    requiredRemoveKeys.forEach((key) => {
         if (!(key in asset)) {
             throw new Error(`${key} is missing in asset delete!`);
         }
     });
 };
 exports.validateContentTypeDelete = (contentType) => {
-    mandatoryRemoveKeys.forEach((key) => {
+    const keys = ['content_type_uid', 'uid'];
+    keys.forEach((key) => {
         if (!(key in contentType)) {
             throw new Error(`${key} is missing in content type delete!`);
         }
