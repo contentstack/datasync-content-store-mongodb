@@ -1,3 +1,9 @@
+/*!
+* Contentstack Mongodb Content Store
+* Copyright © 2019 Contentstack LLC
+* MIT Licensed
+*/
+
 const assetFilterKeys = ['type', 'event_at', 'checkpoint', 'action']
 const entryFilterKeys = ['type', 'event_at', 'checkpoint', 'action']
 const contentTypeFilterKeys = ['type', 'event_at', 'checkpoint', 'action']

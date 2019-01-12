@@ -1,4 +1,9 @@
 "use strict";
+/*!
+* Contentstack Mongodb Content Store
+* Copyright © 2019 Contentstack LLC
+* MIT Licensed
+*/
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongodb_1 = require("mongodb");
 const logger_1 = require("./util/logger");

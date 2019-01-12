@@ -1,3 +1,9 @@
+/*!
+* Contentstack Mongodb Content Store
+* Copyright © 2019 Contentstack LLC
+* MIT Licensed
+*/
+
 import Debug from 'debug'
 import { merge } from 'lodash'
 import { connect } from './connection'
@@ -22,7 +28,6 @@ export const setAssetConnector = (instance) => {
 }
 
 export const setConfig = (config) => {
-  validateConfig(config)
   debug('Config set successfully!')
   appConfig = config
 }
@@ -42,13 +47,13 @@ export const getConfig = () => {
 
 export let mongoClient
 
-export const start = (config, connector, logger?) => {
+export const start = (config, connector?, logger?) => {
 
   return new Promise((resolve, reject) => {
     try {
       appConfig = merge(internalConfig, appConfig, config)
       validateConfig(appConfig)
-      assetConnectorInstance = assetConnectorInstance || connector
+      assetConnectorInstance = connector || assetConnectorInstance 
       validateAssetConnectorInstance(assetConnectorInstance)
       setLogger(logger)
 

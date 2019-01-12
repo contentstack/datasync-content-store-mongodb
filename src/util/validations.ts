@@ -1,3 +1,9 @@
+/*!
+* Contentstack Mongodb Content Store
+* Copyright © 2019 Contentstack LLC
+* MIT Licensed
+*/
+
 const requiredUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid']
 const requiredRemoveKeys = ['content_type_uid', 'locale', 'uid']
 
@@ -13,7 +19,7 @@ export const validateConfig = (config) => {
 export const validateAssetConnectorInstance = (instance) => {
   const keys = ['download', 'delete', 'unpublish']
   keys.forEach((fn) => {
-    if (!(fn in instance) && typeof instance.fn !== 'function') {
+    if (!(fn in instance) || typeof instance[fn] !== 'function') {
       throw new Error(`${JSON.stringify(instance)} connector does not have ${fn}`)
     }
   })

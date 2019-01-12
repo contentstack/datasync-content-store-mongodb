@@ -1,3 +1,9 @@
+/*!
+* Contentstack Mongodb Content Store
+* Copyright © 2019 Contentstack LLC
+* MIT Licensed
+*/
+
 export const config = {
   'content-connector': {
     dbName: 'contentstack-persistent-db',

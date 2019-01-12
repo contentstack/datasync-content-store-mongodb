@@ -10,13 +10,9 @@ const unpublish_asset = require('./dummy-data/unpublish/assets')
 contentConnector.start({}, assetConnector).then((mongoClient) => {
   mongoClient.publish(publish_entry).then((result) => {
     console.log(`Entry published successfully!\n${stringify(result)}`)
-    // log('db' in mongoClient)
-    // mongoClient.client.close()
   }).catch(console.error)
   mongoClient.publish(publish_asset).then((result) => {
     console.log(`Asset published successfully!\n${stringify(result)}`)
-    // log('db' in mongoClient)
-    // mongoClient.client.close()
   }).catch(console.error)
   mongoClient.unpublish(unpublish_entry).then((result) => {
     console.log(`Entry unpublished successfully!\n${stringify(result)}`)

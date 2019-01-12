@@ -1,3 +1,8 @@
+/*!
+* Contentstack Mongodb Content Store
+* Copyright © 2019 Contentstack LLC
+* MIT Licensed
+*/
 export declare class Mongodb {
     assetConnector: any;
     db: any;

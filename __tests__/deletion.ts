@@ -105,7 +105,6 @@ describe('delete', () => {
                 ],
               }).then((data1) => {
                 expect(data1).toEqual(null)
-                expect(data1.length).toEqual(0)
                 mongo.db.collection('contents').findOne({
                   uid: contentType.uid,
                 }).then((data2) => {
