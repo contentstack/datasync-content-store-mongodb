@@ -1,3 +1,9 @@
+/*!
+* Contentstack Mongodb Content Connector
+* Copyright (c) 2019 Contentstack LLC
+* MIT Licensed
+*/
+
 import { Db, MongoClient } from 'mongodb'
 import { logger } from './util/logger'
 import { validateMongodbConfig } from './util/validations'

@@ -6,3 +6,6 @@
 
 # Dependency directories
 node_modules
+
+# Test coverage
+coverage

@@ -1,3 +1,9 @@
+/*!
+* Contentstack Mongodb Content Connector
+* Copyright (c) 2019 Contentstack LLC
+* MIT Licensed
+*/
+
 const requiredUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid']
 const requiredRemoveKeys = ['content_type_uid', 'locale', 'uid']
 
