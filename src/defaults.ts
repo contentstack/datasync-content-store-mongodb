@@ -1,3 +1,6 @@
+/**
+ * @description Internal application config
+ */
 export const config = {
   'content-connector': {
     dbName: 'contentstack-persistent-db',

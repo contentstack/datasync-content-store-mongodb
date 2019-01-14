@@ -16,6 +16,15 @@ import {
 const debug = Debug('mongodb-core')
 let mongo = null
 
+
+/**
+ * @summary
+ * Mongodb connector core class
+ * @description
+ * Handles publish, unpublish and delete data
+ * @returns
+ * Mongodb class instance
+ */
 export class Mongodb {
   public assetConnector: any
   public db: any
@@ -34,6 +43,11 @@ export class Mongodb {
     return mongo
   }
 
+  /**
+   * @description Generic publish method
+   * @param {Object} data - Data to be published
+   * @returns {Promise} Returns a promise
+   */
   public publish(data) {
     return new Promise((resolve, reject) => {
       try {
@@ -48,6 +62,11 @@ export class Mongodb {
     })
   }
 
+  /**
+   * @description Asset publish method
+   * @param {Object} data - Asset to be published
+   * @returns {Promise} Returns a promise
+   */
   public publishAsset(data) {
     debug(`Asset publish called ${JSON.stringify(data)}`)
 
@@ -79,6 +98,11 @@ export class Mongodb {
     })
   }
 
+  /**
+   * @description Entry publish method
+   * @param {Object} data - Entry to be published
+   * @returns {Promise} Returns a promise
+   */
   public publishEntry(data) {
     debug(`Entry publish called ${JSON.stringify(data)}`)
 
@@ -132,6 +156,11 @@ export class Mongodb {
     })
   }
 
+  /**
+   * @description Generic unpublish method
+   * @param {Object} data - Data unpublish query info
+   * @returns {Promise} Returns a promise
+   */
   public unpublish(data) {
     return new Promise((resolve, reject) => {
       try {
@@ -146,6 +175,11 @@ export class Mongodb {
     })
   }
 
+  /**
+   * @description Generic delete method
+   * @param {Object} data - Data delete query info
+   * @returns {Promise} Returns a promise
+   */
   public delete(data) {
     return new Promise((resolve, reject) => {
       try {
@@ -182,6 +216,11 @@ export class Mongodb {
     })
   }
 
+  /**
+   * @description Entry unpublish method
+   * @param {Object} entry - Entry unpublish query info
+   * @returns {Promise} Returns a promise
+   */
   private unpublishEntry(entry) {
     debug(`Delete entry called ${JSON.stringify(entry)}`)
 
@@ -206,6 +245,11 @@ export class Mongodb {
     })
   }
 
+  /**
+   * @description Entry delete method
+   * @param {Object} entry - Entry delete query info
+   * @returns {Promise} Returns a promise
+   */
   private deleteEntry(entry) {
     debug(`Delete entry called ${JSON.stringify(entry)}`)
 
@@ -229,6 +273,11 @@ export class Mongodb {
     })
   }
 
+  /**
+   * @description Asset unpublish method
+   * @param {Object} asset - Asset unpublish query info
+   * @returns {Promise} Returns a promise
+   */
   private unpublishAsset(asset) {
     debug(`Unpublish asset called ${JSON.stringify(asset)}`)
 
@@ -254,6 +303,11 @@ export class Mongodb {
     })
   }
 
+  /**
+   * @description Asset delete method
+   * @param {Object} entry - Asset delete query info
+   * @returns {Promise} Returns a promise
+   */
   private deleteAsset(asset) {
     debug(`Delete asset called ${JSON.stringify(asset)}`)
 
@@ -281,6 +335,11 @@ export class Mongodb {
     })
   }
 
+  /**
+   * @description Content type delete method
+   * @param {Object} contentType - Content type delete query info
+   * @returns {Promise} Returns a promise
+   */
   private deleteContentType(contentType) {
     debug(`Delete content type called ${JSON.stringify(contentType)}`)
 

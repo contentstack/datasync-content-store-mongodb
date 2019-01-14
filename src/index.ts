@@ -15,15 +15,21 @@ const debug = Debug('registration')
 let appConfig: any = {}
 let assetConnectorInstance
 
+/**
+ * @description Set asset connector instance, that has all the basic methods expected for an asset connector
+ * @param {Class | Object} instance - Asset connector instance
+ */
 export const setAssetConnector = (instance) => {
   debug('Asset connector instance registered successfully')
-  // do something with connector instance
   assetConnectorInstance = instance
 }
 
+/**
+ * @description Set app config
+ * @param {Object} config - Application config
+ */
 export const setConfig = (config) => {
   validateConfig(config)
-  debug('Config set successfully!')
   appConfig = config
 }
 
@@ -35,14 +41,31 @@ export const setCustomLogger = (logger?) => {
   setLogger(logger)
 }
 
+/**
+ * @description Get app config
+ * @returns an instance of app config
+ */
 export const getConfig = () => {
 
   return appConfig
 }
 
+/**
+ * @description Mongo client instance
+ * @returns Mongodb connection instance
+ */
 export let mongoClient
 
-export const start = (config, connector, logger?) => {
+/**
+ * @summary
+ * Entry point of the app
+ * @description
+ * Sets asset connectors, validates them and starts the app
+ * @param {Class | Object} connector - Asset connector instance
+ * @param {Object} config - Set application config
+ * @param {Class | Object} logger - Logger object
+ */
+export const start = (connector, config?, logger?) => {
 
   return new Promise((resolve, reject) => {
     try {

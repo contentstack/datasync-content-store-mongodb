@@ -15,6 +15,14 @@ const indexes = {
 
 const instance: IMongo = ({} as any)
 
+/**
+ * @summary
+ * {Singleton}: Establishes connection to mongodb
+ * @description
+ * Handles config validation and connection establishment with mongo server.
+ * Also, creates indexes on connection
+ * @param {Object} config - Content connector config
+ */
 export const connect = (config) => {
   return new Promise((resolve, reject) => {
     try {

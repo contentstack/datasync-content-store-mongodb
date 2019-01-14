@@ -1,6 +1,10 @@
 const requiredUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid']
 const requiredRemoveKeys = ['content_type_uid', 'locale', 'uid']
 
+/**
+ * @description Validates app's config
+ * @param {Object} config - Application config
+ */
 export const validateConfig = (config) => {
   if (typeof config['content-connector'].options !== 'object' || Object.keys(config['content-connector'].options).length
     === 0) {
@@ -10,6 +14,10 @@ export const validateConfig = (config) => {
   }
 }
 
+/**
+ * @description Validate asset connector instance
+ * @param {Object} instance - Instance of asset connector
+ */
 export const validateAssetConnectorInstance = (instance) => {
   const keys = ['download', 'delete', 'unpublish']
   keys.forEach((fn) => {
@@ -19,6 +27,10 @@ export const validateAssetConnectorInstance = (instance) => {
   })
 }
 
+/**
+ * @description Validate mongodb connector instance
+ * @param {Object} config - Content connector config
+ */
 export const validateMongodbConfig = (config: any = {}) => {
   if (typeof config.uri !== 'string' || config.uri.length === 0) {
     throw new Error("Mongodb config 'uri' should be of type string and not empty!")
@@ -29,6 +41,10 @@ export const validateMongodbConfig = (config: any = {}) => {
   }
 }
 
+/**
+ * @description Validate asset object on asset publish
+ * @param {Object} asset - Asset json
+ */
 export const validateAssetPublish = (asset) => {
   requiredUpsertKeys.forEach((key) => {
     if (!(key in asset)) {
@@ -37,6 +53,10 @@ export const validateAssetPublish = (asset) => {
   })
 }
 
+/**
+ * @description Validate entry object on entry publish
+ * @param {Object} entry - Entry json
+ */
 export const validateEntryPublish = (entry) => {
   requiredUpsertKeys.forEach((key) => {
     if (!(key in entry)) {
@@ -45,6 +65,10 @@ export const validateEntryPublish = (entry) => {
   })
 }
 
+/**
+ * @description Validate entry object on entry unpublish/delete
+ * @param {Object} entry - Entry json
+ */
 export const validateEntryRemove = (entry) => {
   requiredRemoveKeys.forEach((key) => {
     if (!(key in entry)) {
@@ -53,6 +77,10 @@ export const validateEntryRemove = (entry) => {
   })
 }
 
+/**
+ * @description Validate asset object on asset unpublish
+ * @param {Object} asset - Asset json
+ */
 export const validateAssetUnpublish = (asset) => {
   requiredRemoveKeys.forEach((key) => {
     if (!(key in asset)) {
@@ -61,6 +89,10 @@ export const validateAssetUnpublish = (asset) => {
   })
 }
 
+/**
+ * @description Validate asset object on asset delete
+ * @param {Object} asset - Asset json
+ */
 export const validateAssetDelete = (asset) => {
   requiredRemoveKeys.forEach((key) => {
     if (!(key in asset)) {
@@ -69,6 +101,10 @@ export const validateAssetDelete = (asset) => {
   })
 }
 
+/**
+ * @description Validate content type object on content type delete
+ * @param {Object} contentType - Content type json
+ */
 export const validateContentTypeDelete = (contentType) => {
   const keys = ['content_type_uid', 'uid']
   keys.forEach((key) => {
