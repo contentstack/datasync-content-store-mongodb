@@ -5,7 +5,7 @@
 */
 
 /**
- * @description
+ * @summary
  *  Internal default config. This can be overriden!
  */
 export const config = {

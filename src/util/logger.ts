@@ -6,13 +6,20 @@
 
 import { validateLogger } from './validations'
 
+interface ILogger {
+  warn(): any,
+  info(): any,
+  log(): any,
+  error(): any,
+}
+
 /**
  * @summary Creates a logger instance
  * @example
  *    const log = setLogger(instance)
  *    log.info('Hello world!')
  */
-export const setLogger = (customLogger?) => {
+export const setLogger = (customLogger?: ILogger) => {
   if (logger) {
     return logger
   } else if (!validateLogger(customLogger) && !customLogger) {

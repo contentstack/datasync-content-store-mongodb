@@ -9,3 +9,6 @@ node_modules
 
 # Exclude coverage informations
 coverage
+
+# Lock file
+package-lock.json

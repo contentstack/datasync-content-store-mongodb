@@ -8,7 +8,7 @@ const requiredUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid']
 const requiredRemoveKeys = ['content_type_uid', 'locale', 'uid']
 
 /**
- * @description Validates app's config
+ * @summary Validates app's config
  * @param {Object} config - Application config
  */
 export const validateConfig = (config) => {
@@ -21,7 +21,7 @@ export const validateConfig = (config) => {
 }
 
 /**
- * @description Validate asset connector instance
+ * @summary Validate asset connector instance
  * @param {Object} instance - Instance of asset connector
  */
 export const validateAssetConnectorInstance = (instance) => {
@@ -34,7 +34,7 @@ export const validateAssetConnectorInstance = (instance) => {
 }
 
 /**
- * @description Validate mongodb connector instance
+ * @summary Validate mongodb connector instance
  * @param {Object} config - Content connector config
  */
 export const validateMongodbConfig = (config: any = {}) => {
@@ -48,7 +48,7 @@ export const validateMongodbConfig = (config: any = {}) => {
 }
 
 /**
- * @description Validate asset object on asset publish
+ * @summary Validate asset object on asset publish
  * @param {Object} asset - Asset json
  */
 export const validateAssetPublish = (asset) => {
@@ -60,7 +60,7 @@ export const validateAssetPublish = (asset) => {
 }
 
 /**
- * @description Validate entry object on entry publish
+ * @summary Validate entry object on entry publish
  * @param {Object} entry - Entry json
  */
 export const validateEntryPublish = (entry) => {
@@ -72,7 +72,7 @@ export const validateEntryPublish = (entry) => {
 }
 
 /**
- * @description Validate entry object on entry unpublish/delete
+ * @summary Validate entry object on entry unpublish/delete
  * @param {Object} entry - Entry json
  */
 export const validateEntryRemove = (entry) => {
@@ -84,7 +84,7 @@ export const validateEntryRemove = (entry) => {
 }
 
 /**
- * @description Validate asset object on asset unpublish
+ * @summary Validate asset object on asset unpublish
  * @param {Object} asset - Asset json
  */
 export const validateAssetUnpublish = (asset) => {
@@ -96,7 +96,7 @@ export const validateAssetUnpublish = (asset) => {
 }
 
 /**
- * @description Validate asset object on asset delete
+ * @summary Validate asset object on asset delete
  * @param {Object} asset - Asset json
  */
 export const validateAssetDelete = (asset) => {
@@ -108,7 +108,7 @@ export const validateAssetDelete = (asset) => {
 }
 
 /**
- * @description Validate content type object on content type delete
+ * @summary Validate content type object on content type delete
  * @param {Object} contentType - Content type json
  */
 export const validateContentTypeDelete = (contentType) => {
@@ -121,7 +121,7 @@ export const validateContentTypeDelete = (contentType) => {
 }
 
 /**
- * @description Validates if the custom logger set supports required methods
+ * @summary Validates if the custom logger set supports required methods
  * @param {Object} instance - Custom logger instance
  */
 export const validateLogger = (instance) => {
@@ -129,7 +129,7 @@ export const validateLogger = (instance) => {
   if (!instance) {
     return flag
   }
-  const requiredFn = ['info', 'warn', 'log', 'error', 'debug']
+  const requiredFn = ['info', 'warn', 'log', 'error']
   requiredFn.forEach((name) => {
     if (typeof instance[name] !== 'function') {
       console.warn(`Unable to register custom logger since '${name}()' does not exist on ${instance}!`)

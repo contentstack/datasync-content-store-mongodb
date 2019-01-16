@@ -9,7 +9,7 @@ const entryFilterKeys = ['type', 'event_at', 'checkpoint', 'action']
 const contentTypeFilterKeys = ['type', 'event_at', 'checkpoint', 'action']
 
 /**
- * @description Remove unwanted keys from asset json
+ * @summary Remove unwanted keys from asset json
  * @param {Object} asset - Asset json
  */
 export const filterAssetKeys = (asset) => {
@@ -21,7 +21,7 @@ export const filterAssetKeys = (asset) => {
 }
 
 /**
- * @description Remove unwanted keys from entry json
+ * @summary Remove unwanted keys from entry json
  * @param {Object} entry - Entry json
  */
 export const filterEntryKeys = (entry) => {
@@ -33,7 +33,7 @@ export const filterEntryKeys = (entry) => {
 }
 
 /**
- * @description Remove unwanted keys from content type json
+ * @summary Remove unwanted keys from content type json
  * @param {Object} contentType - Content type json
  */
 export const filterContentTypeKeys = (contentType) => {

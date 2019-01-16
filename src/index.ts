@@ -1,16 +1,6 @@
 /*!
-<<<<<<< HEAD
 * Contentstack Mongodb Content Connector
 * Copyright (c) 2019 Contentstack LLC
-=======
-<<<<<<< HEAD
-* Contentstack Mongodb Content Connector
-* Copyright (c) 2019 Contentstack LLC
-=======
-* Contentstack Mongodb Content Store
-* Copyright © 2019 Contentstack LLC
->>>>>>> ee31b51fa72be4b95d012630091a2b7b449001e0
->>>>>>> develop
 * MIT Licensed
 */
 
@@ -31,40 +21,67 @@ const debug = Debug('registration')
 let appConfig: any = {}
 let assetConnectorInstance
 
+interface IConnector {
+  publish(): any,
+  unpublish(): any,
+  delete(): any,
+  find(): any[],
+  findOne(): any,
+}
+
+interface IAssetConnector {
+  start(): IConnector,
+  setLogger(): ILogger,
+}
+
+interface IConfig {
+  locales?: any[],
+  contentstack?: any,
+  'content-connector'?: any,
+  'sync-manager'?: any,
+  'asset-connector'?: any,
+}
+
+interface ILogger {
+  warn(): any,
+  info(): any,
+  log(): any,
+  error(): any,
+}
+
 /**
- * @description Set asset connector instance, that has all the basic methods expected for an asset connector
+ * @summary Set asset connector instance, that has all the basic methods expected for an asset connector
  * @param {Class | Object} instance - Asset connector instance
  */
-export const setAssetConnector = (instance) => {
-  debug('Asset connector instance registered successfully')
+export const setAssetConnector = (instance: IAssetConnector) => {
   assetConnectorInstance = instance
 }
 
 /**
- * @description Set app config
+ * @summary Set app config
  * @param {Object} config - Application config
  */
-export const setConfig = (config) => {
+export const setConfig = (config: IConfig) => {
   appConfig = config
 }
 
 /**
- * @description Set custom logger for logging
+ * @summary Set custom logger for logging
  * @param {Object} instance - Custom logger instance
  */
 export { setLogger } from './util/logger'
 
 /**
- * @description Get app config
+ * @summary Get app config
  * @returns an instance of app config
  */
-export const getConfig = () => {
+export const getConfig = (): IConfig => {
 
   return appConfig
 }
 
 /**
- * @description Mongo client instance
+ * @summary Mongo client instance
  * @returns Mongodb connection instance
  */
 export let mongoClient
@@ -78,7 +95,7 @@ export let mongoClient
  * @param {Object} config - Set application config
  * @param {Class | Object} logger - Logger object
  */
-export const start = (connector, config?, logger?) => {
+export const start = (connector: IAssetConnector, config?: IConfig, logger?: ILogger) => {
 
   return new Promise((resolve, reject) => {
     try {
@@ -90,6 +107,7 @@ export const start = (connector, config?, logger?) => {
 
       return connect(appConfig).then((mongo) => {
         mongoClient = new Mongodb(mongo, assetConnectorInstance)
+        debug('Mongo connector instance created successfully!')
 
         return resolve(mongoClient)
       }).catch(reject)

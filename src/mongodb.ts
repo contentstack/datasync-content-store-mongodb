@@ -50,7 +50,7 @@ export class Mongodb {
   }
 
   /**
-   * @description Generic publish method
+   * @summary Generic publish method
    * @param {Object} data - Data to be published
    * @returns {Promise} Returns a promise
    */
@@ -69,7 +69,7 @@ export class Mongodb {
   }
 
   /**
-   * @description Asset publish method
+   * @summary Asset publish method
    * @param {Object} data - Asset to be published
    * @returns {Promise} Returns a promise
    */
@@ -105,7 +105,7 @@ export class Mongodb {
   }
 
   /**
-   * @description Entry publish method
+   * @summary Entry publish method
    * @param {Object} data - Entry to be published
    * @returns {Promise} Returns a promise
    */
@@ -163,7 +163,7 @@ export class Mongodb {
   }
 
   /**
-   * @description Generic unpublish method
+   * @summary Generic unpublish method
    * @param {Object} data - Data unpublish query info
    * @returns {Promise} Returns a promise
    */
@@ -182,7 +182,7 @@ export class Mongodb {
   }
 
   /**
-   * @description Generic delete method
+   * @summary Generic delete method
    * @param {Object} data - Data delete query info
    * @returns {Promise} Returns a promise
    */
@@ -223,7 +223,7 @@ export class Mongodb {
   }
 
   /**
-   * @description Entry unpublish method
+   * @summary Entry unpublish method
    * @param {Object} entry - Entry unpublish query info
    * @returns {Promise} Returns a promise
    */
@@ -252,7 +252,7 @@ export class Mongodb {
   }
 
   /**
-   * @description Entry delete method
+   * @summary Entry delete method
    * @param {Object} entry - Entry delete query info
    * @returns {Promise} Returns a promise
    */
@@ -280,7 +280,7 @@ export class Mongodb {
   }
 
   /**
-   * @description Asset unpublish method
+   * @summary Asset unpublish method
    * @param {Object} asset - Asset unpublish query info
    * @returns {Promise} Returns a promise
    */
@@ -310,7 +310,7 @@ export class Mongodb {
   }
 
   /**
-   * @description Asset delete method
+   * @summary Asset delete method
    * @param {Object} entry - Asset delete query info
    * @returns {Promise} Returns a promise
    */
@@ -342,7 +342,7 @@ export class Mongodb {
   }
 
   /**
-   * @description Content type delete method
+   * @summary Content type delete method
    * @param {Object} contentType - Content type delete query info
    * @returns {Promise} Returns a promise
    */
