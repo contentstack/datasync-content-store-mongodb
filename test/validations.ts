@@ -37,7 +37,7 @@ describe('validations', () => {
 
   test('validate mongodb config with db name error', () => {
     const localConfig = cloneDeep(config['content-connector'])
-    localConfig.dbName = 'dbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+    localConfig.dbName = 'dbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
     expect(() => {
       validateMongodbConfig(localConfig)
     }).toThrow("Mongodb config 'dbName' should be of type string and have length between '1-64'")
@@ -50,6 +50,4 @@ describe('validations', () => {
       validateMongodbConfig(localConfig)
     }).toThrow("Mongodb config 'option' should be of type object and not empty!")
   })
-
-  
 })

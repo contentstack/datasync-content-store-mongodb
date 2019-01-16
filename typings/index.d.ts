@@ -3,9 +3,14 @@
 * Contentstack Mongodb Content Connector
 * Copyright (c) 2019 Contentstack LLC
 =======
+<<<<<<< HEAD
+* Contentstack Mongodb Content Connector
+* Copyright (c) 2019 Contentstack LLC
+=======
 * Contentstack Mongodb Content Store
 * Copyright © 2019 Contentstack LLC
->>>>>>> origin/develop
+>>>>>>> ee31b51fa72be4b95d012630091a2b7b449001e0
+>>>>>>> develop
 * MIT Licensed
 */
 export declare const setAssetConnector: (instance: any) => void;
@@ -13,8 +18,4 @@ export declare const setConfig: (config: any) => void;
 export { setLogger } from './util/logger';
 export declare const getConfig: () => any;
 export declare let mongoClient: any;
-<<<<<<< HEAD
 export declare const start: (connector: any, config?: any, logger?: any) => Promise<{}>;
-=======
-export declare const start: (config: any, connector?: any, logger?: any) => Promise<{}>;
->>>>>>> origin/develop
