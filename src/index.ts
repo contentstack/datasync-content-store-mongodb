@@ -35,7 +35,6 @@ export const setAssetConnector = (instance) => {
  * @param {Object} config - Application config
  */
 export const setConfig = (config) => {
-  validateConfig(config)
   appConfig = config
 }
 
