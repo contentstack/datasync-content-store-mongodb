@@ -5,7 +5,8 @@
 */
 
 /**
- * @description Internal application config
+ * @description
+ *  Internal default config. This can be overriden!
  */
 export const config = {
   'content-connector': {

@@ -19,7 +19,7 @@ exports.validateConfig = (config) => {
 exports.validateAssetConnectorInstance = (instance) => {
     const keys = ['download', 'delete', 'unpublish'];
     keys.forEach((fn) => {
-        if (!(fn in instance) && typeof instance.fn !== 'function') {
+        if (!(fn in instance) || typeof instance[fn] !== 'function') {
             throw new Error(`${JSON.stringify(instance)} connector does not have ${fn}`);
         }
     });

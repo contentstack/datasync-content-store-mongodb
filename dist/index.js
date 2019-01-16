@@ -1,7 +1,12 @@
 "use strict";
 /*!
+<<<<<<< HEAD
 * Contentstack Mongodb Content Connector
 * Copyright (c) 2019 Contentstack LLC
+=======
+* Contentstack Mongodb Content Store
+* Copyright © 2019 Contentstack LLC
+>>>>>>> ee31b51fa72be4b95d012630091a2b7b449001e0
 * MIT Licensed
 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -23,7 +28,6 @@ exports.setAssetConnector = (instance) => {
     assetConnectorInstance = instance;
 };
 exports.setConfig = (config) => {
-    validations_1.validateConfig(config);
     appConfig = config;
 };
 var logger_2 = require("./util/logger");
@@ -36,7 +40,7 @@ exports.start = (connector, config, logger) => {
         try {
             appConfig = lodash_1.merge(defaults_1.config, appConfig, config);
             validations_1.validateConfig(appConfig);
-            assetConnectorInstance = assetConnectorInstance || connector;
+            assetConnectorInstance = connector || assetConnectorInstance;
             validations_1.validateAssetConnectorInstance(assetConnectorInstance);
             logger_1.setLogger(logger);
             return connection_1.connect(appConfig).then((mongo) => {

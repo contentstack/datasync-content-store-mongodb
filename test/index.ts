@@ -17,13 +17,13 @@ describe('core', () => {
   })
 
   test('set custom logger', () => {
-    expect(setLogger()).toBeUndefined()
+    expect(setLogger()).toEqual(console)
   })
 
   test('start mongo driver without successfully', () => {
     setAssetConnector(connector)
 
-    return start(mockConfig).then((mongo) => {
+    return start(connector, mockConfig).then((mongo) => {
       expect(mongo).toHaveProperty('db')
       expect(mongo).toHaveProperty('client')
       expect(mongo).toEqual(mongoClient)

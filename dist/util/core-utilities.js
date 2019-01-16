@@ -12,15 +12,18 @@ exports.filterAssetKeys = (asset) => {
     assetFilterKeys.forEach((key) => {
         delete asset[key];
     });
+    return asset;
 };
 exports.filterEntryKeys = (entry) => {
     entryFilterKeys.forEach((key) => {
         delete entry[key];
     });
+    return entry;
 };
 exports.filterContentTypeKeys = (contentType) => {
     contentTypeFilterKeys.forEach((key) => {
         delete contentType[key];
     });
+    return contentType;
 };
 //# sourceMappingURL=core-utilities.js.map

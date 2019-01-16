@@ -1,6 +1,11 @@
 /*!
+<<<<<<< HEAD
 * Contentstack Mongodb Content Connector
 * Copyright (c) 2019 Contentstack LLC
+=======
+* Contentstack Mongodb Content Store
+* Copyright © 2019 Contentstack LLC
+>>>>>>> ee31b51fa72be4b95d012630091a2b7b449001e0
 * MIT Licensed
 */
 export declare const setAssetConnector: (instance: any) => void;

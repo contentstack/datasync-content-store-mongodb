@@ -7,5 +7,5 @@
 # Dependency directories
 node_modules
 
-# Test coverage
+# Exclude coverage informations
 coverage

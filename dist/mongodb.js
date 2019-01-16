@@ -42,7 +42,7 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 validations_1.validateAssetPublish(data);
-                core_utilities_1.filterAssetKeys(data);
+                data = core_utilities_1.filterAssetKeys(data);
                 return this.assetConnector.download(data).then((asset) => {
                     debug(`Asset download result ${JSON.stringify(asset)}`);
                     this.db.collection(this.collectionName)
@@ -70,19 +70,19 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 validations_1.validateEntryPublish(data);
-                const entry = {
+                let entry = {
                     content_type_uid: data.content_type_uid,
                     data: data.data,
                     locale: data.locale,
                     uid: data.uid,
                 };
-                const contentType = {
+                let contentType = {
                     content_type_uid: 'contentTypes',
                     data: data.content_type,
                     uid: data.content_type_uid,
                 };
-                core_utilities_1.filterEntryKeys(entry);
-                core_utilities_1.filterContentTypeKeys(contentType);
+                entry = core_utilities_1.filterEntryKeys(entry);
+                contentType = core_utilities_1.filterContentTypeKeys(contentType);
                 return this.db.collection(this.collectionName)
                     .updateOne({
                     content_type_uid: entry.content_type_uid,
