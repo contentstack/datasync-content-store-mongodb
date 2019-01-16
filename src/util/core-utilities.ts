@@ -16,6 +16,8 @@ export const filterAssetKeys = (asset) => {
   assetFilterKeys.forEach((key) => {
     delete asset[key]
   })
+
+  return asset
 }
 
 /**
@@ -26,6 +28,8 @@ export const filterEntryKeys = (entry) => {
   entryFilterKeys.forEach((key) => {
     delete entry[key]
   })
+
+  return entry
 }
 
 /**
@@ -36,4 +40,6 @@ export const filterContentTypeKeys = (contentType) => {
   contentTypeFilterKeys.forEach((key) => {
     delete contentType[key]
   })
+
+  return contentType
 }
