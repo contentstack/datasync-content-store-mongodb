@@ -7,5 +7,9 @@
 # Dependency directories
 node_modules
 
+<<<<<<< HEAD
 # Test coverage
+=======
+# Exclude coverage informations
+>>>>>>> origin/develop
 coverage

@@ -35,7 +35,6 @@ export const setAssetConnector = (instance) => {
  * @param {Object} config - Application config
  */
 export const setConfig = (config) => {
-  validateConfig(config)
   appConfig = config
 }
 
@@ -75,7 +74,7 @@ export const start = (connector, config?, logger?) => {
     try {
       appConfig = merge(internalConfig, appConfig, config)
       validateConfig(appConfig)
-      assetConnectorInstance = assetConnectorInstance || connector
+      assetConnectorInstance = connector || assetConnectorInstance
       validateAssetConnectorInstance(assetConnectorInstance)
       setLogger(logger)
 
