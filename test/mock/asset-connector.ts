@@ -5,6 +5,9 @@ export const connector = {
   download: (asset) => {
     return Promise.resolve(asset)
   },
+  setLogger: () => {
+    return
+  },
   start: () => {
     return Promise.resolve(connector)
   },

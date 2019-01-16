@@ -1,4 +1,9 @@
 "use strict";
+/*!
+* Contentstack Mongodb Content Connector
+* Copyright (c) 2019 Contentstack LLC
+* MIT Licensed
+*/
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };

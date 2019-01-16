@@ -43,9 +43,7 @@ export const setConfig = (config) => {
  * @description Set custom logger for logging
  * @param {Object} instance - Custom logger instance
  */
-export const setCustomLogger = (logger?) => {
-  setLogger(logger)
-}
+export { setLogger } from './util/logger'
 
 /**
  * @description Get app config

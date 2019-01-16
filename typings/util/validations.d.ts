@@ -1,3 +1,8 @@
+/*!
+* Contentstack Mongodb Content Connector
+* Copyright (c) 2019 Contentstack LLC
+* MIT Licensed
+*/
 export declare const validateConfig: (config: any) => void;
 export declare const validateAssetConnectorInstance: (instance: any) => void;
 export declare const validateMongodbConfig: (config?: any) => void;

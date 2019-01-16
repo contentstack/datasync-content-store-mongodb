@@ -1,4 +1,9 @@
 "use strict";
+/*!
+* Contentstack Mongodb Content Connector
+* Copyright (c) 2019 Contentstack LLC
+* MIT Licensed
+*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = {
     'content-connector': {

@@ -1,4 +1,9 @@
 "use strict";
+/*!
+* Contentstack Mongodb Content Connector
+* Copyright (c) 2019 Contentstack LLC
+* MIT Licensed
+*/
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -19,16 +24,14 @@ exports.setAssetConnector = (instance) => {
 };
 exports.setConfig = (config) => {
     validations_1.validateConfig(config);
-    debug('Config set successfully!');
     appConfig = config;
 };
-exports.setCustomLogger = (logger) => {
-    logger_1.setLogger(logger);
-};
+var logger_2 = require("./util/logger");
+exports.setLogger = logger_2.setLogger;
 exports.getConfig = () => {
     return appConfig;
 };
-exports.start = (config, connector, logger) => {
+exports.start = (connector, config, logger) => {
     return new Promise((resolve, reject) => {
         try {
             appConfig = lodash_1.merge(defaults_1.config, appConfig, config);

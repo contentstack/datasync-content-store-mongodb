@@ -98,13 +98,13 @@ module.exports = {
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
   testPathIgnorePatterns: [
-    '/__tests__/mock/*',
-    '/__tests__/mongo.setup.ts'
+    '/test/mock/*',
+    '/test/mongo.setup.ts'
   ],
   // The glob patterns Jest uses to detect test files
   testMatch: [
-    '**/__tests__/**/*.js?(x)',
-    '**/__tests__/**/*.ts?(x)',
+    '**/test/**/*.js?(x)',
+    '**/test/**/*.ts?(x)',
   ],
   transform: {
     '^.+\\.ts?$': 'ts-jest',

@@ -3,7 +3,7 @@
  */
 
 import { cloneDeep, merge } from 'lodash'
-import { setCustomLogger } from '../src'
+import { setLogger } from '../src'
 import { connect } from '../src/connection'
 import { config as appConfig } from '../src/defaults'
 import { Mongodb } from '../src/mongodb'
@@ -18,7 +18,7 @@ let db = null
 
 describe('publish', () => {
   beforeAll(() => {
-    setCustomLogger()
+    setLogger()
 
     return connect(config).then((mongodb) => {
       db = new Mongodb(mongodb, connector)
