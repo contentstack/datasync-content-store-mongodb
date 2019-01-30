@@ -97,7 +97,8 @@ class Mongodb {
                     debug(`Entry publish result ${entryPublishResult}`);
                     return this.db.collection(this.collectionName)
                         .updateOne({
-                        uid: contentType.content_type_uid,
+                        content_type_uid: contentType.content_type_uid,
+                        uid: contentType.uid,
                     }, {
                         $set: contentType,
                     }, {
