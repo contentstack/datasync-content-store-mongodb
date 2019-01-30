@@ -30,4 +30,3 @@ const abort = () => {
 process.on('SIGTERM', handleExit);
 process.on('SIGINT', handleExit);
 process.on('uncaughtException', unhandledErrors);
-//# sourceMappingURL=process.js.map

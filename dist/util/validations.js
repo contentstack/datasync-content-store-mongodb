@@ -83,7 +83,7 @@ exports.validateLogger = (instance) => {
     if (!instance) {
         return flag;
     }
-    const requiredFn = ['info', 'warn', 'log', 'error', 'debug'];
+    const requiredFn = ['info', 'warn', 'log', 'error'];
     requiredFn.forEach((name) => {
         if (typeof instance[name] !== 'function') {
             console.warn(`Unable to register custom logger since '${name}()' does not exist on ${instance}!`);
@@ -92,4 +92,3 @@ exports.validateLogger = (instance) => {
     });
     return !flag;
 };
-//# sourceMappingURL=validations.js.map

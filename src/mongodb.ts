@@ -83,7 +83,8 @@ export class Mongodb {
 
         return this.assetConnector.download(data).then((asset) => {
           debug(`Asset download result ${JSON.stringify(asset)}`)
-          this.db.collection(this.collectionName)
+
+          return this.db.collection(this.collectionName)
             .updateOne({
               locale: asset.locale,
               uid: asset.uid,
@@ -192,30 +193,14 @@ export class Mongodb {
         if (data.content_type_uid === '_assets') {
           return this.deleteAsset(data).then(resolve).catch(reject)
         } else if (data.content_type_uid === '_content_types') {
-          return this.deleteContentType(data).then(resolve).catch(reject)
+          return this.deleteContentType(data)
+            .then(resolve)
+            .catch(reject)
         }
 
-        return this.deleteEntry(data).then(resolve).catch(reject)
-      } catch (error) {
-        return reject(error)
-      }
-    })
-  }
-
-  public find(data) {
-    return new Promise((resolve, reject) => {
-      try {
-        return resolve(data)
-      } catch (error) {
-        return reject(error)
-      }
-    })
-  }
-
-  public findOne(data) {
-    return new Promise((resolve, reject) => {
-      try {
-        return resolve(data)
+        return this.deleteEntry(data)
+          .then(resolve)
+          .catch(reject)
       } catch (error) {
         return reject(error)
       }
@@ -324,10 +309,7 @@ export class Mongodb {
         return this.assetConnector.delete(asset).then(() => {
           return this.db.collection(this.collectionName)
             .deleteMany({
-              // data: {
-              //   uid: asset.uid,
-              // },
-              'data.uid': asset.uid,
+              uid: asset.uid,
             })
             .then((result) => {
               debug(`Delete asset result ${JSON.stringify(result)}`)

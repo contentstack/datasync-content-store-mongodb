@@ -20,4 +20,3 @@ exports.setLogger = (customLogger) => {
     }
     return exports.logger;
 };
-//# sourceMappingURL=logger.js.map

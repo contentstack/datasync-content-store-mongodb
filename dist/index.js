@@ -1,17 +1,7 @@
 "use strict";
 /*!
-<<<<<<< HEAD
 * Contentstack Mongodb Content Connector
 * Copyright (c) 2019 Contentstack LLC
-=======
-<<<<<<< HEAD
-* Contentstack Mongodb Content Connector
-* Copyright (c) 2019 Contentstack LLC
-=======
-* Contentstack Mongodb Content Store
-* Copyright © 2019 Contentstack LLC
->>>>>>> ee31b51fa72be4b95d012630091a2b7b449001e0
->>>>>>> develop
 * MIT Licensed
 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -29,7 +19,6 @@ const debug = debug_1.default('registration');
 let appConfig = {};
 let assetConnectorInstance;
 exports.setAssetConnector = (instance) => {
-    debug('Asset connector instance registered successfully');
     assetConnectorInstance = instance;
 };
 exports.setConfig = (config) => {
@@ -50,6 +39,7 @@ exports.start = (connector, config, logger) => {
             logger_1.setLogger(logger);
             return connection_1.connect(appConfig).then((mongo) => {
                 exports.mongoClient = new mongodb_1.Mongodb(mongo, assetConnectorInstance);
+                debug('Mongo connector instance created successfully!');
                 return resolve(exports.mongoClient);
             }).catch(reject);
         }
@@ -58,4 +48,3 @@ exports.start = (connector, config, logger) => {
         }
     });
 };
-//# sourceMappingURL=index.js.map

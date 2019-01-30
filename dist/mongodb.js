@@ -45,7 +45,7 @@ class Mongodb {
                 data = core_utilities_1.filterAssetKeys(data);
                 return this.assetConnector.download(data).then((asset) => {
                     debug(`Asset download result ${JSON.stringify(asset)}`);
-                    this.db.collection(this.collectionName)
+                    return this.db.collection(this.collectionName)
                         .updateOne({
                         locale: asset.locale,
                         uid: asset.uid,
@@ -134,29 +134,13 @@ class Mongodb {
                     return this.deleteAsset(data).then(resolve).catch(reject);
                 }
                 else if (data.content_type_uid === '_content_types') {
-                    return this.deleteContentType(data).then(resolve).catch(reject);
+                    return this.deleteContentType(data)
+                        .then(resolve)
+                        .catch(reject);
                 }
-                return this.deleteEntry(data).then(resolve).catch(reject);
-            }
-            catch (error) {
-                return reject(error);
-            }
-        });
-    }
-    find(data) {
-        return new Promise((resolve, reject) => {
-            try {
-                return resolve(data);
-            }
-            catch (error) {
-                return reject(error);
-            }
-        });
-    }
-    findOne(data) {
-        return new Promise((resolve, reject) => {
-            try {
-                return resolve(data);
+                return this.deleteEntry(data)
+                    .then(resolve)
+                    .catch(reject);
             }
             catch (error) {
                 return reject(error);
@@ -234,7 +218,7 @@ class Mongodb {
                 return this.assetConnector.delete(asset).then(() => {
                     return this.db.collection(this.collectionName)
                         .deleteMany({
-                        'data.uid': asset.uid,
+                        uid: asset.uid,
                     })
                         .then((result) => {
                         debug(`Delete asset result ${JSON.stringify(result)}`);
@@ -275,4 +259,3 @@ class Mongodb {
     }
 }
 exports.Mongodb = Mongodb;
-//# sourceMappingURL=mongodb.js.map

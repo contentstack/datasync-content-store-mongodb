@@ -40,4 +40,3 @@ exports.connect = (config) => {
         }
     });
 };
-//# sourceMappingURL=connection.js.map

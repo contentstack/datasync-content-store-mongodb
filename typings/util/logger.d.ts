@@ -3,5 +3,12 @@
 * Copyright (c) 2019 Contentstack LLC
 * MIT Licensed
 */
-export declare const setLogger: (customLogger?: any) => any;
+interface ILogger {
+    warn(): any;
+    info(): any;
+    log(): any;
+    error(): any;
+}
+export declare const setLogger: (customLogger?: ILogger) => any;
 export declare let logger: any;
+export {};
