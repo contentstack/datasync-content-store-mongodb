@@ -4,6 +4,7 @@
 * MIT Licensed
 */
 
+import { isEmpty, isPlainObject, merge } from 'lodash'
 import { Db, MongoClient } from 'mongodb'
 import { logger } from './util/logger'
 import { validateMongodbConfig } from './util/validations'
@@ -13,7 +14,7 @@ interface IMongo {
   client: any
 }
 
-const indexes = {
+let indexes = {
   content_type_uid: 1,
   locales: 1,
   uid: 1,
@@ -40,6 +41,11 @@ export const connect = (config) => {
       const connectionUri = mongoConfig.uri
       const dbName = mongoConfig.dbName
       const options = mongoConfig.options
+
+      if (mongoConfig.indexes && isPlainObject(mongoConfig.indexes) && !(isEmpty(mongoConfig.indexes))) {
+        indexes = merge(mongoConfig.indexes)
+      }
+
       const client = new MongoClient(connectionUri, options)
 
       return client.connect().then(() => {

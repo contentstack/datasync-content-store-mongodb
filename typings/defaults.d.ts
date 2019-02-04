@@ -6,6 +6,9 @@
 export declare const config: {
     'content-connector': {
         dbName: string;
+        indexes: {
+            published_at: number;
+        };
         options: {
             autoReconnect: boolean;
             connectTimeoutMS: number;

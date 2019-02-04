@@ -11,6 +11,9 @@
 export const config = {
   'content-connector': {
     dbName: 'contentstack-persistent-db',
+    indexes: {
+      published_at: 1,
+    },
     // http://mongodb.github.io/node-mongodb-native/3.1/api/MongoClient.html
     options: {
       autoReconnect: true,

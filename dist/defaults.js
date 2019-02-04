@@ -8,6 +8,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = {
     'content-connector': {
         dbName: 'contentstack-persistent-db',
+        indexes: {
+            published_at: 1,
+        },
         options: {
             autoReconnect: true,
             connectTimeoutMS: 15000,

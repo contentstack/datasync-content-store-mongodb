@@ -61,7 +61,7 @@ exports.structuralChanges = (entity) => {
     });
     if (lodash_1.hasIn(clone, 'publish_details')) {
         clone.published_at = clone.publish_details.time;
-        clone.published_locale = clone.publish_details.locale;
+        clone.locale = clone.publish_details.locale;
         delete clone.publish_details;
     }
     else {

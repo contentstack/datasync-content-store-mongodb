@@ -5,10 +5,11 @@
 * MIT Licensed
 */
 Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = require("lodash");
 const mongodb_1 = require("mongodb");
 const logger_1 = require("./util/logger");
 const validations_1 = require("./util/validations");
-const indexes = {
+let indexes = {
     content_type_uid: 1,
     locales: 1,
     uid: 1,
@@ -25,6 +26,9 @@ exports.connect = (config) => {
             const connectionUri = mongoConfig.uri;
             const dbName = mongoConfig.dbName;
             const options = mongoConfig.options;
+            if (mongoConfig.indexes && lodash_1.isPlainObject(mongoConfig.indexes) && !(lodash_1.isEmpty(mongoConfig.indexes))) {
+                indexes = lodash_1.merge(mongoConfig.indexes);
+            }
             const client = new mongodb_1.MongoClient(connectionUri, options);
             return client.connect().then(() => {
                 instance.db = client.db(dbName);
