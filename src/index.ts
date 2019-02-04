@@ -37,6 +37,7 @@ interface IAssetConnector {
 interface IConfig {
   locales?: any[],
   contentstack?: any,
+  unwantedKeys?: any,
   'content-connector'?: any,
   'sync-manager'?: any,
   'asset-connector'?: any,

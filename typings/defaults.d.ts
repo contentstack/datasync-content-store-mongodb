@@ -15,6 +15,11 @@ export declare const config: {
             reconnectTries: number;
             userNewUrlParser: boolean;
         };
+        unwantedKeys: {
+            asset: string[];
+            contentType: string[];
+            entry: string[];
+        };
         uri: string;
     };
 };

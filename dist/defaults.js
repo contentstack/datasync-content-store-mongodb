@@ -17,6 +17,11 @@ exports.config = {
             reconnectTries: 20,
             userNewUrlParser: true,
         },
+        unwantedKeys: {
+            asset: ['created_by', 'updated_by'],
+            contentType: ['created_by', 'updated_by', 'DEFAULT_ACL', 'SYS_ACL', 'abilities', 'last_activity'],
+            entry: ['created_by', 'updated_by'],
+        },
         uri: 'mongodb://localhost:27017',
     },
 };
