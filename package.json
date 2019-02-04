@@ -1,5 +1,5 @@
 {
-  "name": "contentstack-mongodb-content-connector",
+  "name": "contentstack-content-store-mongodb",
   "author": "Contentstack Ecosystem",
   "version": "1.0.0",
   "description": "Store Contentstack's data in mongodb",
@@ -33,13 +33,14 @@
     "test": "jest --verbose --colors"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "keywords": [
     "contentstack",
     "connector",
     "mongodb",
-    "utility"
+    "utility",
+    "db"
   ],
   "repository": {
     "type": "git",
