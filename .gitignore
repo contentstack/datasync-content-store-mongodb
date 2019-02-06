@@ -1,14 +1,12 @@
-# Runtime data
-.tokens
-
-# IDE config
-.vscode
-
 # Dependency directories
 node_modules
 
 # Exclude coverage informations
 coverage
 
-# Lock file
+# Lock files
 package-lock.json
+
+# Typescript configurations
+tsconfig.json
+tslint.json

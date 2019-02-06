@@ -92,8 +92,8 @@ export class Mongodb {
 
           return this.db.collection(this.collectionName)
             .updateOne({
-              'sys_keys.locale': asset.locale,
-              'sys_keys.uid': asset.uid,
+              locale: asset.locale,
+              uid: asset.uid,
             }, {
               $set: asset,
             }, {
@@ -141,9 +141,9 @@ export class Mongodb {
 
         return this.db.collection(this.collectionName)
           .updateOne({
-            'sys_keys.content_type_uid': entry.content_type_uid,
-            'sys_keys.locale': entry.locale,
-            'sys_keys.uid': entry.uid,
+            content_type_uid: entry.content_type_uid,
+            locale: entry.locale,
+            uid: entry.uid,
           }, {
             $set: entry,
           }, {
@@ -154,8 +154,8 @@ export class Mongodb {
 
             return this.db.collection(this.collectionName)
               .updateOne({
-                'sys_keys.content_type_uid': contentType.content_type_uid,
-                'sys_keys.uid': contentType.uid,
+                content_type_uid: contentType.content_type_uid,
+                uid: contentType.uid,
               }, {
                 $set: contentType,
               }, {
@@ -233,9 +233,9 @@ export class Mongodb {
 
         return this.db.collection(this.collectionName)
           .deleteOne({
-            'sys_keys.content_type_uid': entry.content_type_uid,
-            'sys_keys.locale': entry.locale,
-            'sys_keys.uid': entry.uid,
+            content_type_uid: entry.content_type_uid,
+            locale: entry.locale,
+            uid: entry.uid,
           })
           .then((result) => {
             debug(`Delete entry result ${result}`)
@@ -262,8 +262,8 @@ export class Mongodb {
 
         return this.db.collection(this.collectionName)
           .deleteMany({
-            'sys_keys.content_type_uid': entry.content_type_uid,
-            'sys_keys.uid': entry.uid,
+            content_type_uid: entry.content_type_uid,
+            uid: entry.uid,
           })
           .then((result) => {
             debug(`Delete entry result ${result}`)
@@ -291,8 +291,8 @@ export class Mongodb {
         return this.assetConnector.unpublish(asset).then(() => {
           return this.db.collection(this.collectionName)
             .deleteOne({
-              'sys_keys.content_type_uid': asset.content_type_uid,
-              'sys_keys.uid': asset.uid,
+              content_type_uid: asset.content_type_uid,
+              uid: asset.uid,
             })
             .then((result) => {
               debug(`Unpublish asset result ${JSON.stringify(result)}`)
@@ -321,7 +321,7 @@ export class Mongodb {
         return this.assetConnector.delete(asset).then(() => {
           return this.db.collection(this.collectionName)
             .deleteMany({
-              'sys_keys.uid': asset.uid,
+              uid: asset.uid,
             })
             .then((result) => {
               debug(`Delete asset result ${JSON.stringify(result)}`)
@@ -349,14 +349,14 @@ export class Mongodb {
 
         return this.db.collection(this.collectionName)
           .deleteMany({
-            'sys_keys.content_type_uid': contentType.uid,
+            content_type_uid: contentType.uid,
           })
           .then((entriesDeleteResult) => {
             debug(`Delete entries result ${JSON.stringify(entriesDeleteResult)}`)
 
             return this.db.collection(this.collectionName)
               .deleteOne({
-                'sys_keys.uid': contentType.uid,
+                uid: contentType.uid,
               })
               .then((contentTypeDeleteResult) => {
                 debug(`Content type delete result ${JSON.stringify(contentTypeDeleteResult)}`)
