@@ -85,10 +85,10 @@ export class Mongodb {
       try {
         validateAssetPublish(data)
         data = filterAssetKeys(data)
-        data = structuralChanges(data)
 
         return this.assetConnector.download(data).then((asset) => {
           debug(`Asset download result ${JSON.stringify(asset)}`)
+          asset = structuralChanges(asset)
 
           return this.db.collection(this.collectionName)
             .updateOne({

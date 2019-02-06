@@ -6,7 +6,3 @@ coverage
 
 # Lock files
 package-lock.json
-
-# Typescript configurations
-tsconfig.json
-tslint.json

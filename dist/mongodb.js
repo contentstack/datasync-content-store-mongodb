@@ -47,9 +47,9 @@ class Mongodb {
             try {
                 validations_1.validateAssetPublish(data);
                 data = core_utilities_1.filterAssetKeys(data);
-                data = core_utilities_1.structuralChanges(data);
                 return this.assetConnector.download(data).then((asset) => {
                     debug(`Asset download result ${JSON.stringify(asset)}`);
+                    asset = core_utilities_1.structuralChanges(asset);
                     return this.db.collection(this.collectionName)
                         .updateOne({
                         locale: asset.locale,
