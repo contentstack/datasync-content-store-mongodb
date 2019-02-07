@@ -1,0 +1,17 @@
+# Source files
+src
+
+# Node module dependencies
+node_modules
+package-lock.json
+
+# Sample files
+example
+
+# Typings
+typings
+
+# Beautifiers & Indenters
+.jsbeautifyrc
+.tslint.json
+tsconfig.json
