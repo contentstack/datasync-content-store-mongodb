@@ -9,7 +9,7 @@
  *  Internal default config. This can be overriden!
  */
 export const config = {
-  'content-connector': {
+  contentStore: {
     dbName: 'contentstack-persistent-db',
     indexes: {
       published_at: 1,

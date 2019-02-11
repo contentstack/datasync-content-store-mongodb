@@ -13,10 +13,11 @@ const contentTypeFilterKeys = ['type', 'event_at', 'checkpoint', 'action'];
 const indexedKeys = ['content_type_uid', 'locale', 'uid', 'published_at'];
 exports.filterAssetKeys = (asset) => {
     const config = __1.getConfig();
+    console.log('@config', JSON.stringify(config, null, 1));
     assetFilterKeys.forEach((key) => {
         delete asset[key];
     });
-    const unwantedKeys = config['content-connector'].unwantedKeys;
+    const unwantedKeys = config.contentStore.unwantedKeys;
     if (unwantedKeys && unwantedKeys.asset && unwantedKeys.asset.length !== 0) {
         unwantedKeys.asset.forEach((key) => {
             delete asset.data[key];
@@ -26,10 +27,11 @@ exports.filterAssetKeys = (asset) => {
 };
 exports.filterEntryKeys = (entry) => {
     const config = __1.getConfig();
+    console.log('@config', JSON.stringify(config, null, 1));
     entryFilterKeys.forEach((key) => {
         delete entry[key];
     });
-    const unwantedKeys = config['content-connector'].unwantedKeys;
+    const unwantedKeys = config.contentStore.unwantedKeys;
     if (unwantedKeys && unwantedKeys.entry && unwantedKeys.entry.length !== 0) {
         unwantedKeys.entry.forEach((key) => {
             delete entry.data[key];
@@ -39,10 +41,11 @@ exports.filterEntryKeys = (entry) => {
 };
 exports.filterContentTypeKeys = (contentType) => {
     const config = __1.getConfig();
+    console.log('@config', JSON.stringify(config, null, 1));
     contentTypeFilterKeys.forEach((key) => {
         delete contentType[key];
     });
-    const unwantedKeys = config['content-connector'].unwantedKeys;
+    const unwantedKeys = config.contentStore.unwantedKeys;
     if (unwantedKeys && unwantedKeys.contentType && unwantedKeys.contentType.length !== 0) {
         unwantedKeys.contentType.forEach((key) => {
             delete contentType.data[key];

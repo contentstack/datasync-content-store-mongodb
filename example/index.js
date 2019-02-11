@@ -1,6 +1,6 @@
 
 const contentConnector = require('../dist')
-const assetConnector = require('./dummy-data/asset-connector')
+const assetConnector = require('./dummy-data/assetStore')
 const publish_entry = require('./dummy-data/publish/entries')
 const publish_asset = require('./dummy-data/publish/assets')
 const unpublish_entry = require('./dummy-data/unpublish/entries')

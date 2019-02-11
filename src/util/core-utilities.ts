@@ -21,7 +21,7 @@ export const filterAssetKeys = (asset) => {
   assetFilterKeys.forEach((key) => {
     delete asset[key]
   })
-  const unwantedKeys = config['content-connector'].unwantedKeys
+  const unwantedKeys = config.contentStore.unwantedKeys
   if (unwantedKeys && unwantedKeys.asset && unwantedKeys.asset.length !== 0) {
     unwantedKeys.asset.forEach((key) => {
       delete asset.data[key]
@@ -40,7 +40,7 @@ export const filterEntryKeys = (entry) => {
   entryFilterKeys.forEach((key) => {
     delete entry[key]
   })
-  const unwantedKeys = config['content-connector'].unwantedKeys
+  const unwantedKeys = config.contentStore.unwantedKeys
   if (unwantedKeys && unwantedKeys.entry && unwantedKeys.entry.length !== 0) {
     unwantedKeys.entry.forEach((key) => {
       delete entry.data[key]
@@ -59,7 +59,7 @@ export const filterContentTypeKeys = (contentType) => {
   contentTypeFilterKeys.forEach((key) => {
     delete contentType[key]
   })
-  const unwantedKeys = config['content-connector'].unwantedKeys
+  const unwantedKeys = config.contentStore.unwantedKeys
   if (unwantedKeys && unwantedKeys.contentType && unwantedKeys.contentType.length !== 0) {
     unwantedKeys.contentType.forEach((key) => {
       delete contentType.data[key]

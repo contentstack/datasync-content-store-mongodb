@@ -18,9 +18,9 @@ interface IConfig {
     locales?: any[];
     contentstack?: any;
     unwantedKeys?: any;
-    'content-connector'?: any;
-    'sync-manager'?: any;
-    'asset-connector'?: any;
+    contentStore?: any;
+    syncManager?: any;
+    assetStore?: any;
 }
 interface ILogger {
     warn(): any;

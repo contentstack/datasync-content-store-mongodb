@@ -1,5 +1,5 @@
 export const config = {
-  'content-connector': {
+  contentStore: {
     dbName: 'jest',
   },
 }

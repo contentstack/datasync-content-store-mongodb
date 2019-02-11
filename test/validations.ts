@@ -1,7 +1,7 @@
 import { cloneDeep, merge } from 'lodash'
 import { config as appConfig } from '../src/defaults'
 import { validateAssetConnectorInstance, validateConfig, validateMongodbConfig } from '../src/util/validations'
-import { connector } from './mock/asset-connector'
+import { connector } from './mock/assetStore'
 import { config as mockConfig } from './mock/config'
 
 const config = cloneDeep(merge({}, appConfig, mockConfig))
@@ -9,13 +9,13 @@ const config = cloneDeep(merge({}, appConfig, mockConfig))
 describe('validations', () => {
   test('validate app config should throw connector options error', () => {
     const localConfig = cloneDeep(config)
-    localConfig['content-connector'].options = ({} as any)
+    localConfig.contentStore.options = ({} as any)
     expect(() => {validateConfig(localConfig)}).toThrow('Content connector options cannot be empty!')
   })
 
   test('validate app config should throw connector uri error', () => {
     const localConfig = cloneDeep(config)
-    localConfig['content-connector'].uri = ''
+    localConfig.contentStore.uri = ''
     expect(() => {validateConfig(localConfig)}).toThrow('Content connector uri should be of type string and not empty!')
   })
 
@@ -28,7 +28,7 @@ describe('validations', () => {
   })
 
   test('validate mongodb config with uri error', () => {
-    const localConfig = cloneDeep(config['content-connector'])
+    const localConfig = cloneDeep(config.contentStore)
     localConfig.uri = ''
     expect(() => {
       validateMongodbConfig(localConfig)
@@ -36,7 +36,7 @@ describe('validations', () => {
   })
 
   test('validate mongodb config with db name error', () => {
-    const localConfig = cloneDeep(config['content-connector'])
+    const localConfig = cloneDeep(config.contentStore)
     localConfig.dbName = 'dbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
     expect(() => {
       validateMongodbConfig(localConfig)
@@ -44,7 +44,7 @@ describe('validations', () => {
   })
 
   test('validate mongodb config with empty options error', () => {
-    const localConfig = cloneDeep(config['content-connector'])
+    const localConfig = cloneDeep(config.contentStore)
     localConfig.options = ({} as any)
     expect(() => {
       validateMongodbConfig(localConfig)

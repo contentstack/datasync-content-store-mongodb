@@ -3,7 +3,7 @@
  */
 
 import { getConfig, mongoClient, setAssetConnector, setConfig, setLogger, start } from '../src'
-import { connector } from './mock/asset-connector'
+import { connector } from './mock/assetStore'
 import { config as mockConfig } from './mock/config'
 
 describe('core', () => {

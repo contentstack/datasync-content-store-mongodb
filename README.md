@@ -4,12 +4,12 @@
 
 Contentstack is a headless CMS with an API-first approach. It is a CMS that developers can use to build powerful cross-platform applications in their favorite languages. Build your application frontend, and Contentstack will take care of the rest. [Read More](https://www.contentstack.com/).
 
-The cotentstack-mongodb-content-connector is part of [contentstack-sync utility's]() content storage drivers and is used to store data into mongodb. Learn how Contentstack helps you store your data locally with the help of the Sync Utility [here]()
+The cotentstack-content-store-mongodb is part of [contentstack-sync utility's]() content storage drivers and is used to store data into mongodb. Learn how Contentstack helps you store your data locally with the help of the Sync Utility [here]()
 
 Currently, Contentstack provides the following databases for storing synced data
-- [contentstack-filesystem-content-store]()
-- [contentstack-mongodb-content-store]()
-- [contentstack-filesystem-asset-store]()
+- [contentstack-content-store-filesystem]()
+- [contentstack-asset-store-filesystem]()
+- [contentstack-content-store-mongodb]()
 
 **[contentstack-webhook-listener]()** or your own personalized cron job can be used to invoke the app and sync the data on a regular basis.
 
@@ -27,15 +27,15 @@ Learn how to set up Contentstack Sync Utility [here]()
 Here's a boiler plate on how to use the utilities
 
 ```js
-  const assetConnector = require('contentstack-asset-connector')
-  const contentConnector = require('contentstack-mongodb-content-connector')
+  const assetStore = require('contentstack-asset-store-filesystem')
+  const contentStore = require('contentstack-content-store-mongodb')
   const listener = require('contentstack-webhook-listener')
 
   const config = require('./config')
   const syncManager = require('./dist')
 
-  syncManager.setAssetConnector(assetConnector)
-  syncManager.setContentConnector(contentConnector)
+  syncManager.setAssetStore(assetStore)
+  syncManager.setContentStore(contentStore)
   syncManager.setListener(listener)
   syncManager.setConfig(config)
 
@@ -71,7 +71,7 @@ By default, this module uses the following internal configuration.
 Here's a sample config to help you get started!
 ```js
 {
-  "content-connector": {
+  "contentStore": {
     dbName: "my-contentstack-data"
   },
   "contentstack": {
@@ -83,7 +83,7 @@ Here's a sample config to help you get started!
       "greetings": ["Hello there!", "Ola amigo!"]
     }
   },
-  "sync-manager": {
+  "syncManager": {
     "cooloff": 3000,
     "limit": 40,
   }

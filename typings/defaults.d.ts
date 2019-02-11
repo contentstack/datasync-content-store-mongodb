@@ -4,7 +4,7 @@
 * MIT Licensed
 */
 export declare const config: {
-    'content-connector': {
+    contentStore: {
         dbName: string;
         indexes: {
             published_at: number;

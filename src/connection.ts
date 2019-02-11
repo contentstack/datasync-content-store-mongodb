@@ -36,7 +36,7 @@ export const connect = (config) => {
       if (Object.keys(instance).length !== 0) {
         return resolve(instance)
       }
-      const mongoConfig = config['content-connector']
+      const mongoConfig = config.contentStore
       validateMongodbConfig(mongoConfig)
       const connectionUri = mongoConfig.uri
       const dbName = mongoConfig.dbName

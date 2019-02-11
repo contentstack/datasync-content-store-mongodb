@@ -7,14 +7,14 @@ import { setLogger } from '../src'
 import { connect } from '../src/connection'
 import { config as appConfig } from '../src/defaults'
 import { Mongodb } from '../src/mongodb'
-import { connector } from './mock/asset-connector'
+import { connector } from './mock/assetStore'
 import { config as mockConfig } from './mock/config'
 import { data as assets } from './mock/data/assets'
 import { data as content_type } from './mock/data/content-types'
 import { data as entries } from './mock/data/entries'
 
 const config = cloneDeep(merge({}, appConfig, mockConfig))
-config['content-connector'].dbName = 'jest-unpublishing'
+config.contentStore.dbName = 'jest-unpublishing'
 let db = null
 let mongo = null
 

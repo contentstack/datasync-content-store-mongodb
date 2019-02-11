@@ -8,11 +8,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const requiredUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid'];
 const requiredRemoveKeys = ['content_type_uid', 'locale', 'uid'];
 exports.validateConfig = (config) => {
-    if (typeof config['content-connector'].options !== 'object' || Object.keys(config['content-connector'].options).length
+    if (typeof config.contentStore.options !== 'object' || Object.keys(config.contentStore.options).length
         === 0) {
         throw new Error('Content connector options cannot be empty!');
     }
-    else if (typeof config['content-connector'].uri !== 'string' || config['content-connector'].uri.length === 0) {
+    else if (typeof config.contentStore.uri !== 'string' || config.contentStore.uri.length === 0) {
         throw new Error('Content connector uri should be of type string and not empty!');
     }
 };

@@ -6,7 +6,7 @@
 */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = {
-    'content-connector': {
+    contentStore: {
         dbName: 'contentstack-persistent-db',
         indexes: {
             published_at: 1,
