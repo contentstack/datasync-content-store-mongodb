@@ -3,7 +3,7 @@
  */
 
 import { getConfig, mongoClient, setAssetConnector, setConfig, setLogger, start } from '../src'
-import { connector } from './mock/assetStore'
+import { assetConnector, connector } from './mock/assetStore'
 import { config as mockConfig } from './mock/config'
 
 describe('core', () => {
@@ -13,7 +13,7 @@ describe('core', () => {
   })
 
   test('set asset connector without issues', () => {
-    expect(setAssetConnector(connector)).toBeUndefined()
+    expect(setAssetConnector((assetConnector as any))).toBeUndefined()
   })
 
   test('set custom logger', () => {
@@ -21,9 +21,9 @@ describe('core', () => {
   })
 
   test('start mongo driver without successfully', () => {
-    setAssetConnector(connector)
+    setAssetConnector((connector as any))
 
-    return start(connector, mockConfig).then((mongo) => {
+    return start((connector as any), mockConfig).then((mongo) => {
       expect(mongo).toHaveProperty('db')
       expect(mongo).toHaveProperty('client')
       expect(mongo).toEqual(mongoClient)

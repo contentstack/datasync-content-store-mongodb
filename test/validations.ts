@@ -1,6 +1,6 @@
 import { cloneDeep, merge } from 'lodash'
 import { config as appConfig } from '../src/defaults'
-import { validateAssetConnectorInstance, validateConfig, validateMongodbConfig } from '../src/util/validations'
+import { validateAssetPublish, validateAssetConnectorInstance, validateConfig, validateEntryPublish, validateMongodbConfig } from '../src/util/validations'
 import { connector } from './mock/assetStore'
 import { config as mockConfig } from './mock/config'
 
@@ -49,5 +49,30 @@ describe('validations', () => {
     expect(() => {
       validateMongodbConfig(localConfig)
     }).toThrow("Mongodb config 'option' should be of type object and not empty!")
+  })
+})
+
+describe('Negative validations', () => {
+  test('mandatory-key in entry not present, should throw error', () => {
+    const entry = {
+      locale: 'en-us',
+      data: {},
+      uid: 'e1'
+    }
+    expect(() => {
+      validateEntryPublish(entry)
+    }).toThrow('content_type_uid is missing in entry publish!')
+  })
+
+  test('mandatory-key in asset not present, should throw error', () => {
+    const asset = {
+      content_type_uid: '_assets',
+      // locale: 'en-us',
+      data: {},
+      uid: 'e1'
+    }
+    expect(() => {
+      validateAssetPublish(asset)
+    }).toThrow('locale is missing in asset publish!')
   })
 })

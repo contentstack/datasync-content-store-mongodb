@@ -13,7 +13,6 @@ const contentTypeFilterKeys = ['type', 'event_at', 'checkpoint', 'action'];
 const indexedKeys = ['content_type_uid', 'locale', 'uid', 'published_at'];
 exports.filterAssetKeys = (asset) => {
     const config = __1.getConfig();
-    console.log('@config', JSON.stringify(config, null, 1));
     assetFilterKeys.forEach((key) => {
         delete asset[key];
     });
@@ -27,7 +26,6 @@ exports.filterAssetKeys = (asset) => {
 };
 exports.filterEntryKeys = (entry) => {
     const config = __1.getConfig();
-    console.log('@config', JSON.stringify(config, null, 1));
     entryFilterKeys.forEach((key) => {
         delete entry[key];
     });
@@ -41,7 +39,6 @@ exports.filterEntryKeys = (entry) => {
 };
 exports.filterContentTypeKeys = (contentType) => {
     const config = __1.getConfig();
-    console.log('@config', JSON.stringify(config, null, 1));
     contentTypeFilterKeys.forEach((key) => {
         delete contentType[key];
     });

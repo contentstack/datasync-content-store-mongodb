@@ -102,7 +102,7 @@ export class Mongodb {
             .then((result) => {
               debug(`Asset publish result ${JSON.stringify(result)}`)
 
-              return resolve(asset)
+              return resolve(data)
             })
         }).catch(reject)
       } catch (error) {
