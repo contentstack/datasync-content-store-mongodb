@@ -38,12 +38,12 @@ export class Mongodb {
   public client: any
   private collectionName: string
 
-  constructor(mongodb, connector) {
+  constructor(mongodb, connector, config = { collectionName: 'contents'}) {
     if (!mongo) {
       this.assetConnector = connector
       this.db = mongodb.db
       this.client = mongodb.client
-      this.collectionName = 'contents'
+      this.collectionName = (config && config.collectionName) ? config.collectionName : 'contents'
       mongo = this
     }
 

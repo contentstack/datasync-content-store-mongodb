@@ -107,7 +107,7 @@ export const start = (connector: IAssetConnector, config?: IConfig, logger?: ILo
       setLogger(logger)
 
       return connect(appConfig).then((mongo) => {
-        mongoClient = new Mongodb(mongo, assetConnectorInstance)
+        mongoClient = new Mongodb(mongo, assetConnectorInstance, appConfig.contentStore)
         debug('Mongo connector instance created successfully!')
 
         return resolve(mongoClient)

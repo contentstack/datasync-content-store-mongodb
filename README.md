@@ -1,10 +1,10 @@
 [![Contentstack](https://www.contentstack.com/docs/static/images/contentstack.png)](https://www.contentstack.com/)
 
-## Contentstack Mongodb Content Connector
+## Contentstack Mongodb Content Store
 
 Contentstack is a headless CMS with an API-first approach. It is a CMS that developers can use to build powerful cross-platform applications in their favorite languages. Build your application frontend, and Contentstack will take care of the rest. [Read More](https://www.contentstack.com/).
 
-The cotentstack-content-store-mongodb is part of [contentstack-sync utility's]() content storage drivers and is used to store data into mongodb. Learn how Contentstack helps you store your data locally with the help of the Sync Utility [here]()
+The cotentstack-content-store-mongodb is part of [contentstack-sync utility's]() content storage drivers and is used to store data in mongodb. Learn how Contentstack helps you store your data locally with the help of the Sync Utility [here]()
 
 Currently, Contentstack provides the following databases for storing synced data
 - [contentstack-content-store-filesystem]()
@@ -19,8 +19,8 @@ Any publish/unpublish/delete action performed on Contentstack, will be tracked a
 
 ### Prerequisite
 
-To run this module, you'd need to have mongodb installed locally or an mongodb atlas account.
-Learn how to set up Contentstack Sync Utility [here]()
+- nodejs v8 or above
+- mongodb installed locally or an mongodb-atlas account
 
 ### Sample
 

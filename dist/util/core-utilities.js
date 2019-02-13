@@ -53,6 +53,8 @@ exports.filterContentTypeKeys = (contentType) => {
 exports.structuralChanges = (entity) => {
     const clone = lodash_1.cloneDeep(entity.data);
     const obj = {};
+    obj.synced_at = new Date().toISOString();
+    clone.synced_at = obj.synced_at;
     indexedKeys.forEach((key) => {
         if (lodash_1.hasIn(entity, key)) {
             obj[key] = entity[key];

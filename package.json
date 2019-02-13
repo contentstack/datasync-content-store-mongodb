@@ -1,9 +1,9 @@
 {
   "name": "contentstack-content-store-mongodb",
-  "author": "Contentstack Ecosystem",
+  "author": "Contentstack Ecosystem <ecosystem@contentstack.com>",
   "version": "1.0.0",
-  "description": "Store Contentstack's data in mongodb",
-  "main": "dist",
+  "description": "Sync data stored at Contentstack into your mongodb",
+  "main": "dist/index.js",
   "dependencies": {
     "debug": "^4.1.0",
     "lodash": "^4.17.11",
@@ -37,18 +37,18 @@
   },
   "keywords": [
     "contentstack",
-    "connector",
+    "database",
     "mongodb",
     "utility",
     "db"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/contentstack/contentstack-sync.git"
+    "url": "git+https://github.com/contentstack/contentstack-content-store-mongodb.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/contentstack/contentstack-sync/issues"
+    "url": "https://github.com/contentstack/contentstack-content-store-mongodb/issues"
   },
-  "homepage": "https://www.contentstack.com/"
+  "homepage": "https://www.contentstack.com/docs/tools-and-frameworks"
 }

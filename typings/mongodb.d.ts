@@ -8,7 +8,9 @@ export declare class Mongodb {
     db: any;
     client: any;
     private collectionName;
-    constructor(mongodb: any, connector: any);
+    constructor(mongodb: any, connector: any, config?: {
+        collectionName: string;
+    });
     publish(data: any): Promise<{}>;
     publishAsset(data: any): Promise<{}>;
     publishEntry(data: any): Promise<{}>;

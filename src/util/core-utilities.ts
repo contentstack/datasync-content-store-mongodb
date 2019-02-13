@@ -71,7 +71,9 @@ export const filterContentTypeKeys = (contentType) => {
 
 export const structuralChanges = (entity) => {
   const clone = cloneDeep(entity.data)
-  const obj = {}
+  const obj: any = {}
+  obj.synced_at = new Date().toISOString()
+  clone.synced_at = obj.synced_at
 
   indexedKeys.forEach((key) => {
     if (hasIn(entity, key)) {
