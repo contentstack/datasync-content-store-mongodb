@@ -8,6 +8,9 @@ export declare const config: {
         dbName: string;
         indexes: {
             published_at: number;
+            content_type_uid: number;
+            locale: number;
+            uid: number;
         };
         options: {
             autoReconnect: boolean;

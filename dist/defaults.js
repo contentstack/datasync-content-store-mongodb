@@ -10,6 +10,9 @@ exports.config = {
         dbName: 'contentstack-persistent-db',
         indexes: {
             published_at: 1,
+            content_type_uid: 1,
+            locale: 1,
+            uid: 1
         },
         options: {
             autoReconnect: true,

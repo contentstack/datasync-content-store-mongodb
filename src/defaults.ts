@@ -13,6 +13,9 @@ export const config = {
     dbName: 'contentstack-persistent-db',
     indexes: {
       published_at: 1,
+      content_type_uid: 1,
+      locale: 1,
+      uid: 1
     },
     // http://mongodb.github.io/node-mongodb-native/3.1/api/MongoClient.html
     options: {

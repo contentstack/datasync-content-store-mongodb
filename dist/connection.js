@@ -23,11 +23,11 @@ exports.connect = (config) => {
             }
             const mongoConfig = config.contentStore;
             validations_1.validateMongodbConfig(mongoConfig);
-            const connectionUri = mongoConfig.uri;
+            const connectionUri = mongoConfig.url || mongoConfig.uri;
             const dbName = mongoConfig.dbName;
             const options = mongoConfig.options;
             if (mongoConfig.indexes && lodash_1.isPlainObject(mongoConfig.indexes) && !(lodash_1.isEmpty(mongoConfig.indexes))) {
-                indexes = lodash_1.merge(mongoConfig.indexes);
+                indexes = lodash_1.merge(indexes, mongoConfig.indexes);
             }
             const client = new mongodb_1.MongoClient(connectionUri, options);
             return client.connect().then(() => {

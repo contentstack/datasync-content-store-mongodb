@@ -38,12 +38,12 @@ export const connect = (config) => {
       }
       const mongoConfig = config.contentStore
       validateMongodbConfig(mongoConfig)
-      const connectionUri = mongoConfig.uri
+      const connectionUri = mongoConfig.url || mongoConfig.uri
       const dbName = mongoConfig.dbName
       const options = mongoConfig.options
 
       if (mongoConfig.indexes && isPlainObject(mongoConfig.indexes) && !(isEmpty(mongoConfig.indexes))) {
-        indexes = merge(mongoConfig.indexes)
+        indexes = merge(indexes, mongoConfig.indexes)
       }
 
       const client = new MongoClient(connectionUri, options)
