@@ -11,9 +11,14 @@ export const data = [
       title: 'entry one',
       uid: 'e1',
       url: '/entry-one',
+      created_by: 'rkiyer',
+      publish_details: {
+        time: '2019-02-15T10:37:49.723Z',
+        locale: 'en-us'
+      }
     },
     locale: 'en-us',
-    uid: 'e1',
+    uid: 'e1'
   },
   {
     _id: 'e2',

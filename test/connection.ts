@@ -8,8 +8,6 @@ import { connect } from '../src/connection'
 import { config as appConfig } from '../src/defaults'
 import { config as mockConfig } from './mock/config'
 
-// import { createMongod } from './mongo.setup'
-
 const config = cloneDeep(merge({}, appConfig, mockConfig))
 let mongo = null
 describe.only('mongodb connection', () => {

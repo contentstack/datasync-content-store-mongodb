@@ -21,12 +21,39 @@ exports.config = {
             noDelay: true,
             reconnectInterval: 1000,
             reconnectTries: 20,
-            userNewUrlParser: true,
+            useNewUrlParser: true,
+        },
+        indexedKeys: {
+            content_type_uid: true,
+            locale: true,
+            uid: true,
+            published_at: true
         },
         unwantedKeys: {
-            asset: ['created_by', 'updated_by'],
-            contentType: ['created_by', 'updated_by', 'DEFAULT_ACL', 'SYS_ACL', 'abilities', 'last_activity'],
-            entry: ['created_by', 'updated_by'],
+            asset: {
+                action: true,
+                checkpoint: true,
+                'data.created_by': true,
+                event_at: true,
+                type: true,
+                'data.updated_by': true
+            },
+            contentType: {
+                'data.created_by': true,
+                'data.updated_by': true,
+                'data.DEFAULT_ACL': true,
+                'data.SYS_ACL': true,
+                'data.abilities': true,
+                'data.last_activity': true
+            },
+            entry: {
+                action: true,
+                checkpoint: true,
+                'data.created_by': true,
+                event_at: true,
+                type: true,
+                'data.updated_by': true
+            },
         },
         uri: 'mongodb://localhost:27017',
     },

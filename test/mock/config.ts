@@ -1,5 +1,6 @@
 export const config = {
   contentStore: {
-    dbName: 'jest',
+    dbName: 'mongostore-testing',
+    collectionName: 'testing'
   },
 }

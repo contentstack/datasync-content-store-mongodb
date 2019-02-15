@@ -14,9 +14,11 @@ import { data as content_type } from './mock/data/content-types'
 import { data as entries } from './mock/data/entries'
 
 const config = cloneDeep(merge({}, appConfig, mockConfig))
-config.contentStore.dbName = 'jest-deletion'
-let db = null
-let mongo = null
+config.contentStore.dbName = 'mongostore-testing'
+config.contentStore.collectionName = 'deletion'
+
+let mongoClient
+let db
 
 describe('delete', () => {
   beforeAll(() => {
@@ -24,28 +26,27 @@ describe('delete', () => {
     setConfig(config)
 
     return connect(config).then((mongodb) => {
-      mongo = mongodb
-      db = new Mongodb(mongodb, connector)
+      mongoClient = new Mongodb(mongodb, connector)
+      db = mongoClient
     }).catch(console.error)
   })
 
   afterAll(() => {
-    // mongo.db.dropDatabase().then(mongo.client.close).catch((error) => {
-    //   console.error(error)
-    //   mongo.client.close()
-    // })
+    return mongoClient.db
+      .collection(config.contentStore.collectionName)
+      .drop()
   })
 
   describe('delete an entry', () => {
     test('delete entry successfully', () => {
       const entry = cloneDeep(entries[1])
 
-      return db.publish(entry).then(() => {
-        // expect(result).toEqual(entry)
+      return db.publish(entry).then((result) => {
+        expect(result).toEqual(entry)
 
         return db.delete(entry).then((result2) => {
           expect(result2).toEqual(entry)
-          mongo.db.collection('contents').findOne({
+          mongoClient.db.collection('contents').findOne({
             uid: entry.uid,
           }).then((data) => {
             expect(data).toBeNull()
@@ -59,12 +60,12 @@ describe('delete', () => {
     test('delete asset successfully', () => {
       const asset = cloneDeep(assets[0])
 
-      return db.publish(asset).then(() => {
-        // expect(result).toEqual(asset)
+      return db.publish(asset).then((result) => {
+        expect(result).toEqual(asset)
 
         return db.delete(asset).then((result2) => {
           expect(result2).toEqual(asset)
-          mongo.db.collection('contents').findOne({
+          mongoClient.db.collection('contents').findOne({
             uid: asset.uid,
           }).then((data) => {
             expect(data).toBeNull()
@@ -81,50 +82,54 @@ describe('delete', () => {
       const entry3 = cloneDeep(entries[2])
       const contentType = cloneDeep(content_type[0])
 
-      return db.publish(entry1).then(() => {
-        // expect(result1).toEqual(entry1)
+      return db.publish(entry1).then((result1) => {
+        expect(result1).toEqual(entry1)
+        return db.publish(entry2)
+      })
+      .then((result2) => {
+        expect(result2).toEqual(entry2)
 
-        return db.publish(entry2).then(() => {
-          // expect(result2).toEqual(entry2)
+        return db.publish(entry3)
+      })
+      .then((result3) => {
+        expect(result3).toEqual(entry3)
 
-          return db.publish(entry3).then(() => {
-            // expect(result3).toEqual(entry3)
-
-            return db.delete(contentType).then((result4) => {
-              expect(result4).toEqual(contentType)
-              mongo.db.collection('contents').findOne({
-                $or: [
-                  {
-                    uid: entry1.uid,
-                  },
-                  {
-                    uid: entry2.uid,
-                  },
-                  {
-                    uid: entry3.uid,
-                  },
-                ],
-              }).then((data1) => {
-                expect(data1).toEqual(null)
-                mongo.db.collection('contents').findOne({
-                  uid: contentType.uid,
-                }).then((data2) => {
-                  expect(data2).toBeNull()
-                }).catch(console.error)
-              }).catch(console.error)
-            }).catch(console.error)
-          }).catch(console.error)
-        }).catch(console.error)
-      }).catch(console.error)
+        return db.delete(contentType)
+      })
+      .then((result4) => {
+        expect(result4).toEqual(contentType)
+        return mongoClient.db.collection('contents').findOne({
+          $or: [
+            {
+              uid: entry1.uid,
+            },
+            {
+              uid: entry2.uid,
+            },
+            {
+              uid: entry3.uid,
+            },
+          ],
+        })
+      })
+      .then((data1) => {
+        expect(data1).toEqual(null)
+        
+        return mongoClient.db.collection('contents').findOne({
+          uid: contentType.uid,
+        })
+      })
+      .then((data2) => {
+        expect(data2).toBeNull()
+      })
+      .catch(console.error)
     })
   })
 
   describe('delete should throw an error', () => {
     test('delete entry with error', () => {
 
-      return db.delete().then((result) => {
-        expect(result).toBeUndefined()
-      }).catch((error) => {
+      return db.delete().catch((error) => {
         expect(error.message).toEqual("Cannot read property 'content_type_uid' of undefined")
       })
     })

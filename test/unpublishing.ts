@@ -13,9 +13,11 @@ import { data as assets } from './mock/data/assets'
 import { data as entries } from './mock/data/entries'
 
 const config = cloneDeep(merge({}, appConfig, mockConfig))
-config.contentStore.dbName = 'jest-unpublishing'
-let db = null
-let mongo = null
+config.contentStore.dbName = 'mongostore-testing'
+config.contentStore.collectionName = 'unpublishing'
+
+let mongoClient
+let db
 
 describe('unpublish', () => {
   beforeAll(() => {
@@ -23,32 +25,31 @@ describe('unpublish', () => {
     setConfig(config)
 
     return connect(config).then((mongodb) => {
-      mongo = mongodb
-      db = new Mongodb(mongodb, connector)
+      mongoClient = new Mongodb(mongodb, connector)
+      db = mongoClient
     }).catch(console.error)
   })
 
   afterAll(() => {
-    // mongo.db.dropDatabase().then(mongo.client.close).catch((error) => {
-    //   console.error(error)
-    //   mongo.client.close()
-    // })
+    return mongoClient.db
+      .collection(config.contentStore.collectionName)
+      .drop()
   })
 
   describe('unpublish an entry', () => {
     test('unpublish an entry successfully', () => {
       const entry = cloneDeep(entries[0])
 
-      return db.publish(entry).then(() => {
-        // expect(result).toEqual(entry)
+      return db.publish(entry).then((result) => {
+        expect(result).toEqual(entry)
 
         return db.unpublish(entry).then((result2) => {
           expect(result2).toEqual(entry)
-          mongo.db.collection('contents').findOne({
+          mongoClient.db.collection('contents').findOne({
             uid: entry.uid,
           }).then((data) => {
             expect(data).toBeNull()
-          }).catch(console.error)
+          })
         })
       }).catch(console.error)
     })
@@ -58,16 +59,16 @@ describe('unpublish', () => {
     test('unpublish asset successfully', () => {
       const asset = cloneDeep(assets[0])
 
-      return db.publish(asset).then(() => {
-        // expect(result).toEqual(asset)
+      return db.publish(asset).then((result) => {
+        expect(result).toEqual(asset)
 
         return db.unpublish(asset).then((result2) => {
           expect(result2).toEqual(asset)
-          mongo.db.collection('contents').findOne({
+          mongoClient.db.collection('contents').findOne({
             uid: asset.uid,
           }).then((data) => {
             expect(data).toBeNull()
-          }).catch(console.error)
+          })
         })
       }).catch(console.error)
     })
