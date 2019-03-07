@@ -58,6 +58,7 @@ export const connect = (config) => {
 
       return client.connect().then(() => {
         instance.db = client.db(dbName)
+        instance.client = client
         logger.info(`Mongodb connection to ${connectionUri} established successfully!`)
 
         resolve(instance)

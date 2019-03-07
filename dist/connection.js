@@ -42,6 +42,7 @@ exports.connect = (config) => {
             const client = new mongodb_1.MongoClient(connectionUri, options);
             return client.connect().then(() => {
                 instance.db = client.db(dbName);
+                instance.client = client;
                 logger_1.logger.info(`Mongodb connection to ${connectionUri} established successfully!`);
                 resolve(instance);
                 const bucket = [];

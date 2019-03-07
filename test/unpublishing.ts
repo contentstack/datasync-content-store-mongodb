@@ -13,7 +13,6 @@ import { data as assets } from './mock/data/assets'
 import { data as entries } from './mock/data/entries'
 
 const config = cloneDeep(merge({}, appConfig, mockConfig))
-config.contentStore.dbName = 'mongostore-testing'
 config.contentStore.collectionName = 'unpublishing'
 
 let mongoClient

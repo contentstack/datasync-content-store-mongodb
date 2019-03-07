@@ -14,7 +14,6 @@ import { data as content_type } from './mock/data/content-types'
 import { data as entries } from './mock/data/entries'
 
 const config = cloneDeep(merge({}, appConfig, mockConfig))
-config.contentStore.dbName = 'mongostore-testing'
 config.contentStore.collectionName = 'deletion'
 
 let mongoClient

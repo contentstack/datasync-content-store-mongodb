@@ -6,7 +6,8 @@ node_modules
 package-lock.json
 
 # Sample files
-example
+example/**/*
+!example/index.js
 
 # Typings
 typings
