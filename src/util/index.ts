@@ -4,8 +4,8 @@
 * MIT Licensed
 */
 
-import { cloneDeep, hasIn } from 'lodash'
-import { getConfig } from '..'
+import { cloneDeep, hasIn, merge } from 'lodash'
+import { getConfig } from '../index'
 
 const maskKeys = (json, arr, pos) => {
   const key = arr[pos]
@@ -71,7 +71,7 @@ export const structuralChanges = (entity) => {
   const contentStore = getConfig().contentStore
   const indexedKeys = contentStore.indexedKeys
   if (indexedKeys && typeof indexedKeys === 'object' && Object.keys(indexedKeys).length) {
-    const clone = cloneDeep(entity.data)
+    let clone = cloneDeep(entity.data)
     const obj: any = {}
     obj.synced_at = new Date().toISOString()
     clone.synced_at = obj.synced_at
@@ -94,10 +94,23 @@ export const structuralChanges = (entity) => {
       clone.published_at = new Date().toISOString()
     }
   
-    clone.sys_keys = obj
+    clone = merge(clone, obj)
 
     return clone
   }
 
   return entity
+}
+
+export const buildReferences = (schema, references = {}, parent?) => {
+  for (let i = 0, l = schema.length; i < l; i++) {
+    if (schema[i] && schema[i].data_type && schema[i].data_type === 'reference') {
+      const field = ((parent) ? `${parent}:${schema[i].uid}`: schema[i].uid)
+      references[field] = schema[i].reference_to
+    } else if (schema[i] && schema[i].data_type && schema[i].data_type === 'group' && schema[i].schema) {
+      buildReferences(schema[i].schema, references, ((parent) ? `${parent}:${schema[i].uid}`: schema[i].uid))
+    }
+  }
+
+  return references
 }

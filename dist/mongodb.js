@@ -9,7 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug_1 = __importDefault(require("debug"));
-const core_utilities_1 = require("./util/core-utilities");
+const index_1 = require("./util/index");
 const validations_1 = require("./util/validations");
 const debug = debug_1.default('mongodb-core');
 let mongo = null;
@@ -46,10 +46,10 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 validations_1.validateAssetPublish(data);
-                data = core_utilities_1.filterAssetKeys(data);
+                data = index_1.filterAssetKeys(data);
                 return this.assetConnector.download(data).then((asset) => {
                     debug(`Asset download result ${JSON.stringify(asset)}`);
-                    asset = core_utilities_1.structuralChanges(asset);
+                    asset = index_1.structuralChanges(asset);
                     return this.db.collection(this.collectionName)
                         .updateOne({
                         locale: asset.locale,
@@ -74,6 +74,7 @@ class Mongodb {
         debug(`Entry publish called ${JSON.stringify(data)}`);
         return new Promise((resolve, reject) => {
             try {
+                let contentType;
                 validations_1.validateEntryPublish(data);
                 let entry = {
                     content_type_uid: data.content_type_uid,
@@ -81,15 +82,18 @@ class Mongodb {
                     locale: data.locale,
                     uid: data.uid,
                 };
-                let contentType = {
-                    content_type_uid: 'contentTypes',
-                    data: data.content_type,
-                    uid: data.content_type_uid,
-                };
-                entry = core_utilities_1.filterEntryKeys(entry);
-                contentType = core_utilities_1.filterContentTypeKeys(contentType);
-                entry = core_utilities_1.structuralChanges(entry);
-                contentType = core_utilities_1.structuralChanges(contentType);
+                if (data.hasOwnProperty('content_type')) {
+                    contentType = {
+                        content_type_uid: '_content_types',
+                        data: data.content_type,
+                        uid: data.content_type_uid,
+                    };
+                    contentType = index_1.filterContentTypeKeys(contentType);
+                    contentType = index_1.structuralChanges(contentType);
+                    contentType.data.reference_to = index_1.buildReferences(contentType.data.schema);
+                }
+                entry = index_1.filterEntryKeys(entry);
+                entry = index_1.structuralChanges(entry);
                 return this.db.collection(this.collectionName)
                     .updateOne({
                     content_type_uid: entry.content_type_uid,
@@ -102,19 +106,22 @@ class Mongodb {
                 })
                     .then((entryPublishResult) => {
                     debug(`Entry publish result ${entryPublishResult}`);
-                    return this.db.collection(this.collectionName)
-                        .updateOne({
-                        content_type_uid: contentType.content_type_uid,
-                        uid: contentType.uid,
-                    }, {
-                        $set: contentType,
-                    }, {
-                        upsert: true,
-                    })
-                        .then((contentTypeUpdateResult) => {
-                        debug(`Content type publish result ${contentTypeUpdateResult}`);
-                        return resolve(data);
-                    });
+                    if (typeof contentType === 'object') {
+                        return this.db.collection(this.collectionName)
+                            .updateOne({
+                            content_type_uid: contentType.content_type_uid,
+                            uid: contentType.uid,
+                        }, {
+                            $set: contentType,
+                        }, {
+                            upsert: true,
+                        })
+                            .then((contentTypeUpdateResult) => {
+                            debug(`Content type publish result ${contentTypeUpdateResult}`);
+                            return resolve(data);
+                        });
+                    }
+                    return resolve(data);
                 }).catch(reject);
             }
             catch (error) {

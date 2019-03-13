@@ -6,11 +6,12 @@
 
 import Debug from 'debug'
 import {
+  buildReferences,
   filterAssetKeys,
   filterContentTypeKeys,
   filterEntryKeys,
   structuralChanges,
-} from './util/core-utilities'
+} from './util/index'
 import {
   validateAssetDelete,
   validateAssetPublish,
@@ -121,6 +122,7 @@ export class Mongodb {
 
     return new Promise((resolve, reject) => {
       try {
+        let contentType
         validateEntryPublish(data)
         let entry = {
           content_type_uid: data.content_type_uid,
@@ -128,16 +130,20 @@ export class Mongodb {
           locale: data.locale,
           uid: data.uid,
         }
-        let contentType = {
-          content_type_uid: 'contentTypes',
-          data: data.content_type,
-          uid: data.content_type_uid,
-        }
-        entry = filterEntryKeys(entry)
-        contentType = filterContentTypeKeys(contentType)
 
+        if (data.hasOwnProperty('content_type')) {
+          contentType = {
+            content_type_uid: '_content_types',
+            data: data.content_type,
+            uid: data.content_type_uid,
+          }
+          contentType = filterContentTypeKeys(contentType)
+          contentType = structuralChanges(contentType)
+          contentType.data.reference_to = buildReferences(contentType.data.schema)
+        }
+
+        entry = filterEntryKeys(entry)
         entry = structuralChanges(entry)
-        contentType = structuralChanges(contentType)
 
         return this.db.collection(this.collectionName)
           .updateOne({
@@ -152,20 +158,24 @@ export class Mongodb {
           .then((entryPublishResult) => {
             debug(`Entry publish result ${entryPublishResult}`)
 
-            return this.db.collection(this.collectionName)
-              .updateOne({
-                content_type_uid: contentType.content_type_uid,
-                uid: contentType.uid,
-              }, {
-                $set: contentType,
-              }, {
-                upsert: true,
-              })
-              .then((contentTypeUpdateResult) => {
-                debug(`Content type publish result ${contentTypeUpdateResult}`)
+            if (typeof contentType === 'object') {
+              return this.db.collection(this.collectionName)
+                .updateOne({
+                  content_type_uid: contentType.content_type_uid,
+                  uid: contentType.uid,
+                }, {
+                  $set: contentType,
+                }, {
+                  upsert: true,
+                })
+                .then((contentTypeUpdateResult) => {
+                  debug(`Content type publish result ${contentTypeUpdateResult}`)
 
-                return resolve(data)
-              })
+                  return resolve(data)
+                })
+            }
+
+            return resolve(data)
           }).catch(reject)
       } catch (error) {
         return reject(error)

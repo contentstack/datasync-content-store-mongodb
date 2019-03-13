@@ -6,7 +6,7 @@
 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = require("lodash");
-const __1 = require("..");
+const index_1 = require("../index");
 const maskKeys = (json, arr, pos) => {
     const key = arr[pos];
     if (json.hasOwnProperty(key)) {
@@ -25,7 +25,7 @@ const maskKeys = (json, arr, pos) => {
     }
 };
 const filter = (type, json) => {
-    const contentStore = __1.getConfig().contentStore;
+    const contentStore = index_1.getConfig().contentStore;
     const unwantedKeys = contentStore.unwantedKeys;
     if (unwantedKeys && unwantedKeys[type] && Object.keys(unwantedKeys[type]).length !== 0) {
         const keyConfig = unwantedKeys[type];
@@ -48,10 +48,10 @@ exports.filterContentTypeKeys = (contentType) => {
     return filter('contentType', contentType);
 };
 exports.structuralChanges = (entity) => {
-    const contentStore = __1.getConfig().contentStore;
+    const contentStore = index_1.getConfig().contentStore;
     const indexedKeys = contentStore.indexedKeys;
     if (indexedKeys && typeof indexedKeys === 'object' && Object.keys(indexedKeys).length) {
-        const clone = lodash_1.cloneDeep(entity.data);
+        let clone = lodash_1.cloneDeep(entity.data);
         const obj = {};
         obj.synced_at = new Date().toISOString();
         clone.synced_at = obj.synced_at;
@@ -71,8 +71,20 @@ exports.structuralChanges = (entity) => {
         else {
             clone.published_at = new Date().toISOString();
         }
-        clone.sys_keys = obj;
+        clone = lodash_1.merge(clone, obj);
         return clone;
     }
     return entity;
+};
+exports.buildReferences = (schema, references = {}, parent) => {
+    for (let i = 0, l = schema.length; i < l; i++) {
+        if (schema[i] && schema[i].data_type && schema[i].data_type === 'reference') {
+            const field = ((parent) ? `${parent}:${schema[i].uid}` : schema[i].uid);
+            references[field] = schema[i].reference_to;
+        }
+        else if (schema[i] && schema[i].data_type && schema[i].data_type === 'group' && schema[i].schema) {
+            exports.buildReferences(schema[i].schema, references, ((parent) ? `${parent}:${schema[i].uid}` : schema[i].uid));
+        }
+    }
+    return references;
 };
