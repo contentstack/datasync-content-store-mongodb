@@ -1,7 +1,7 @@
 {
   "name": "contentstack-content-store-mongodb",
   "author": "Contentstack Ecosystem <ecosystem@contentstack.com>",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Sync data stored at Contentstack into your mongodb",
   "main": "dist/index.js",
   "dependencies": {

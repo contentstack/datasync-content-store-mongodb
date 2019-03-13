@@ -139,7 +139,7 @@ export class Mongodb {
           }
           contentType = filterContentTypeKeys(contentType)
           contentType = structuralChanges(contentType)
-          contentType.data.reference_to = buildReferences(contentType.data.schema)
+          contentType.references = buildReferences(contentType.schema)
         }
 
         entry = filterEntryKeys(entry)

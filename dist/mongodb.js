@@ -90,7 +90,7 @@ class Mongodb {
                     };
                     contentType = index_1.filterContentTypeKeys(contentType);
                     contentType = index_1.structuralChanges(contentType);
-                    contentType.data.reference_to = index_1.buildReferences(contentType.data.schema);
+                    contentType.references = index_1.buildReferences(contentType.schema);
                 }
                 entry = index_1.filterEntryKeys(entry);
                 entry = index_1.structuralChanges(entry);

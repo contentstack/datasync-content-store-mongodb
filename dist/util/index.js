@@ -79,11 +79,11 @@ exports.structuralChanges = (entity) => {
 exports.buildReferences = (schema, references = {}, parent) => {
     for (let i = 0, l = schema.length; i < l; i++) {
         if (schema[i] && schema[i].data_type && schema[i].data_type === 'reference') {
-            const field = ((parent) ? `${parent}:${schema[i].uid}` : schema[i].uid);
+            const field = ((parent) ? `${parent}.${schema[i].uid}` : schema[i].uid);
             references[field] = schema[i].reference_to;
         }
         else if (schema[i] && schema[i].data_type && schema[i].data_type === 'group' && schema[i].schema) {
-            exports.buildReferences(schema[i].schema, references, ((parent) ? `${parent}:${schema[i].uid}` : schema[i].uid));
+            exports.buildReferences(schema[i].schema, references, ((parent) ? `${parent}.${schema[i].uid}` : schema[i].uid));
         }
     }
     return references;
