@@ -5,17 +5,15 @@ src
 node_modules
 package-lock.json
 
-# Sample files
-example/**/*
-!example/index.js
-
 # Typings
 typings
 
 # Beautifiers & Indenters
 .jsbeautifyrc
-.tslint.json
 tsconfig.json
 
 # Test Coverage
 coverage
+
+# Gitignore
+.gitignore
