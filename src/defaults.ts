@@ -11,6 +11,7 @@
 export const config = {
   contentStore: {
     dbName: 'contentstack-persistent-db',
+    collectionName: 'contents',
     indexes: {
       published_at: -1,
       content_type_uid: 1,
@@ -41,14 +42,14 @@ export const config = {
         checkpoint: true,
         'data.created_by': true,
         event_at: true,
-        type: true, 
+        type: true,
         'data.updated_by': true
       },
       contentType: {
-        'data.created_by': true, 
-        'data.updated_by': true, 
+        'data.created_by': true,
+        'data.updated_by': true,
         'data.DEFAULT_ACL': true,
-        'data.SYS_ACL': true, 
+        'data.SYS_ACL': true,
         'data.abilities': true,
         'data.last_activity': true
       },
@@ -57,7 +58,7 @@ export const config = {
         checkpoint: true,
         'data.created_by': true,
         event_at: true,
-        type: true, 
+        type: true,
         'data.updated_by': true
       },
     },
