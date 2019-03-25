@@ -41,17 +41,21 @@ syncManager.start()
 
 
 ## Configuration
-
 Here is the config table for the module:
 
+By default, this module uses the following internal configuration.  
+  
+
 |Property|DataType|Description|Default|
-|--|--|--|--|--|
+|--|--|--|--|
 |dbName|string|contentstack-persistent-db|**Optional.** The MongoDB database name|
 |uri|string|mongodb://localhost:27017 |**Optional.** The MongoDB connection URI|
-| indexedKeys | object |**see config below** |**Optional.** keys that form part of sys_keys, pass { key: true } to add, { key: false } to remove currently, only top-level keys from SYNC API response item are supported|
-|unwantedKeys|object|**see config below**|**Optional.** Keys to be deleted, while data is being inserted|
-|options|object|**see config below**|**Optional.** The MongoDB connection options|
+| indexedKeys | object |**[see config below](https://github.com/contentstack/datasync-content-store-mongodb#detailed-configs)** |**Optional.** keys that form part of sys_keys, pass { key: true } to add, { key: false } to remove currently, only top-level keys from SYNC API response item are supported|
+|unwantedKeys|object|**[see config below](https://github.com/contentstack/datasync-content-store-mongodb#detailed-configs)** |**Optional.** Keys to be deleted, while data is being inserted|
+|options|object|**[see config below](https://github.com/contentstack/datasync-content-store-mongodb#detailed-configs)** |**Optional.** The MongoDB connection options|
 
+
+## Detailed configs
 ```js
 indexedKeys: {
 	content_type_uid:  true,
