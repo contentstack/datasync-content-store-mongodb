@@ -1,184 +1,117 @@
+
 [![Contentstack](https://www.contentstack.com/docs/static/images/contentstack.png)](https://www.contentstack.com/)
 
-## Contentstack Sync Content Store MongoDB
+  Contentstack is a headless CMS with an API-first approach. It is a CMS that developers can use to build powerful cross-platform applications in their favorite languages. Build your application frontend, and Contentstack will take care of the rest. [Read More](https://www.contentstack.com/).
 
-The Contentstack Sync utility lets you sync your Contentstack data on your server, enabling you to save data locally and serve content directly from your server.
 
-The Cotentstack MongoDB Content Store is part of Contentstack Sync utility's content storage drivers and is used to store data in the MongoDB database.
+## Contentstack DataSync Content Store MongoDB
 
-Learn how Contentstack helps you store your data locally with the help of the Contentstack Sync utility [here]().
+  Contentstack DataSync lets you sync your Contentstack data with your database, enabling you to save data locally and serve content directly from your database. It is a combination of four powerful modules that is [DataSync Webhook Listener](https://github.com/contentstack/webhook-listener), [DataSync Manager](https://github.com/contentstack/datasync-manager), [DataSync Asset Store Filesystem](https://github.com/contentstack/datasync-asset-store-filesystem), DataSync Content Store — [Filesystem](https://github.com/contentstack/datasync-content-store-filesystem) and [MongoDB](https://github.com/contentstack/datasync-content-store-mongodb).
 
-Currently, Contentstack offers the following databases for storing the synced data:
-- Filesystem data store: [contentstack-content-store-filesystem](https://github.com/contentstack/contentstack-content-store-filesystem)
-- Filesystem asset store: [contentstack-asset-store-filesystem](https://github.com/contentstack/contentstack-asset-store-filesystem)
-- Mongodb data store: [contentstack-content-store-mongodb](https://github.com/contentstack/contentstack-content-store-mongodb)
+The Cotentstack MongoDB Content Store is part of [](https://github.com/contentstack/contentstack-content-store-mongodb/blob/master) Contentstack DataSync's content storage drivers and is used to store data in the MongoDB database. Any publish, unpublish, or delete action performed on content will be tracked by the  Webhook Listener and the relevant content will be synced accordingly in your MongoDB database.
 
-To notify contentstack-sync-manager, you can use a listener module - [contentstack-webhook-listener](https://github.com/contentstack/contentstack-webhook-listener) or your own personalized cron job can be used to invoke the app and sync the data on a regular interval.
 
-### Prerequisite
+##  Prerequisite
 
-- nodejs v8+
-- MongoDB installed locally and it is up and running, or a MongoDB-atlas account
+-   Node.js v8 or above
+-   MongoDB installed locally and it is up and running, or a MongoDB-atlas account
 
-### Working
 
-When an entry or an asset is published, unpublished or deleted, the listener fires a notification event and the [contentstack-sync-manager]() uses the `Contentstack's Sync API` to sync the latest changes.
+## Usage
 
-Once the sync manager fetches the updated details from Contentstack, it passes them to the registered plugins and data connectors i.e. your mongodb.
-
-Read more on how to get started with [Contentstack Sync Utility]()
-
-## Documentation & Getting started
-
-In order to get you upto speed, we've prepared quite a few documentation and examples that would help you to learn and understand on how to use the utilities.
-
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Reference documentation](#reference-documentation)
-- [Getting started examples](#getting-started-examples)
-- [Migration](#migration-from-contentstack-express)
-
-### Usage
-
-The following code snippet is the bare basics to get you stared with using the Contentstack Sync Utility:
-
+This is how the datasync-content-store-filesystem is defined in the boilerplate:
 ```js
-const assetStore = require('contentstack-asset-store-filesystem')
-const contentStore = require('contentstack-content-store-mongodb')
-const listener = require('contentstack-webhook-listener')
-const syncManager = require('contentstack-sync-manager')
-const config = require('./config')
+const  assetStore = require('@contentstack/datasync-asset-store-filesystem')
+const  contentStore = require('@contentstack/datasync-content-store-mongodb')// <<--
+const  listener = require('@contentstack/webhook-listener')
+const  syncManager = require('@contentstack/datasync-manager')
+const  config = require('./config')
 
 syncManager.setAssetStore(assetStore)
-syncManager.setContentStore(contentStore)
+syncManager.setContentStore(contentStore)// Sets required asset store to sync manager.
 syncManager.setListener(listener)
 syncManager.setConfig(config)
 
 syncManager.start()
-  .then(() => {
-    console.log('Contentstack sync started successfully!')
-  })
-  .catch(console.error)
+.then(() => {
+	console.log('Contentstack sync started successfully!')
+})
+.catch(console.error)
 ```
-You can replace [contentstack-content-store-mongodb]() used above, with [contentstack-content-store-filesystem]() and switch content store databases.
 
-### Configuration
 
-Here's a list of configuration keys for contentstack-sync-manager
+## Configuration
 
-- Contentstack configuration keys
+Here is the config table for the module:
 
-| Key Name | Default | Description |
-| :--- |:---:| :---|
-| apiKey | | **Required**. Your stack's API key |
-| deliveryToken | | **Required**. Your environment's delivery token |
-| sync_token | | Token from where you'd like to start the process |
-| pagination_token | | Token from where you'd like to start the process |
-| MAX_RETRY_LIMIT | 6 | Number of times the API call would retry, if the server fails |
+|Property|DataType|Description|Default|
+|--|--|--|--|--|
+|dbName|string|contentstack-persistent-db|**Optional.** The MongoDB database name|
+|uri|string|mongodb://localhost:27017 |**Optional.** The MongoDB connection URI|
+| indexedKeys | object |**see config below** |**Optional.** keys that form part of sys_keys, pass { key: true } to add, { key: false } to remove currently, only top-level keys from SYNC API response item are supported|
+|unwantedKeys|object|**see config below**|**Optional.** Keys to be deleted, while data is being inserted|
+|options|object|**see config below**|**Optional.** The MongoDB connection options|
 
-- MongoDB content store configuration keys
+```js
+indexedKeys: {
+	content_type_uid:  true,
+	locale:  true,
+	uid:  true,
+	published_at:  true
+},
 
-<!-- https://michelf.ca/projects/php-markdown/extra/ -->
-<table>
-  <thead>
-    <tr>
-      <th>Key Name</th>
-      <th>Default value</th>
-      <th>Key</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>dbName</td>
-      <td>contentstack-persistent-db</td>
-      <td>Mongodb database name</td>
-    </tr>
-    <tr>
-      <td>collectionName</td>
-      <td>contents</td>
-      <td>The database's collection name</td>
-    </tr>
-    <tr>
-      <td>uri</td>
-      <td>mongodb://localhost:27017</td>
-      <td>URL string to the mongodb path to connect to</td>
-    </tr>
-    <tr>
-      <td>unwantedKeys</td>
-      <td>
-        <ul>
-          <li>asset.action: true</li>
-          <li>asset.checkpoint: true</li>
-          <li>asset.data.created_by: true</li>
-          <li>asset.data.updated_by: true</li>
-          <li>asset.event_at: true</li>
-          <li>asset.type: true</li>
-          <li>entry.action: true</li>
-          <li>entry.checkpoint: true</li>
-          <li>entry.data.created_by: true</li>
-          <li>entry.data.updated_by: true</li>
-          <li>entry.event_at: true</li>
-          <li>entry.type: true</li>
-          <li>content_type.data.created_by: true</li>
-          <li>content_type.data.updated_by: true</li>
-          <li>content_type.data.DEFAULT_ACL: true</li>
-          <li>content_type.data.SYS_ACL: true</li>
-          <li>content_type.data.abilities: true</li>
-          <li>content_type.data.last_activity: true</li>
-        </ul>
-      </td>
-      <td>You can remove keys from an item, that you do not wish to store in your database. In case you'd like to override any of the above, pass <code>key: false</code>. Ex: <code>asset.data.created_by: false</code> to keep <code>created_by</code> key in all of asset's json data.<br><strong>Note:</strong> These keys are respective of the <code>Sync API</code> json responses.</td>
-    </tr>
-    <tr>
-      <td>indexes</td>
-      <td>
-        <ul>
-          <li>published_at: -1</li>
-          <li>content_type_uid: 1</li>
-          <li>locale: 1</li>
-          <li>uid: 1</li>
-        </ul>
-      </td>
-      <td>Pass keys that you'd like the mongodb driver to create indexes on. The library will create indexes immidiately after it establishes connection with the mongodb url provided.</td>
-    </tr>
-    <tr>
-      <td>options</td>
-      <td>
-        <ul>
-          <li>options.autoReconnect: true</li>
-          <li>options.connectTimeoutMS: 15000</li>
-          <li>options.keepAlive: true</li>
-          <li>options.noDelay: true</li>
-          <li>options.reconnectInterval: 1000</li>
-          <li>options.reconnectTries: 20</li>
-          <li>options.useNewUrlParser: true</li>
-        </ul>
-      </td>
-      <td>Options to be provided while setting up connection to the mongodb database. Ref Mongodb Docs - http://mongodb.github.io/node-mongodb-native/3.1/api/MongoClient.html for more option info.</td>
-    </tr>
-  </tbody>
-</table>
+unwantedKeys: {
+	asset: {
+		action:  true,
+		checkpoint:  true,
+		'data.created_by':  true,
+		event_at:  true,
+		type:  true,
+		'data.updated_by':  true
+	},
+	contentType: {
+		'data.created_by':  true,
+		'data.updated_by':  true,
+		'data.DEFAULT_ACL':  true,
+		'data.SYS_ACL':  true,
+		'data.abilities':  true,
+		'data.last_activity':  true
+	},
+	entry: {
+		action:  true,
+		checkpoint:  true,
+		'data.created_by':  true,
+		event_at:  true,
+		type:  true,
+		'data.updated_by':  true
+	}
+},
 
-### Reference documentation
+options: {
+	autoReconnect:  true,
+	connectTimeoutMS:  15000,
+	keepAlive:  true,
+	noDelay:  true,
+	reconnectInterval:  1000,
+	reconnectTries:  20,
+	useNewUrlParser:  true,
+},
+```
 
-The [Contentstack Sync Utility Docs]() documents what configuration, arguments, return types and methods are exposed by this utility.
 
-### Getting started examples
+## Further Reading
 
-You can refer to [contentstack-sync-boilerplate] on how to use this library along with listeners and data stores.
+-   [Getting started with Contentstack DataSync](https://www.contentstack.com/docs/guide/synchronization/contentstack-datasync)    
+-   [Contentstack DataSync](https://www.contentstack.com/docs/guide/synchronization/contentstack-datasync/configuration-files-for-contentstack-datasync) doc lists the configuration for different modules
 
-We have created a basic boilerplate on how to get started with creating a standard website using the Contentstack Sync Utility [here]()
 
-### Migration from `contentstack-express`
+## Support and Feature requests
 
-If you are an existing [contentstack-express]() user, check out how you can migrate your existing website to use contentstack sync utilities [here]()
+If you have any issues working with the library, please file an issue [here](https://github.com/contentstack/datasync-content-store-mongodb/issues) at Github.
 
-### Support and Feature requests
+You can send us an e-mail at [support@contentstack.com](mailto:support@contentstack.com) if you have any support or feature requests. Our support team is available 24/7 on the intercom. You can always get in touch and give us an opportunity to serve you better!
 
-If you have any issues with the library, please file an issue [here](https://github.com/contentstack/contentstack-content-store-mongodb/issues) at Github.
 
-You can [e-mail](mailto:ecosystem@contentstack.com) if you have any support or feature requests. Our dilligent minions will be working round the clock to help and serve you better!
+## License
 
-### Licence
-
-This repository is published under the [MIT](LICENSE) license.
+This repository is published under the [MIT license](LICENSE).
