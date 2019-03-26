@@ -2,11 +2,11 @@
 
 ## Contentstack Sync Content Store MongoDB
 
-The Contentstack Sync utility lets you sync your Contentstack data on your server, enabling you to save data locally and serve content directly from your server.
+The Contentstack sync utility lets you sync your Contentstack data on your server, enabling you to save data locally and serve content directly from your server.
 
-The Cotentstack MongoDB Content Store is part of Contentstack Sync utility's content storage drivers and is used to store data in the MongoDB database.
+The Cotentstack MongoDB Content Store is part of Contentstack sync utility's content storage drivers and is used to store data in the MongoDB database.
 
-Learn how Contentstack helps you store your data locally with the help of the Contentstack Sync utility [here]().
+Learn how Contentstack helps you store your data locally with the help of the Contentstack sync utility [here]().
 
 Currently, Contentstack offers the following databases for storing the synced data:
 - Filesystem data store: [contentstack-content-store-filesystem](https://github.com/contentstack/contentstack-content-store-filesystem)
@@ -26,7 +26,7 @@ When an entry or an asset is published, unpublished or deleted, the listener fir
 
 Once the sync manager fetches the updated details from Contentstack, it passes them to the registered plugins and data connectors i.e. your mongodb.
 
-Read more on how to get started with [Contentstack Sync Utility]()
+Read more on how to get started with [Contentstack sync utility]()
 
 ## Documentation & Getting started
 
@@ -40,7 +40,7 @@ In order to get you upto speed, we've prepared quite a few documentation and exa
 
 ### Usage
 
-The following code snippet is the bare basics to get you stared with using the Contentstack Sync Utility:
+The following code snippet is the bare basics to get you stared with using the Contentstack sync utility:
 
 ```js
 const assetStore = require('contentstack-asset-store-filesystem')
@@ -161,13 +161,13 @@ Here's a list of configuration keys for contentstack-sync-manager
 
 ### Reference documentation
 
-The [Contentstack Sync Utility Docs]() documents what configuration, arguments, return types and methods are exposed by this utility.
+The [Contentstack sync utility Docs]() documents what configuration, arguments, return types and methods are exposed by this utility.
 
 ### Getting started examples
 
 You can refer to [contentstack-sync-boilerplate] on how to use this library along with listeners and data stores.
 
-We have created a basic boilerplate on how to get started with creating a standard website using the Contentstack Sync Utility [here]()
+We have created a basic boilerplate on how to get started with creating a standard website using the Contentstack sync utility [here]()
 
 ### Migration from `contentstack-express`
 
