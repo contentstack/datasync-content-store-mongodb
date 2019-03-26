@@ -1,7 +1,7 @@
 {
   "name": "@contentstack/datasync-content-store-mongodb",
   "author": "Contentstack Ecosystem <ecosystem@contentstack.com>",
-  "version": "0.0.1-rc.1",
+  "version": "0.0.1-rc.2",
   "description": " The module that stores your content in a Filesystem database after it is fetched from the Contentstack server.",
   "main": "dist/index.js",
   "dependencies": {
