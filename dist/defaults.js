@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = {
     contentStore: {
         dbName: 'contentstack-persistent-db',
+        collectionName: 'contents',
         indexes: {
             published_at: -1,
             content_type_uid: 1,

@@ -1,19 +1,19 @@
 # Source files
 src
 
-# Node module dependencies
-node_modules
-package-lock.json
-
-# Typings
-typings
-
-# Beautifiers & Indenters
-.jsbeautifyrc
+# Typescript configurations
 tsconfig.json
 
-# Test Coverage
-coverage
+# Test configurations
+jest.config.js
 
-# Gitignore
-.gitignore
+# Data
+_contents
+
+# Node module dependencies
+node_modules
+
+# Others
+.vscode
+package-lock.json
+coverage

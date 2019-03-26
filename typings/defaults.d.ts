@@ -6,6 +6,7 @@
 export declare const config: {
     contentStore: {
         dbName: string;
+        collectionName: string;
         indexes: {
             published_at: number;
             content_type_uid: number;

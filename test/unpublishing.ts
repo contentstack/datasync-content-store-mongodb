@@ -44,7 +44,7 @@ describe('unpublish', () => {
 
         return db.unpublish(entry).then((result2) => {
           expect(result2).toEqual(entry)
-          mongoClient.db.collection('contents').findOne({
+          mongoClient.db.collection(config.contentStore.collectionName).findOne({
             uid: entry.uid,
           }).then((data) => {
             expect(data).toBeNull()
@@ -63,7 +63,7 @@ describe('unpublish', () => {
 
         return db.unpublish(asset).then((result2) => {
           expect(result2).toEqual(asset)
-          mongoClient.db.collection('contents').findOne({
+          mongoClient.db.collection(config.contentStore.collectionName).findOne({
             uid: asset.uid,
           }).then((data) => {
             expect(data).toBeNull()
