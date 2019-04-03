@@ -4,11 +4,11 @@
 * MIT Licensed
 */
 export declare class Mongodb {
-    assetConnector: any;
+    assetStore: any;
     db: any;
     client: any;
     private collectionName;
-    constructor(mongodb: any, connector: any, config?: {
+    constructor(mongodb: any, assetStore: any, config?: {
         collectionName: string;
     });
     publish(data: any): Promise<{}>;

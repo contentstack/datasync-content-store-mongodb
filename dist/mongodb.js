@@ -14,9 +14,9 @@ const validations_1 = require("./util/validations");
 const debug = debug_1.default('mongodb-core');
 let mongo = null;
 class Mongodb {
-    constructor(mongodb, connector, config = { collectionName: 'contents' }) {
+    constructor(mongodb, assetStore, config = { collectionName: 'contents' }) {
         if (!mongo) {
-            this.assetConnector = connector;
+            this.assetStore = assetStore;
             this.db = mongodb.db;
             this.client = mongodb.client;
             this.collectionName = (config && config.collectionName) ? config.collectionName : 'contents';
@@ -47,7 +47,7 @@ class Mongodb {
             try {
                 validations_1.validateAssetPublish(data);
                 data = core_utilities_1.filterAssetKeys(data);
-                return this.assetConnector.download(data).then((asset) => {
+                return this.assetStore.download(data).then((asset) => {
                     debug(`Asset download result ${JSON.stringify(asset)}`);
                     asset = core_utilities_1.structuralChanges(asset);
                     return this.db.collection(this.collectionName)
@@ -126,7 +126,9 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 if (data.content_type_uid === '_assets') {
-                    return this.unpublishAsset(data).then(resolve).catch(reject);
+                    return this.unpublishAsset(data)
+                        .then(resolve)
+                        .catch(reject);
                 }
                 return this.unpublishEntry(data).then(resolve).catch(reject);
             }
@@ -203,17 +205,38 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 validations_1.validateAssetUnpublish(asset);
-                return this.assetConnector.unpublish(asset).then(() => {
+                return this.db.collection(this.collectionName)
+                    .findOneAndDelete({
+                    content_type_uid: asset.content_type_uid,
+                    locale: asset.locale,
+                    uid: asset.uid,
+                    _version: {
+                        $exists: true
+                    }
+                })
+                    .then((result) => {
+                    debug(`Asset unpublish status: ${result}`);
                     return this.db.collection(this.collectionName)
-                        .deleteOne({
+                        .find({
                         content_type_uid: asset.content_type_uid,
+                        locale: asset.locale,
                         uid: asset.uid,
-                    })
-                        .then((result) => {
-                        debug(`Unpublish asset result ${JSON.stringify(result)}`);
-                        return resolve(asset);
+                        url: asset.data.url,
+                        download_id: {
+                            $exists: true
+                        }
                     });
-                }).catch(reject);
+                })
+                    .then((assets) => {
+                    if (typeof assets !== null) {
+                        debug(`Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.`);
+                        return resolve(asset);
+                    }
+                    debug(`Only published object of ${JSON.stringify(asset)} was present`);
+                    return this.assetStore.unpublish(asset)
+                        .then(() => resolve(asset));
+                })
+                    .catch(reject);
             }
             catch (error) {
                 return reject(error);
@@ -225,16 +248,19 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 validations_1.validateAssetDelete(asset);
-                return this.assetConnector.delete(asset).then(() => {
-                    return this.db.collection(this.collectionName)
-                        .deleteMany({
-                        uid: asset.uid,
-                    })
-                        .then((result) => {
-                        debug(`Delete asset result ${JSON.stringify(result)}`);
+                return this.db.collection(this.collectionName)
+                    .deleteMany({
+                    uid: asset.uid,
+                })
+                    .then((result) => {
+                    debug(`Delete asset result ${JSON.stringify(result)}`);
+                    if (result === null) {
                         return resolve(asset);
-                    });
-                }).catch(reject);
+                    }
+                    return this.assetStore.delete(asset)
+                        .then(() => resolve(asset));
+                })
+                    .catch(reject);
             }
             catch (error) {
                 return reject(error);
