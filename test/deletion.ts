@@ -17,7 +17,7 @@ const config = cloneDeep(merge({}, appConfig, mockConfig))
 config.contentStore.collectionName = 'deletion'
 
 let mongoClient
-let db
+let db, mongo
 
 describe('delete', () => {
   beforeAll(() => {
@@ -25,6 +25,7 @@ describe('delete', () => {
     setConfig(config)
 
     return connect(config).then((mongodb) => {
+      mongo = mongodb
       mongoClient = new Mongodb(mongodb, connector)
       db = mongoClient
     }).catch(console.error)
@@ -34,6 +35,10 @@ describe('delete', () => {
     return mongoClient.db
       .collection(config.contentStore.collectionName)
       .drop()
+  })
+
+  afterAll(() => {
+    mongo.client.close()
   })
 
   describe('delete an entry', () => {

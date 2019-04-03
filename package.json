@@ -2,24 +2,24 @@
   "name": "@contentstack/datasync-content-store-mongodb",
   "author": "Contentstack Ecosystem <ecosystem@contentstack.com>",
   "version": "0.0.1",
-  "description": " The module that stores your content in a Filesystem database after it is fetched from the Contentstack server.",
+  "description": "Test travis CI",
   "main": "dist/index.js",
   "dependencies": {
-    "debug": "4.1.0",
-    "lodash": "4.17.11",
-    "mongodb": "3.1.10"
+    "debug": "^4.1.0",
+    "lodash": "^4.17.11",
+    "mongodb": "^3.1.10"
   },
   "devDependencies": {
-    "@types/debug": "0.0.31",
+    "@types/debug": "^0.0.31",
     "@types/jest": "^23.3.11",
-    "@types/lodash": "4.14.119",
+    "@types/lodash": "^4.14.119",
     "@types/mongodb": "^3.1.17",
-    "@types/node": "10.12.12",
-    "eslint": "5.10.0",
+    "@types/node": "^10.12.12",
+    "eslint": "^5.10.0",
     "jest": "^23.6.0",
     "ts-jest": "^23.10.5",
-    "tslint": "5.11.0",
-    "typescript": "3.2.2"
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.2"
   },
   "scripts": {
     "clean": "rimraf dist",
@@ -30,15 +30,19 @@
     "pretest": "npm run clean && npm run compile",
     "start": "dist",
     "tslint": "npx tslint -c tslint.json 'src/**/*.ts'",
-    "test": "jest --verbose --colors"
+    "test": "jest --detectOpenHandles --verbose --colors"
   },
   "engines": {
     "node": ">=8"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "contentstack",
     "utility",
-    "datasync"
+    "datasync",
+    "mongodb-content-store"
   ],
   "repository": {
     "type": "git",

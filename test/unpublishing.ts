@@ -16,7 +16,7 @@ const config = cloneDeep(merge({}, appConfig, mockConfig))
 config.contentStore.collectionName = 'unpublishing'
 
 let mongoClient
-let db
+let db, mongo
 
 describe('unpublish', () => {
   beforeAll(() => {
@@ -24,6 +24,7 @@ describe('unpublish', () => {
     setConfig(config)
 
     return connect(config).then((mongodb) => {
+      mongo = mongodb
       mongoClient = new Mongodb(mongodb, connector)
       db = mongoClient
     }).catch(console.error)
@@ -33,6 +34,10 @@ describe('unpublish', () => {
     return mongoClient.db
       .collection(config.contentStore.collectionName)
       .drop()
+  })
+
+  afterAll(() => {
+    mongo.client.close()
   })
 
   describe('unpublish an entry', () => {

@@ -312,17 +312,20 @@ export class Mongodb {
                   $exists: true
                 }
               })
+              .then((assets) => {
+                return {result, assets}
+              })
           })
-          .then((assets) => {
-            if (typeof assets !== null) {
+          .then((op) => {
+            if (typeof op.assets !== null) {
               debug(`Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.`)
 
-              return resolve(asset)
+              return resolve(op.result)
             }
             debug(`Only published object of ${JSON.stringify(asset)} was present`)
 
-            return this.assetStore.unpublish(asset)
-              .then(() => resolve(asset))
+            return this.assetStore.unpublish(op.result)
+              .then(() => resolve(op.result))
           })
           .catch(reject)
       } catch (error) {
