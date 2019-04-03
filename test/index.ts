@@ -23,10 +23,11 @@ describe('core', () => {
   test('start mongo driver without successfully', () => {
     setAssetConnector((connector as any))
 
-    return start((connector as any), mockConfig).then((mongo) => {
+    return start((connector as any), mockConfig).then((mongo: any) => {
       expect(mongo).toHaveProperty('db')
       expect(mongo).toHaveProperty('client')
       expect(mongo).toEqual(mongoClient)
+      mongo.client.close()
     }).catch((error) => {
       expect(error).toBeNull()
     })

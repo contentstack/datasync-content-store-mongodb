@@ -1,8 +1,6 @@
 # Dependency directories
 node_modules
+package-lock.json
 
 # Exclude coverage informations
 coverage
-
-# Lock files
-package-lock.json

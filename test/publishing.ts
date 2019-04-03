@@ -16,7 +16,7 @@ const config = cloneDeep(merge({}, appConfig, mockConfig))
 config.contentStore.collectionName = 'publishing'
 
 let mongoClient
-let db
+let db, mongo
 
 describe('publish', () => {
   beforeAll(() => {
@@ -24,6 +24,7 @@ describe('publish', () => {
     setConfig(config)
 
     return connect(config).then((mongodb) => {
+      mongo = mongodb
       mongoClient = new Mongodb(mongodb, connector)
       db = mongoClient
     }).catch(console.error)
@@ -33,6 +34,10 @@ describe('publish', () => {
     return mongoClient.db
       .collection(config.contentStore.collectionName)
       .drop()
+  })
+
+  afterAll(() => {
+    mongo.client.close()
   })
 
   describe('publish entry', () => {

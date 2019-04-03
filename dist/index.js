@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug_1 = __importDefault(require("debug"));
 const lodash_1 = require("lodash");
 const connection_1 = require("./connection");
-const defaults_1 = require("./defaults");
+const config_1 = require("./config");
 const mongodb_1 = require("./mongodb");
 const logger_1 = require("./util/logger");
 const validations_1 = require("./util/validations");
@@ -32,7 +32,7 @@ exports.getConfig = () => {
 exports.start = (connector, config, logger) => {
     return new Promise((resolve, reject) => {
         try {
-            appConfig = lodash_1.merge(defaults_1.config, appConfig, config);
+            appConfig = lodash_1.merge(config_1.config, appConfig, config);
             validations_1.validateConfig(appConfig);
             assetConnectorInstance = connector || assetConnectorInstance;
             validations_1.validateAssetConnectorInstance(assetConnectorInstance);

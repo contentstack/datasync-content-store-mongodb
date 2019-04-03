@@ -7,7 +7,7 @@
 import Debug from 'debug'
 import { merge } from 'lodash'
 import { connect } from './connection'
-import { config as internalConfig } from './defaults'
+import { config as internalConfig } from './config'
 import { Mongodb } from './mongodb'
 import { setLogger } from './util/logger'
 
