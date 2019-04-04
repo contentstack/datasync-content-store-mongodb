@@ -55,7 +55,9 @@ describe('unpublish', () => {
             expect(data).toBeNull()
           })
         })
-      }).catch(console.error)
+      }).catch((error) => {
+        expect(error).toBeNull()
+      })
     })
   })
 
@@ -67,14 +69,22 @@ describe('unpublish', () => {
         expect(result).toEqual(asset)
 
         return db.unpublish(asset).then((result2) => {
-          expect(result2).toEqual(asset)
+          expect(result2).not.toBeNull()
+          expect(result2._version).toEqual(1)
+          expect(result2.content_type_uid).toEqual('_assets')
+          // Important checks
+          expect(result2.locale).toEqual(asset.locale)
+          expect(result2.uid).toEqual(asset.uid)
+          expect(result2.title).toEqual(asset.data.title)
           mongoClient.db.collection(config.contentStore.collectionName).findOne({
             uid: asset.uid,
           }).then((data) => {
             expect(data).toBeNull()
           })
         })
-      }).catch(console.error)
+      }).catch((error) => {
+        expect(error).toBeNull()
+      })
     })
   })
 

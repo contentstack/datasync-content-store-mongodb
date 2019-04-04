@@ -5,6 +5,7 @@ export const data = [
     data: {
       title: 'asset one',
       uid: 'a1',
+      _version: 1,
     },
     locale: 'en-us',
     uid: 'a1',
@@ -15,6 +16,7 @@ export const data = [
     data: {
       title: 'asset two',
       uid: 'a2',
+      _version: 2,
     },
     locale: 'en-us',
     uid: 'a2',
@@ -25,6 +27,7 @@ export const data = [
     data: {
       title: 'asset three',
       uid: 'a3',
+      _version: 3,
     },
     locale: 'en-us',
     uid: 'a3',

@@ -90,7 +90,6 @@ class Mongodb {
                     };
                     contentType = index_1.filterContentTypeKeys(contentType);
                     contentType = index_1.structuralChanges(contentType);
-                    contentType.references = index_1.buildReferences(contentType.schema);
                 }
                 entry = index_1.filterEntryKeys(entry);
                 entry = index_1.structuralChanges(entry);
@@ -223,6 +222,9 @@ class Mongodb {
                 })
                     .then((result) => {
                     debug(`Asset unpublish status: ${result}`);
+                    if (result.value === null) {
+                        return resolve(asset);
+                    }
                     return this.db.collection(this.collectionName)
                         .find({
                         content_type_uid: asset.content_type_uid,
@@ -233,18 +235,16 @@ class Mongodb {
                             $exists: true
                         }
                     })
+                        .toArray()
                         .then((assets) => {
-                        return { result, assets };
-                    });
-                })
-                    .then((op) => {
-                    if (typeof op.assets !== null) {
+                        if (assets === null) {
+                            debug(`Only published object of ${JSON.stringify(asset)} was present`);
+                            return this.assetStore.unpublish(result.value)
+                                .then(() => resolve(result.value));
+                        }
                         debug(`Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.`);
-                        return resolve(op.result);
-                    }
-                    debug(`Only published object of ${JSON.stringify(asset)} was present`);
-                    return this.assetStore.unpublish(op.result)
-                        .then(() => resolve(op.result));
+                        return resolve(result.value);
+                    });
                 })
                     .catch(reject);
             }

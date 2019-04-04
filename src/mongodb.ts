@@ -5,21 +5,8 @@
 */
 
 import Debug from 'debug'
-import {
-  buildReferences,
-  filterAssetKeys,
-  filterContentTypeKeys,
-  filterEntryKeys,
-  structuralChanges,
-} from './util/index'
-import {
-  validateAssetDelete,
-  validateAssetPublish,
-  validateAssetUnpublish,
-  validateContentTypeDelete,
-  validateEntryPublish,
-  validateEntryRemove,
-} from './util/validations'
+import { filterAssetKeys, filterContentTypeKeys, filterEntryKeys, structuralChanges, } from './util/index'
+import { validateAssetDelete, validateAssetPublish, validateAssetUnpublish, validateContentTypeDelete, validateEntryPublish, validateEntryRemove, } from './util/validations'
 
 const debug = Debug('mongodb-core')
 let mongo = null
@@ -139,7 +126,6 @@ export class Mongodb {
           }
           contentType = filterContentTypeKeys(contentType)
           contentType = structuralChanges(contentType)
-          contentType.references = buildReferences(contentType.schema)
         }
 
         entry = filterEntryKeys(entry)
@@ -312,6 +298,10 @@ export class Mongodb {
           .then((result) => {
             debug(`Asset unpublish status: ${result}`)
 
+            if (result.value === null) {
+              return resolve(asset)
+            }
+
             return this.db.collection(this.collectionName)
               .find({
                 content_type_uid: asset.content_type_uid,
@@ -322,20 +312,19 @@ export class Mongodb {
                   $exists: true
                 }
               })
+              .toArray()
               .then((assets) => {
-                return {result, assets}
+                if (assets === null) {
+                  debug(`Only published object of ${JSON.stringify(asset)} was present`)
+
+                  return this.assetStore.unpublish(result.value)
+                    .then(() => resolve(result.value))
+                }
+
+                debug(`Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.`)
+
+                return resolve(result.value)
               })
-          })
-          .then((op) => {
-            if (typeof op.assets !== null) {
-              debug(`Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.`)
-
-              return resolve(op.result)
-            }
-            debug(`Only published object of ${JSON.stringify(asset)} was present`)
-
-            return this.assetStore.unpublish(op.result)
-              .then(() => resolve(op.result))
           })
           .catch(reject)
       } catch (error) {
