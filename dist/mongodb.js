@@ -237,7 +237,7 @@ class Mongodb {
                     })
                         .toArray()
                         .then((assets) => {
-                        if (assets === null) {
+                        if (assets.length === 0) {
                             debug(`Only published object of ${JSON.stringify(asset)} was present`);
                             return this.assetStore.unpublish(result.value)
                                 .then(() => resolve(result.value));
@@ -259,17 +259,29 @@ class Mongodb {
             try {
                 validations_1.validateAssetDelete(asset);
                 return this.db.collection(this.collectionName)
-                    .deleteMany({
+                    .findOne({
+                    content_type_uid: '_assets',
                     uid: asset.uid,
+                    locale: asset.locale
                 })
                     .then((result) => {
-                    debug(`Delete asset result ${JSON.stringify(result)}`);
-                    if (result === null) {
+                    if (asset === null) {
+                        debug(`Asset did not exist!`);
                         return resolve(asset);
                     }
-                    return this.assetStore.delete(asset)
-                        .then(() => resolve(asset));
+                    return this.db.collection(this.collectionName)
+                        .deleteMany({
+                        uid: asset.uid,
+                        locale: asset.locale
+                    })
+                        .then(() => {
+                        return result;
+                    });
                 })
+                    .then((result) => {
+                    return this.assetStore.delete(result);
+                })
+                    .then(resolve)
                     .catch(reject);
             }
             catch (error) {

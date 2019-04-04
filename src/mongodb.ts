@@ -297,7 +297,6 @@ export class Mongodb {
           })
           .then((result) => {
             debug(`Asset unpublish status: ${result}`)
-
             if (result.value === null) {
               return resolve(asset)
             }
@@ -314,13 +313,12 @@ export class Mongodb {
               })
               .toArray()
               .then((assets) => {
-                if (assets === null) {
+                if (assets.length === 0) {
                   debug(`Only published object of ${JSON.stringify(asset)} was present`)
 
                   return this.assetStore.unpublish(result.value)
                     .then(() => resolve(result.value))
                 }
-
                 debug(`Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.`)
 
                 return resolve(result.value)
@@ -346,19 +344,31 @@ export class Mongodb {
         validateAssetDelete(asset)
 
         return this.db.collection(this.collectionName)
-          .deleteMany({
+          .findOne({
+            content_type_uid: '_assets',
             uid: asset.uid,
+            locale: asset.locale
           })
           .then((result) => {
-            debug(`Delete asset result ${JSON.stringify(result)}`)
+            if (asset === null) {
+              debug(`Asset did not exist!`)
 
-            if (result === null) {
               return resolve(asset)
             }
 
-            return this.assetStore.delete(asset)
-              .then(() => resolve(asset))
+            return this.db.collection(this.collectionName)
+              .deleteMany({
+                uid: asset.uid,
+                locale: asset.locale
+              })
+              .then(() => {
+                return result
+              })
           })
+          .then((result) => {
+            return this.assetStore.delete(result)
+          })
+          .then(resolve)
           .catch(reject)
       } catch (error) {
         return reject(error)
