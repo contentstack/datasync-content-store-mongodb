@@ -86,6 +86,8 @@ export class Mongodb {
 
           if (asset.hasOwnProperty('download_id')) {
             query.download_id = asset.download_id
+          } else if (asset.hasOwnProperty('_version')) {
+            query._version = asset._version
           }
 
           return this.db.collection(this.collectionName)
@@ -313,6 +315,7 @@ export class Mongodb {
                 content_type_uid: asset.content_type_uid,
                 locale: asset.locale,
                 uid: asset.uid,
+                url: result.value.url,
                 download_id: {
                   $exists: true
                 }
