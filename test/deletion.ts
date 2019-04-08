@@ -77,6 +77,23 @@ describe('delete', () => {
         })
       }).catch(console.error)
     })
+    test('delete asset that does not exist', () => {
+      const asset = cloneDeep(assets[0])
+
+      return db.publish(asset).then((result) => {
+        expect(result).toEqual(asset)
+        asset.uid = 'does not exist'
+
+        return db.delete(asset).then((result2) => {
+          expect(result2).toEqual(asset)
+          mongoClient.db.collection('contents').findOne({
+            uid: asset.uid,
+          }).then((data) => {
+            expect(data).toBeNull()
+          }).catch(console.error)
+        })
+      }).catch(console.error)
+    })
   })
 
   describe('delete a content type', () => {

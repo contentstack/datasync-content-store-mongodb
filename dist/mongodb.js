@@ -47,9 +47,10 @@ class Mongodb {
             try {
                 validations_1.validateAssetPublish(data);
                 data = index_1.filterAssetKeys(data);
-                return this.assetStore.download(data).then((asset) => {
+                return this.assetStore.download(data.data).then((asset) => {
                     debug(`Asset download result ${JSON.stringify(asset)}`);
-                    asset = index_1.structuralChanges(asset);
+                    data.data = asset;
+                    asset = index_1.structuralChanges(data);
                     return this.db.collection(this.collectionName)
                         .updateOne({
                         locale: asset.locale,
@@ -240,10 +241,10 @@ class Mongodb {
                         if (assets.length === 0) {
                             debug(`Only published object of ${JSON.stringify(asset)} was present`);
                             return this.assetStore.unpublish(result.value)
-                                .then(() => resolve(result.value));
+                                .then(() => resolve(asset));
                         }
                         debug(`Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.`);
-                        return resolve(result.value);
+                        return resolve(asset);
                     });
                 })
                     .catch(reject);
@@ -279,9 +280,9 @@ class Mongodb {
                     });
                 })
                     .then((result) => {
-                    return this.assetStore.delete(result);
+                    return this.assetStore.delete(result)
+                        .then(() => resolve(asset));
                 })
-                    .then(resolve)
                     .catch(reject);
             }
             catch (error) {
