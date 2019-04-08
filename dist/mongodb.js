@@ -51,11 +51,15 @@ class Mongodb {
                     debug(`Asset download result ${JSON.stringify(asset)}`);
                     data.data = asset;
                     asset = index_1.structuralChanges(data);
-                    return this.db.collection(this.collectionName)
-                        .updateOne({
+                    const query = {
                         locale: asset.locale,
-                        uid: asset.uid,
-                    }, {
+                        uid: asset.uid
+                    };
+                    if (asset.hasOwnProperty('download_id')) {
+                        query.download_id = asset.download_id;
+                    }
+                    return this.db.collection(this.collectionName)
+                        .updateOne(query, {
                         $set: asset,
                     }, {
                         upsert: true,
@@ -231,7 +235,6 @@ class Mongodb {
                         content_type_uid: asset.content_type_uid,
                         locale: asset.locale,
                         uid: asset.uid,
-                        url: asset.data.url,
                         download_id: {
                             $exists: true
                         }

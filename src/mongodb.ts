@@ -79,11 +79,17 @@ export class Mongodb {
           data.data = asset
           asset = structuralChanges(data)
 
+          const query: any = {
+            locale: asset.locale,
+            uid: asset.uid
+          }
+
+          if (asset.hasOwnProperty('download_id')) {
+            query.download_id = asset.download_id
+          }
+
           return this.db.collection(this.collectionName)
-            .updateOne({
-              locale: asset.locale,
-              uid: asset.uid,
-            }, {
+            .updateOne(query, {
               $set: asset,
             }, {
               upsert: true,
@@ -307,7 +313,6 @@ export class Mongodb {
                 content_type_uid: asset.content_type_uid,
                 locale: asset.locale,
                 uid: asset.uid,
-                url: asset.data.url,
                 download_id: {
                   $exists: true
                 }
