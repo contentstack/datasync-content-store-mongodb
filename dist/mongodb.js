@@ -4,11 +4,20 @@
 * Copyright (c) 2019 Contentstack LLC
 * MIT Licensed
 */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug_1 = __importDefault(require("debug"));
+const lodash_1 = require("lodash");
 const index_1 = require("./util/index");
 const validations_1 = require("./util/validations");
 const debug = debug_1.default('mongodb-core');
@@ -43,40 +52,44 @@ class Mongodb {
     }
     publishAsset(data) {
         debug(`Asset publish called ${JSON.stringify(data)}`);
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                validations_1.validateAssetPublish(data);
-                data = index_1.filterAssetKeys(data);
-                return this.assetStore.download(data.data).then((asset) => {
-                    debug(`Asset download result ${JSON.stringify(asset)}`);
-                    data.data = asset;
-                    asset = index_1.structuralChanges(data);
+                let assetJSON = lodash_1.cloneDeep(data);
+                validations_1.validateAssetPublish(assetJSON);
+                assetJSON = index_1.filterAssetKeys(assetJSON);
+                assetJSON = index_1.structuralChanges(assetJSON);
+                if (assetJSON.hasOwnProperty('_version')) {
+                    yield this.unpublish(data);
+                }
+                return this.assetStore.download(assetJSON)
+                    .then((asset) => {
                     const query = {
-                        locale: asset.locale,
-                        uid: asset.uid
+                        uid: asset.uid,
+                        locale: asset.locale
                     };
                     if (asset.hasOwnProperty('download_id')) {
                         query.download_id = asset.download_id;
                     }
-                    else if (asset.hasOwnProperty('_version')) {
+                    else {
                         query._version = asset._version;
                     }
                     return this.db.collection(this.collectionName)
                         .updateOne(query, {
-                        $set: asset,
+                        $set: assetJSON,
                     }, {
                         upsert: true,
-                    })
-                        .then((result) => {
-                        debug(`Asset publish result ${JSON.stringify(result)}`);
-                        return resolve(data);
                     });
-                }).catch(reject);
+                })
+                    .then((result) => {
+                    debug(`Asset publish result ${JSON.stringify(result)}`);
+                    return resolve(data);
+                })
+                    .catch(reject);
             }
             catch (error) {
                 return reject(error);
             }
-        });
+        }));
     }
     publishEntry(data) {
         debug(`Entry publish called ${JSON.stringify(data)}`);
@@ -229,7 +242,7 @@ class Mongodb {
                     }
                 })
                     .then((result) => {
-                    debug(`Asset unpublish status: ${result}`);
+                    debug(`Asset unpublish status: ${JSON.stringify(result)}`);
                     if (result.value === null) {
                         return resolve(asset);
                     }
@@ -267,18 +280,20 @@ class Mongodb {
             try {
                 validations_1.validateAssetDelete(asset);
                 return this.db.collection(this.collectionName)
-                    .findOne({
+                    .find({
                     content_type_uid: '_assets',
                     uid: asset.uid,
                     locale: asset.locale
                 })
+                    .toArray()
                     .then((result) => {
-                    if (asset === null) {
+                    if (result.length === 0) {
                         debug(`Asset did not exist!`);
                         return resolve(asset);
                     }
                     return this.db.collection(this.collectionName)
                         .deleteMany({
+                        content_type_uid: '_assets',
                         uid: asset.uid,
                         locale: asset.locale
                     })

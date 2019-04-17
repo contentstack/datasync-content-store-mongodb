@@ -5,6 +5,7 @@
 */
 
 import Debug from 'debug'
+import { cloneDeep } from 'lodash'
 import { filterAssetKeys, filterContentTypeKeys, filterEntryKeys, structuralChanges, } from './util/index'
 import { validateAssetDelete, validateAssetPublish, validateAssetUnpublish, validateContentTypeDelete, validateEntryPublish, validateEntryRemove, } from './util/validations'
 
@@ -69,39 +70,44 @@ export class Mongodb {
   public publishAsset(data) {
     debug(`Asset publish called ${JSON.stringify(data)}`)
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
-        validateAssetPublish(data)
-        data = filterAssetKeys(data)
 
-        return this.assetStore.download(data.data).then((asset) => {
-          debug(`Asset download result ${JSON.stringify(asset)}`)
-          data.data = asset
-          asset = structuralChanges(data)
+        let assetJSON = cloneDeep(data)
+        validateAssetPublish(assetJSON)
+        assetJSON = filterAssetKeys(assetJSON)
+        assetJSON = structuralChanges(assetJSON)
 
-          const query: any = {
-            locale: asset.locale,
-            uid: asset.uid
-          }
+        if (assetJSON.hasOwnProperty('_version')) {
+          await this.unpublish(data)
+        }
 
-          if (asset.hasOwnProperty('download_id')) {
-            query.download_id = asset.download_id
-          } else if (asset.hasOwnProperty('_version')) {
-            query._version = asset._version
-          }
+        // remove if any published version exists first
+        return this.assetStore.download(assetJSON)
+          .then((asset) => {
+            const query: any = {
+              uid: asset.uid,
+              locale: asset.locale
+            }
+            if (asset.hasOwnProperty('download_id')) {
+              query.download_id = asset.download_id
+            } else {
+              query._version = asset._version
+            }
 
-          return this.db.collection(this.collectionName)
-            .updateOne(query, {
-              $set: asset,
-            }, {
-              upsert: true,
-            })
-            .then((result) => {
-              debug(`Asset publish result ${JSON.stringify(result)}`)
+            return this.db.collection(this.collectionName)
+              .updateOne(query, {
+                $set: assetJSON,
+              }, {
+                upsert: true,
+              })
+          })
+          .then((result) => {
+            debug(`Asset publish result ${JSON.stringify(result)}`)
 
-              return resolve(data)
-            })
-        }).catch(reject)
+            return resolve(data)
+          })
+          .catch(reject)
       } catch (error) {
         return reject(error)
       }
@@ -305,7 +311,7 @@ export class Mongodb {
             }
           })
           .then((result) => {
-            debug(`Asset unpublish status: ${result}`)
+            debug(`Asset unpublish status: ${JSON.stringify(result)}`)
             if (result.value === null) {
               return resolve(asset)
             }
@@ -353,13 +359,14 @@ export class Mongodb {
         validateAssetDelete(asset)
 
         return this.db.collection(this.collectionName)
-          .findOne({
+          .find({
             content_type_uid: '_assets',
             uid: asset.uid,
             locale: asset.locale
           })
+          .toArray()
           .then((result) => {
-            if (asset === null) {
+            if (result.length === 0) {
               debug(`Asset did not exist!`)
 
               return resolve(asset)
@@ -367,6 +374,7 @@ export class Mongodb {
 
             return this.db.collection(this.collectionName)
               .deleteMany({
+                content_type_uid: '_assets',
                 uid: asset.uid,
                 locale: asset.locale
               })

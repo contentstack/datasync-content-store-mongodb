@@ -25,8 +25,6 @@ interface IConnector {
   publish(): any,
   unpublish(): any,
   delete(): any,
-  find(): any[],
-  findOne(): any,
 }
 
 interface IAssetConnector {
