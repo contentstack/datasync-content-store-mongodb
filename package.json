@@ -5,9 +5,9 @@
   "description": "Contentstack datasync's mongodb library. Helps to store contents in mongodb",
   "main": "dist/index.js",
   "dependencies": {
-    "debug": "^4.1.0",
-    "lodash": "^4.17.11",
-    "mongodb": "^3.1.10"
+    "debug": "4.1.0",
+    "lodash": "4.17.11",
+    "mongodb": "3.1.10"
   },
   "devDependencies": {
     "@types/debug": "^0.0.31",
