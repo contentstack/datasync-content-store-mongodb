@@ -15,7 +15,7 @@ const logger_1 = require("./util/logger");
 const validations_1 = require("./util/validations");
 const debug = debug_1.default('connection');
 let indexes = {
-    content_type_uid: 1,
+    _content_type_uid: 1,
     locales: 1,
     uid: 1,
 };
@@ -30,11 +30,10 @@ exports.connect = (config) => {
             validations_1.validateMongodbConfig(mongoConfig);
             const connectionUri = mongoConfig.url || mongoConfig.uri;
             const dbName = mongoConfig.dbName;
-            const collectionName = mongoConfig.collectionName;
             const options = mongoConfig.options;
             debug('connection url', connectionUri);
             debug('db name', dbName);
-            debug('collection name', collectionName);
+            debug('collection names', mongoConfig.collection);
             debug('db options', JSON.stringify(options));
             if (mongoConfig.indexes && lodash_1.isPlainObject(mongoConfig.indexes) && !(lodash_1.isEmpty(mongoConfig.indexes))) {
                 indexes = lodash_1.merge(indexes, mongoConfig.indexes);
@@ -46,18 +45,16 @@ exports.connect = (config) => {
                 logger_1.logger.info(`Mongodb connection to ${connectionUri} established successfully!`);
                 resolve(instance);
                 const bucket = [];
-                for (let index in indexes) {
-                    if (indexes[index] === 1 || indexes[index] === -1) {
-                        bucket.push(createIndexes(collectionName, index, indexes[index]));
+                for (let key in mongoConfig.collection) {
+                    for (let index in indexes) {
+                        if (indexes[index] === 1 || indexes[index] === -1) {
+                            bucket.push(createIndexes(mongoConfig.collection[key], index, indexes[index]));
+                        }
                     }
                 }
                 Promise.all(bucket)
                     .then(() => {
-                    logger_1.logger.info(`Indexes created successfully in ${collectionName}`);
-                })
-                    .catch((error) => {
-                    logger_1.logger.error(`Failed while creating indexes in ${collectionName}`);
-                    logger_1.logger.error(error);
+                    logger_1.logger.info(`Indexes created successfully`);
                 });
             }).catch(reject);
         }
@@ -73,7 +70,6 @@ const createIndexes = (collectionId, index, type) => {
     })
         .then((result) => {
         debug(`Indexes result for ${index}: ${JSON.stringify(result)}`);
-        logger_1.logger.info(`Index created in collection: ${collectionId}, index-field: ${index}, index-type: ${type}`);
         return;
     });
 };

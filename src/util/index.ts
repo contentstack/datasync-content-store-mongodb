@@ -4,8 +4,20 @@
 * MIT Licensed
 */
 
-import { cloneDeep, hasIn, merge } from 'lodash'
+import { cloneDeep, merge } from 'lodash'
 import { getConfig } from '../index'
+
+export const sanitizeConfig = (config) => {
+  if (typeof config.contentStore.collectionName === 'string' && config.contentStore.length) {
+    config.contentStore.collection.entry = config.contentStore.collectionName
+    config.contentStore.collection.asset = config.contentStore.collectionName
+    config.contentStore.collection.schema = config.contentStore.collectionName
+
+    delete config.contentStore.collectionName
+  }
+
+  return config
+}
 
 const maskKeys = (json, arr, pos) => {
   const key = arr[pos]
@@ -68,36 +80,10 @@ export const filterContentTypeKeys = (contentType) => {
 }
 
 export const structuralChanges = (entity) => {
-  const contentStore = getConfig().contentStore
-  const indexedKeys = contentStore.indexedKeys
-  if (indexedKeys && typeof indexedKeys === 'object' && Object.keys(indexedKeys).length) {
-    let clone = cloneDeep(entity.data)
-    const obj: any = {}
-    obj.synced_at = new Date().toISOString()
-    clone.synced_at = obj.synced_at
+  const data = cloneDeep(entity.data)
+  delete entity.data
 
-    for (let key in indexedKeys) {
-      if (indexedKeys[key]) {
-        if (hasIn(entity, key)) {
-          obj[key] = entity[key]
-          clone[key] = entity[key]
-        }
-      }
-    }
-  
-    if (hasIn(clone, 'publish_details')) {
-      clone.published_at = clone.publish_details.time
-      clone.locale = clone.publish_details.locale
-      delete clone.publish_details
-    } else {
-      // most prolly for content types (though, not required)
-      clone.published_at = new Date().toISOString()
-    }
-  
-    clone = merge(clone, obj)
-
-    return clone
-  }
+  entity = merge(entity, data)
 
   return entity
 }

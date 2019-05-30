@@ -7,15 +7,13 @@ export declare class Mongodb {
     assetStore: any;
     db: any;
     client: any;
-    private collectionName;
-    constructor(mongodb: any, assetStore: any, config?: {
-        collectionName: string;
-    });
-    publish(data: any): Promise<{}>;
-    publishAsset(data: any): Promise<{}>;
-    publishEntry(data: any): Promise<{}>;
-    unpublish(data: any): Promise<{}>;
-    delete(data: any): Promise<{}>;
+    private collection;
+    constructor(mongodb: any, assetStore: any, config: any);
+    publish(data: any): Promise<unknown>;
+    publishAsset(data: any): Promise<unknown>;
+    publishEntry(data: any): Promise<unknown>;
+    unpublish(data: any): Promise<unknown>;
+    delete(data: any): Promise<unknown>;
     private unpublishEntry;
     private deleteEntry;
     private unpublishAsset;

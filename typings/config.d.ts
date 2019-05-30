@@ -6,10 +6,14 @@
 export declare const config: {
     contentStore: {
         dbName: string;
-        collectionName: string;
+        collection: {
+            entry: string;
+            asset: string;
+            schema: string;
+        };
         indexes: {
             published_at: number;
-            content_type_uid: number;
+            _content_type_uid: number;
             locale: number;
             uid: number;
         };
@@ -21,12 +25,6 @@ export declare const config: {
             reconnectInterval: number;
             reconnectTries: number;
             useNewUrlParser: boolean;
-        };
-        indexedKeys: {
-            content_type_uid: boolean;
-            locale: boolean;
-            uid: boolean;
-            published_at: boolean;
         };
         unwantedKeys: {
             asset: {

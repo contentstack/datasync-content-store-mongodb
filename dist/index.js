@@ -13,6 +13,7 @@ const lodash_1 = require("lodash");
 const connection_1 = require("./connection");
 const config_1 = require("./config");
 const mongodb_1 = require("./mongodb");
+const index_1 = require("./util/index");
 const logger_1 = require("./util/logger");
 const validations_1 = require("./util/validations");
 const debug = debug_1.default('registration');
@@ -34,6 +35,7 @@ exports.start = (connector, config, logger) => {
         try {
             appConfig = lodash_1.merge(config_1.config, appConfig, config);
             validations_1.validateConfig(appConfig);
+            appConfig = index_1.sanitizeConfig(appConfig);
             assetConnectorInstance = connector || assetConnectorInstance;
             validations_1.validateAssetConnectorInstance(assetConnectorInstance);
             logger_1.setLogger(logger);

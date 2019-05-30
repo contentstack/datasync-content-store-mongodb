@@ -31,4 +31,4 @@ export declare const setConfig: (config: IConfig) => void;
 export { setLogger } from './util/logger';
 export declare const getConfig: () => IConfig;
 export declare let mongoClient: any;
-export declare const start: (connector: IAssetConnector, config?: IConfig, logger?: ILogger) => Promise<{}>;
+export declare const start: (connector: IAssetConnector, config?: IConfig, logger?: ILogger) => Promise<unknown>;

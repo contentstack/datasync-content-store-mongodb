@@ -25,14 +25,18 @@ export class Mongodb {
   public assetStore: any
   public db: any
   public client: any
-  private collectionName: string
+  private collection: {
+    asset: string,
+    entry: string,
+    schema: string
+  }
 
-  constructor(mongodb, assetStore, config = { collectionName: 'contents'}) {
+  constructor(mongodb, assetStore, config) {
     if (!mongo) {
       this.assetStore = assetStore
       this.db = mongodb.db
       this.client = mongodb.client
-      this.collectionName = (config && config.collectionName) ? config.collectionName : 'contents'
+      this.collection = config.collection
       mongo = this
     }
 
@@ -95,7 +99,7 @@ export class Mongodb {
               query._version = asset._version
             }
 
-            return this.db.collection(this.collectionName)
+            return this.db.collection(this.collection.asset)
               .updateOne(query, {
                 $set: assetJSON,
               }, {
@@ -127,15 +131,17 @@ export class Mongodb {
         let contentType
         validateEntryPublish(data)
         let entry = {
-          content_type_uid: data.content_type_uid,
+          _content_type_uid: data.content_type_uid,
           data: data.data,
           locale: data.locale,
           uid: data.uid,
+          event_at: data.event_at,
+          synced_at: data.synced_at,
         }
 
         if (data.hasOwnProperty('content_type')) {
           contentType = {
-            content_type_uid: '_content_types',
+            _content_type_uid: '_content_types',
             data: data.content_type,
             uid: data.content_type_uid,
           }
@@ -146,9 +152,9 @@ export class Mongodb {
         entry = filterEntryKeys(entry)
         entry = structuralChanges(entry)
 
-        return this.db.collection(this.collectionName)
+        return this.db.collection(this.collection.entry)
           .updateOne({
-            content_type_uid: entry.content_type_uid,
+            _content_type_uid: entry._content_type_uid,
             locale: entry.locale,
             uid: entry.uid,
           }, {
@@ -160,9 +166,9 @@ export class Mongodb {
             debug(`Entry publish result ${entryPublishResult}`)
 
             if (typeof contentType === 'object') {
-              return this.db.collection(this.collectionName)
+              return this.db.collection(this.collection.schema)
                 .updateOne({
-                  content_type_uid: contentType.content_type_uid,
+                  _content_type_uid: contentType._content_type_uid,
                   uid: contentType.uid,
                 }, {
                   $set: contentType,
@@ -244,9 +250,9 @@ export class Mongodb {
       try {
         validateEntryRemove(entry)
 
-        return this.db.collection(this.collectionName)
+        return this.db.collection(this.collection.entry)
           .deleteOne({
-            content_type_uid: entry.content_type_uid,
+            _content_type_uid: entry.content_type_uid,
             locale: entry.locale,
             uid: entry.uid,
           })
@@ -273,9 +279,9 @@ export class Mongodb {
       try {
         validateEntryRemove(entry)
 
-        return this.db.collection(this.collectionName)
+        return this.db.collection(this.collection.entry)
           .deleteMany({
-            content_type_uid: entry.content_type_uid,
+            _content_type_uid: entry.content_type_uid,
             uid: entry.uid,
           })
           .then((result) => {
@@ -301,9 +307,9 @@ export class Mongodb {
       try {
         validateAssetUnpublish(asset)
 
-        return this.db.collection(this.collectionName)
+        return this.db.collection(this.collection.asset)
           .findOneAndDelete({
-            content_type_uid: asset.content_type_uid,
+            _content_type_uid: asset.content_type_uid,
             locale: asset.locale,
             uid: asset.uid,
             _version: {
@@ -316,9 +322,9 @@ export class Mongodb {
               return resolve(asset)
             }
 
-            return this.db.collection(this.collectionName)
+            return this.db.collection(this.collection.asset)
               .find({
-                content_type_uid: asset.content_type_uid,
+                _content_type_uid: asset.content_type_uid,
                 locale: asset.locale,
                 uid: asset.uid,
                 url: result.value.url,
@@ -358,9 +364,9 @@ export class Mongodb {
       try {
         validateAssetDelete(asset)
 
-        return this.db.collection(this.collectionName)
+        return this.db.collection(this.collection.asset)
           .find({
-            content_type_uid: '_assets',
+            _content_type_uid: '_assets',
             uid: asset.uid,
             locale: asset.locale
           })
@@ -372,9 +378,9 @@ export class Mongodb {
               return resolve(asset)
             }
 
-            return this.db.collection(this.collectionName)
+            return this.db.collection(this.collection.asset)
               .deleteMany({
-                content_type_uid: '_assets',
+                _content_type_uid: '_assets',
                 uid: asset.uid,
                 locale: asset.locale
               })
@@ -405,14 +411,14 @@ export class Mongodb {
       try {
         validateContentTypeDelete(contentType)
 
-        return this.db.collection(this.collectionName)
+        return this.db.collection(this.collection.entry)
           .deleteMany({
-            content_type_uid: contentType.uid,
+            _content_type_uid: contentType.uid,
           })
           .then((entriesDeleteResult) => {
             debug(`Delete entries result ${JSON.stringify(entriesDeleteResult)}`)
 
-            return this.db.collection(this.collectionName)
+            return this.db.collection(this.collection.schema)
               .deleteOne({
                 uid: contentType.uid,
               })

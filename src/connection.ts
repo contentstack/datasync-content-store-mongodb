@@ -17,7 +17,7 @@ interface IMongo {
 }
 
 let indexes = {
-  content_type_uid: 1,
+  _content_type_uid: 1,
   locales: 1,
   uid: 1,
 }
@@ -42,12 +42,11 @@ export const connect = (config) => {
       validateMongodbConfig(mongoConfig)
       const connectionUri = mongoConfig.url || mongoConfig.uri
       const dbName = mongoConfig.dbName
-      const collectionName = mongoConfig.collectionName
       const options = mongoConfig.options
 
       debug('connection url', connectionUri)
       debug('db name', dbName)
-      debug('collection name', collectionName)
+      debug('collection names', mongoConfig.collection)
       debug('db options', JSON.stringify(options))
 
       if (mongoConfig.indexes && isPlainObject(mongoConfig.indexes) && !(isEmpty(mongoConfig.indexes))) {
@@ -65,19 +64,18 @@ export const connect = (config) => {
 
         // Create indexes in the background
         const bucket: any = []
-        for (let index in indexes) {
-          if (indexes[index] === 1 || indexes[index] === -1) {
-            bucket.push(createIndexes(collectionName, index, indexes[index]))
+
+        for (let key in mongoConfig.collection) {
+          for (let index in indexes) {
+            if (indexes[index] === 1 || indexes[index] === -1) {
+              bucket.push(createIndexes(mongoConfig.collection[key], index, indexes[index]))
+            }
           }
         }
 
         Promise.all(bucket)
           .then(() => {
-            logger.info(`Indexes created successfully in ${collectionName}`)    
-          })
-          .catch((error) => {
-            logger.error(`Failed while creating indexes in ${collectionName}`)
-            logger.error(error)
+            logger.info(`Indexes created successfully`)    
           })
       }).catch(reject)
     } catch (error) {
@@ -93,7 +91,6 @@ const createIndexes = (collectionId, index, type) => {
     })
     .then((result) => {
       debug(`Indexes result for ${index}: ${JSON.stringify(result)}`)
-      logger.info(`Index created in collection: ${collectionId}, index-field: ${index}, index-type: ${type}`)
       return
     })
 }

@@ -9,6 +9,7 @@ import { merge } from 'lodash'
 import { connect } from './connection'
 import { config as internalConfig } from './config'
 import { Mongodb } from './mongodb'
+import { sanitizeConfig } from './util/index'
 import { setLogger } from './util/logger'
 
 import {
@@ -100,6 +101,7 @@ export const start = (connector: IAssetConnector, config?: IConfig, logger?: ILo
     try {
       appConfig = merge(internalConfig, appConfig, config)
       validateConfig(appConfig)
+      appConfig = sanitizeConfig(appConfig)
       assetConnectorInstance = connector || assetConnectorInstance
       validateAssetConnectorInstance(assetConnectorInstance)
       setLogger(logger)

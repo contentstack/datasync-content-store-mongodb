@@ -11,10 +11,14 @@
 export const config = {
   contentStore: {
     dbName: 'contentstack-persistent-db',
-    collectionName: 'contents',
+    collection: {
+      entry: 'contents',
+      asset: 'contents',
+      schema: 'contents'
+    },
     indexes: {
       published_at: -1,
-      content_type_uid: 1,
+      _content_type_uid: 1,
       locale: 1,
       uid: 1
     },
@@ -27,14 +31,6 @@ export const config = {
       reconnectInterval: 1000,
       reconnectTries: 20,
       useNewUrlParser: true,
-    },
-    // keys that form part of sys_keys, pass { key: true } to add, { key: false } to remove
-    // currently, only top level keys from SYNC API response item are supported
-    indexedKeys: {
-      content_type_uid: true,
-      locale: true,
-      uid: true,
-      published_at: true
     },
     unwantedKeys: {
       asset: {
