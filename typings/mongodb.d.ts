@@ -9,11 +9,11 @@ export declare class Mongodb {
     client: any;
     private collection;
     constructor(mongodb: any, assetStore: any, config: any);
-    publish(data: any): Promise<unknown>;
-    publishAsset(data: any): Promise<unknown>;
-    publishEntry(data: any): Promise<unknown>;
-    unpublish(data: any): Promise<unknown>;
-    delete(data: any): Promise<unknown>;
+    publish(data: any): Promise<{}>;
+    publishAsset(data: any): Promise<{}>;
+    publishEntry(data: any): Promise<{}>;
+    unpublish(data: any): Promise<{}>;
+    delete(data: any): Promise<{}>;
     private unpublishEntry;
     private deleteEntry;
     private unpublishAsset;

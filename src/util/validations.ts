@@ -4,8 +4,8 @@
 * MIT Licensed
 */
 
-const requiredUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid']
-const requiredRemoveKeys = ['content_type_uid', 'locale', 'uid']
+const requiredUpsertKeys = ['_content_type_uid', 'locale', 'uid']
+const requiredRemoveKeys = ['_content_type_uid', 'locale', 'uid']
 
 /**
  * @summary Validates app's config
@@ -112,7 +112,7 @@ export const validateAssetDelete = (asset) => {
  * @param {Object} contentType - Content type json
  */
 export const validateContentTypeDelete = (contentType) => {
-  const keys = ['content_type_uid', 'uid']
+  const keys = ['_content_type_uid', 'uid']
   keys.forEach((key) => {
     if (!(key in contentType)) {
       throw new Error(`${key} is missing in content type delete!`)

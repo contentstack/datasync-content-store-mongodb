@@ -39,11 +39,13 @@ exports.start = (connector, config, logger) => {
             assetConnectorInstance = connector || assetConnectorInstance;
             validations_1.validateAssetConnectorInstance(assetConnectorInstance);
             logger_1.setLogger(logger);
-            return connection_1.connect(appConfig).then((mongo) => {
+            return connection_1.connect(appConfig)
+                .then((mongo) => {
                 exports.mongoClient = new mongodb_1.Mongodb(mongo, assetConnectorInstance, appConfig.contentStore);
                 debug('Mongo connector instance created successfully!');
                 return resolve(exports.mongoClient);
-            }).catch(reject);
+            })
+                .catch(reject);
         }
         catch (error) {
             return reject(error);

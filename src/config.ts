@@ -17,9 +17,7 @@ export const config = {
       schema: 'contents'
     },
     indexes: {
-      published_at: -1,
       _content_type_uid: 1,
-      locale: 1,
       uid: 1
     },
     // http://mongodb.github.io/node-mongodb-native/3.1/api/MongoClient.html
@@ -34,28 +32,28 @@ export const config = {
     },
     unwantedKeys: {
       asset: {
-        action: true,
-        checkpoint: true,
-        'data.created_by': true,
-        event_at: true,
         type: true,
-        'data.updated_by': true
+        _checkpoint: true,
+        created_by: true,
+        _event_at: true,
+        updated_by: true,
+        publish_details: true,
       },
       contentType: {
-        'data.created_by': true,
-        'data.updated_by': true,
-        'data.DEFAULT_ACL': true,
-        'data.SYS_ACL': true,
-        'data.abilities': true,
-        'data.last_activity': true
+        created_by: true,
+        updated_by: true,
+        DEFAULT_ACL: true,
+        SYS_ACL: true,
+        abilities: true,
+        last_activity: true,
       },
       entry: {
-        action: true,
-        checkpoint: true,
-        'data.created_by': true,
-        event_at: true,
         type: true,
-        'data.updated_by': true
+        _checkpoint: true,
+        created_by: true,
+        _event_at: true,
+        updated_by: true,
+        publish_details: true,
       },
     },
     uri: 'mongodb://localhost:27017',

@@ -5,8 +5,8 @@
 * MIT Licensed
 */
 Object.defineProperty(exports, "__esModule", { value: true });
-const requiredUpsertKeys = ['content_type_uid', 'locale', 'data', 'uid'];
-const requiredRemoveKeys = ['content_type_uid', 'locale', 'uid'];
+const requiredUpsertKeys = ['_content_type_uid', 'locale', 'uid'];
+const requiredRemoveKeys = ['_content_type_uid', 'locale', 'uid'];
 exports.validateConfig = (config) => {
     if (typeof config.contentStore.options !== 'object' || Object.keys(config.contentStore.options).length
         === 0) {
@@ -71,7 +71,7 @@ exports.validateAssetDelete = (asset) => {
     });
 };
 exports.validateContentTypeDelete = (contentType) => {
-    const keys = ['content_type_uid', 'uid'];
+    const keys = ['_content_type_uid', 'uid'];
     keys.forEach((key) => {
         if (!(key in contentType)) {
             throw new Error(`${key} is missing in content type delete!`);

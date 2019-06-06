@@ -106,12 +106,14 @@ export const start = (connector: IAssetConnector, config?: IConfig, logger?: ILo
       validateAssetConnectorInstance(assetConnectorInstance)
       setLogger(logger)
 
-      return connect(appConfig).then((mongo) => {
-        mongoClient = new Mongodb(mongo, assetConnectorInstance, appConfig.contentStore)
-        debug('Mongo connector instance created successfully!')
+      return connect(appConfig)
+        .then((mongo) => {
+          mongoClient = new Mongodb(mongo, assetConnectorInstance, appConfig.contentStore)
+          debug('Mongo connector instance created successfully!')
 
-        return resolve(mongoClient)
-      }).catch(reject)
+          return resolve(mongoClient)
+        })
+        .catch(reject)
     } catch (error) {
       return reject(error)
     }

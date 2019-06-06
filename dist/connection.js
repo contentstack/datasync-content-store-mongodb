@@ -16,7 +16,6 @@ const validations_1 = require("./util/validations");
 const debug = debug_1.default('connection');
 let indexes = {
     _content_type_uid: 1,
-    locales: 1,
     uid: 1,
 };
 const instance = {};
@@ -56,7 +55,8 @@ exports.connect = (config) => {
                     .then(() => {
                     logger_1.logger.info(`Indexes created successfully`);
                 });
-            }).catch(reject);
+            })
+                .catch(reject);
         }
         catch (error) {
             return reject(error);

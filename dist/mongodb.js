@@ -36,7 +36,7 @@ class Mongodb {
     publish(data) {
         return new Promise((resolve, reject) => {
             try {
-                if (data.content_type_uid === '_assets') {
+                if (data._content_type_uid === '_assets') {
                     return this.publishAsset(data)
                         .then(resolve)
                         .catch(reject);
@@ -57,7 +57,6 @@ class Mongodb {
                 let assetJSON = lodash_1.cloneDeep(data);
                 validations_1.validateAssetPublish(assetJSON);
                 assetJSON = index_1.filterAssetKeys(assetJSON);
-                assetJSON = index_1.structuralChanges(assetJSON);
                 if (assetJSON.hasOwnProperty('_version')) {
                     yield this.unpublish(data);
                 }
@@ -96,33 +95,21 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 let contentType;
-                validations_1.validateEntryPublish(data);
-                let entry = {
-                    _content_type_uid: data.content_type_uid,
-                    data: data.data,
-                    locale: data.locale,
-                    uid: data.uid,
-                    event_at: data.event_at,
-                    synced_at: data.synced_at,
-                };
-                if (data.hasOwnProperty('content_type')) {
-                    contentType = {
-                        _content_type_uid: '_content_types',
-                        data: data.content_type,
-                        uid: data.content_type_uid,
-                    };
+                let entryJSON = lodash_1.cloneDeep(data);
+                validations_1.validateEntryPublish(entryJSON);
+                if (data.hasOwnProperty('_content_type')) {
+                    contentType = Object.assign({ _content_type_uid: '_content_types' }, data._content_type);
                     contentType = index_1.filterContentTypeKeys(contentType);
-                    contentType = index_1.structuralChanges(contentType);
+                    delete entryJSON._content_type;
                 }
-                entry = index_1.filterEntryKeys(entry);
-                entry = index_1.structuralChanges(entry);
+                entryJSON = index_1.filterEntryKeys(entryJSON);
                 return this.db.collection(this.collection.entry)
                     .updateOne({
-                    _content_type_uid: entry._content_type_uid,
-                    locale: entry.locale,
-                    uid: entry.uid,
+                    _content_type_uid: entryJSON._content_type_uid,
+                    locale: entryJSON.locale,
+                    uid: entryJSON.uid,
                 }, {
-                    $set: entry,
+                    $set: entryJSON,
                 }, {
                     upsert: true,
                 })
@@ -154,12 +141,14 @@ class Mongodb {
     unpublish(data) {
         return new Promise((resolve, reject) => {
             try {
-                if (data.content_type_uid === '_assets') {
+                if (data._content_type_uid === '_assets') {
                     return this.unpublishAsset(data)
                         .then(resolve)
                         .catch(reject);
                 }
-                return this.unpublishEntry(data).then(resolve).catch(reject);
+                return this.unpublishEntry(data)
+                    .then(resolve)
+                    .catch(reject);
             }
             catch (error) {
                 return reject(error);
@@ -169,12 +158,12 @@ class Mongodb {
     delete(data) {
         return new Promise((resolve, reject) => {
             try {
-                if (data.content_type_uid === '_assets') {
+                if (data._content_type_uid === '_assets') {
                     return this.deleteAsset(data)
                         .then(resolve)
                         .catch(reject);
                 }
-                else if (data.content_type_uid === '_content_types') {
+                else if (data._content_type_uid === '_content_types') {
                     return this.deleteContentType(data)
                         .then(resolve)
                         .catch(reject);
@@ -195,7 +184,7 @@ class Mongodb {
                 validations_1.validateEntryRemove(entry);
                 return this.db.collection(this.collection.entry)
                     .deleteOne({
-                    _content_type_uid: entry.content_type_uid,
+                    _content_type_uid: entry._content_type_uid,
                     locale: entry.locale,
                     uid: entry.uid,
                 })
@@ -216,13 +205,14 @@ class Mongodb {
                 validations_1.validateEntryRemove(entry);
                 return this.db.collection(this.collection.entry)
                     .deleteMany({
-                    _content_type_uid: entry.content_type_uid,
+                    _content_type_uid: entry._content_type_uid,
                     uid: entry.uid,
                 })
                     .then((result) => {
                     debug(`Delete entry result ${result}`);
                     return resolve(entry);
-                }).catch(reject);
+                })
+                    .catch(reject);
             }
             catch (error) {
                 return reject(error);
@@ -236,7 +226,7 @@ class Mongodb {
                 validations_1.validateAssetUnpublish(asset);
                 return this.db.collection(this.collection.asset)
                     .findOneAndDelete({
-                    _content_type_uid: asset.content_type_uid,
+                    _content_type_uid: asset._content_type_uid,
                     locale: asset.locale,
                     uid: asset.uid,
                     _version: {
@@ -250,7 +240,7 @@ class Mongodb {
                     }
                     return this.db.collection(this.collection.asset)
                         .find({
-                        _content_type_uid: asset.content_type_uid,
+                        _content_type_uid: asset._content_type_uid,
                         locale: asset.locale,
                         uid: asset.uid,
                         url: result.value.url,
@@ -333,7 +323,8 @@ class Mongodb {
                         debug(`Content type delete result ${JSON.stringify(contentTypeDeleteResult)}`);
                         return resolve(contentType);
                     });
-                }).catch(reject);
+                })
+                    .catch(reject);
             }
             catch (error) {
                 return reject(error);

@@ -18,7 +18,6 @@ interface IMongo {
 
 let indexes = {
   _content_type_uid: 1,
-  locales: 1,
   uid: 1,
 }
 
@@ -77,7 +76,8 @@ export const connect = (config) => {
           .then(() => {
             logger.info(`Indexes created successfully`)    
           })
-      }).catch(reject)
+      })
+      .catch(reject)
     } catch (error) {
       return reject(error)
     }

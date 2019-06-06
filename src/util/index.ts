@@ -4,7 +4,6 @@
 * MIT Licensed
 */
 
-import { cloneDeep, merge } from 'lodash'
 import { getConfig } from '../index'
 
 export const sanitizeConfig = (config) => {
@@ -77,13 +76,4 @@ export const filterEntryKeys = (entry) => {
  */
 export const filterContentTypeKeys = (contentType) => {
   return filter('contentType', contentType)
-}
-
-export const structuralChanges = (entity) => {
-  const data = cloneDeep(entity.data)
-  delete entity.data
-
-  entity = merge(entity, data)
-
-  return entity
 }

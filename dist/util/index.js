@@ -5,7 +5,6 @@
 * MIT Licensed
 */
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = require("lodash");
 const index_1 = require("../index");
 exports.sanitizeConfig = (config) => {
     if (typeof config.contentStore.collectionName === 'string' && config.contentStore.length) {
@@ -55,10 +54,4 @@ exports.filterEntryKeys = (entry) => {
 };
 exports.filterContentTypeKeys = (contentType) => {
     return filter('contentType', contentType);
-};
-exports.structuralChanges = (entity) => {
-    const data = lodash_1.cloneDeep(entity.data);
-    delete entity.data;
-    entity = lodash_1.merge(entity, data);
-    return entity;
 };

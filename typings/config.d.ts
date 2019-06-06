@@ -12,9 +12,7 @@ export declare const config: {
             schema: string;
         };
         indexes: {
-            published_at: number;
             _content_type_uid: number;
-            locale: number;
             uid: number;
         };
         options: {
@@ -28,28 +26,28 @@ export declare const config: {
         };
         unwantedKeys: {
             asset: {
-                action: boolean;
-                checkpoint: boolean;
-                'data.created_by': boolean;
-                event_at: boolean;
                 type: boolean;
-                'data.updated_by': boolean;
+                _checkpoint: boolean;
+                created_by: boolean;
+                _event_at: boolean;
+                updated_by: boolean;
+                publish_details: boolean;
             };
             contentType: {
-                'data.created_by': boolean;
-                'data.updated_by': boolean;
-                'data.DEFAULT_ACL': boolean;
-                'data.SYS_ACL': boolean;
-                'data.abilities': boolean;
-                'data.last_activity': boolean;
+                created_by: boolean;
+                updated_by: boolean;
+                DEFAULT_ACL: boolean;
+                SYS_ACL: boolean;
+                abilities: boolean;
+                last_activity: boolean;
             };
             entry: {
-                action: boolean;
-                checkpoint: boolean;
-                'data.created_by': boolean;
-                event_at: boolean;
                 type: boolean;
-                'data.updated_by': boolean;
+                _checkpoint: boolean;
+                created_by: boolean;
+                _event_at: boolean;
+                updated_by: boolean;
+                publish_details: boolean;
             };
         };
         uri: string;

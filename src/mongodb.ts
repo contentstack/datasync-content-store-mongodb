@@ -6,7 +6,7 @@
 
 import Debug from 'debug'
 import { cloneDeep } from 'lodash'
-import { filterAssetKeys, filterContentTypeKeys, filterEntryKeys, structuralChanges, } from './util/index'
+import { filterAssetKeys, filterContentTypeKeys, filterEntryKeys } from './util/index'
 import { validateAssetDelete, validateAssetPublish, validateAssetUnpublish, validateContentTypeDelete, validateEntryPublish, validateEntryRemove, } from './util/validations'
 
 const debug = Debug('mongodb-core')
@@ -51,7 +51,7 @@ export class Mongodb {
   public publish(data) {
     return new Promise((resolve, reject) => {
       try {
-        if (data.content_type_uid === '_assets') {
+        if (data._content_type_uid === '_assets') {
           return this.publishAsset(data)
             .then(resolve)
             .catch(reject)
@@ -80,7 +80,6 @@ export class Mongodb {
         let assetJSON = cloneDeep(data)
         validateAssetPublish(assetJSON)
         assetJSON = filterAssetKeys(assetJSON)
-        assetJSON = structuralChanges(assetJSON)
 
         if (assetJSON.hasOwnProperty('_version')) {
           await this.unpublish(data)
@@ -129,36 +128,27 @@ export class Mongodb {
     return new Promise((resolve, reject) => {
       try {
         let contentType
-        validateEntryPublish(data)
-        let entry = {
-          _content_type_uid: data.content_type_uid,
-          data: data.data,
-          locale: data.locale,
-          uid: data.uid,
-          event_at: data.event_at,
-          synced_at: data.synced_at,
-        }
+        let entryJSON = cloneDeep(data)
+        validateEntryPublish(entryJSON)
 
-        if (data.hasOwnProperty('content_type')) {
+        if (data.hasOwnProperty('_content_type')) {
           contentType = {
             _content_type_uid: '_content_types',
-            data: data.content_type,
-            uid: data.content_type_uid,
+            ...data._content_type
           }
           contentType = filterContentTypeKeys(contentType)
-          contentType = structuralChanges(contentType)
+          delete entryJSON._content_type
         }
 
-        entry = filterEntryKeys(entry)
-        entry = structuralChanges(entry)
+        entryJSON = filterEntryKeys(entryJSON)
 
         return this.db.collection(this.collection.entry)
           .updateOne({
-            _content_type_uid: entry._content_type_uid,
-            locale: entry.locale,
-            uid: entry.uid,
+            _content_type_uid: entryJSON._content_type_uid,
+            locale: entryJSON.locale,
+            uid: entryJSON.uid,
           }, {
-            $set: entry,
+            $set: entryJSON,
           }, {
             upsert: true,
           })
@@ -198,13 +188,15 @@ export class Mongodb {
   public unpublish(data) {
     return new Promise((resolve, reject) => {
       try {
-        if (data.content_type_uid === '_assets') {
+        if (data._content_type_uid === '_assets') {
           return this.unpublishAsset(data)
             .then(resolve)
             .catch(reject)
         }
 
-        return this.unpublishEntry(data).then(resolve).catch(reject)
+        return this.unpublishEntry(data)
+          .then(resolve)
+          .catch(reject)
       } catch (error) {
         return reject(error)
       }
@@ -219,11 +211,11 @@ export class Mongodb {
   public delete(data) {
     return new Promise((resolve, reject) => {
       try {
-        if (data.content_type_uid === '_assets') {
+        if (data._content_type_uid === '_assets') {
           return this.deleteAsset(data)
             .then(resolve)
             .catch(reject)
-        } else if (data.content_type_uid === '_content_types') {
+        } else if (data._content_type_uid === '_content_types') {
           return this.deleteContentType(data)
             .then(resolve)
             .catch(reject)
@@ -252,7 +244,7 @@ export class Mongodb {
 
         return this.db.collection(this.collection.entry)
           .deleteOne({
-            _content_type_uid: entry.content_type_uid,
+            _content_type_uid: entry._content_type_uid,
             locale: entry.locale,
             uid: entry.uid,
           })
@@ -281,14 +273,15 @@ export class Mongodb {
 
         return this.db.collection(this.collection.entry)
           .deleteMany({
-            _content_type_uid: entry.content_type_uid,
+            _content_type_uid: entry._content_type_uid,
             uid: entry.uid,
           })
           .then((result) => {
             debug(`Delete entry result ${result}`)
 
             return resolve(entry)
-          }).catch(reject)
+          })
+          .catch(reject)
       } catch (error) {
         return reject(error)
       }
@@ -309,7 +302,7 @@ export class Mongodb {
 
         return this.db.collection(this.collection.asset)
           .findOneAndDelete({
-            _content_type_uid: asset.content_type_uid,
+            _content_type_uid: asset._content_type_uid,
             locale: asset.locale,
             uid: asset.uid,
             _version: {
@@ -324,7 +317,7 @@ export class Mongodb {
 
             return this.db.collection(this.collection.asset)
               .find({
-                _content_type_uid: asset.content_type_uid,
+                _content_type_uid: asset._content_type_uid,
                 locale: asset.locale,
                 uid: asset.uid,
                 url: result.value.url,
@@ -427,7 +420,8 @@ export class Mongodb {
 
                 return resolve(contentType)
               })
-          }).catch(reject)
+          })
+          .catch(reject)
       } catch (error) {
         return reject(error)
       }

@@ -3,4 +3,4 @@
 * Copyright (c) 2019 Contentstack LLC
 * MIT Licensed
 */
-export declare const connect: (config: any) => Promise<unknown>;
+export declare const connect: (config: any) => Promise<{}>;
