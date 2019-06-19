@@ -10,7 +10,6 @@ import { connect } from './connection'
 import { config as internalConfig } from './config'
 import { Mongodb } from './mongodb'
 import { sanitizeConfig } from './util/index'
-import { setLogger } from './util/logger'
 
 import {
   validateAssetConnectorInstance,
@@ -21,32 +20,33 @@ const debug = Debug('registration')
 
 let appConfig: any = {}
 let assetConnectorInstance
+let mongoClient: Mongodb
 
 interface IConnector {
-  publish(): any,
-  unpublish(): any,
-  delete(): any,
+  publish<T>(input: T): Promise<{T}>,
+  unpublish<T>(input: T): Promise<{T}>,
+  delete<T>(input: T): Promise<{T}>,
 }
 
 interface IAssetConnector {
   start(): IConnector,
-  setLogger(): ILogger,
+}
+
+interface IMongoConfig {
+  dbName?: string,
+  collection?: {
+    entry?: string,
+    asset?: string,
+    schema?: string,
+  },
+  collectionName?: string,
+  indexes?: any,
+  [propName: string]: any
 }
 
 interface IConfig {
-  locales?: any[],
-  contentstack?: any,
-  unwantedKeys?: any,
-  contentStore?: any,
-  syncManager?: any,
-  assetStore?: any,
-}
-
-interface ILogger {
-  warn(): any,
-  info(): any,
-  log(): any,
-  error(): any,
+  contentStore: IMongoConfig,
+  assetStore: any, // We do not know what config asset store needs/would have
 }
 
 /**
@@ -66,12 +66,6 @@ export const setConfig = (config: IConfig) => {
 }
 
 /**
- * @summary Set custom logger for logging
- * @param {Object} instance - Custom logger instance
- */
-export { setLogger } from './util/logger'
-
-/**
  * @summary Get app config
  * @returns an instance of app config
  */
@@ -84,7 +78,9 @@ export const getConfig = (): IConfig => {
  * @summary Mongo client instance
  * @returns Mongodb connection instance
  */
-export let mongoClient
+export const getMongoClient = () => {
+  return mongoClient
+}
 
 /**
  * @summary
@@ -93,9 +89,8 @@ export let mongoClient
  * Sets asset connectors, validates them and starts the app
  * @param {Class | Object} connector - Asset connector instance
  * @param {Object} config - Set application config
- * @param {Class | Object} logger - Logger object
  */
-export const start = (connector: IAssetConnector, config?: IConfig, logger?: ILogger) => {
+export const start = (connector: IAssetConnector, config?: IConfig) => {
 
   return new Promise((resolve, reject) => {
     try {
@@ -104,7 +99,6 @@ export const start = (connector: IAssetConnector, config?: IConfig, logger?: ILo
       appConfig = sanitizeConfig(appConfig)
       assetConnectorInstance = connector || assetConnectorInstance
       validateAssetConnectorInstance(assetConnectorInstance)
-      setLogger(logger)
 
       return connect(appConfig)
         .then((mongo) => {

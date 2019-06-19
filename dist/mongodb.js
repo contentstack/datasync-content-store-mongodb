@@ -1,9 +1,9 @@
 "use strict";
 /*!
-* Contentstack Mongodb Content Connector
-* Copyright (c) 2019 Contentstack LLC
-* MIT Licensed
-*/
+ * Contentstack Mongodb Content Connector
+ * Copyright (c) 2019 Contentstack LLC
+ * MIT Licensed
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -27,8 +27,8 @@ class Mongodb {
         if (!mongo) {
             this.assetStore = assetStore;
             this.db = mongodb.db;
+            this.config = config;
             this.client = mongodb.client;
-            this.collection = config.collection;
             mongo = this;
         }
         return mongo;
@@ -72,7 +72,7 @@ class Mongodb {
                     else {
                         query._version = asset._version;
                     }
-                    return this.db.collection(this.collection.asset)
+                    return this.db.collection(index_1.getCollectionName(asset))
                         .updateOne(query, {
                         $set: assetJSON,
                     }, {
@@ -90,20 +90,42 @@ class Mongodb {
             }
         }));
     }
-    publishEntry(data) {
-        debug(`Entry publish called ${JSON.stringify(data)}`);
+    updateContentType(contentType) {
+        debug(`Entry publish called ${JSON.stringify(contentType)}`);
         return new Promise((resolve, reject) => {
             try {
-                let contentType;
-                let entryJSON = lodash_1.cloneDeep(data);
+                let contentTypeJSON = lodash_1.cloneDeep(contentType);
+                validations_1.validateContentTypeUpdate(contentTypeJSON);
+                contentTypeJSON = index_1.filterContentTypeKeys(contentTypeJSON);
+                return this.db
+                    .collection(index_1.getCollectionName(contentTypeJSON))
+                    .updateOne({
+                    _content_type_uid: contentTypeJSON._content_type_uid,
+                    uid: contentTypeJSON.uid,
+                }, {
+                    $set: contentTypeJSON,
+                }, {
+                    upsert: true,
+                })
+                    .then((contentTypeUpdateResult) => {
+                    debug(`Content type update result ${JSON.stringify(contentTypeUpdateResult)}`);
+                    return resolve(contentType);
+                })
+                    .catch(reject);
+            }
+            catch (error) {
+                return reject(error);
+            }
+        });
+    }
+    publishEntry(entry) {
+        debug(`Entry publish called ${JSON.stringify(entry)}`);
+        return new Promise((resolve, reject) => {
+            try {
+                let entryJSON = lodash_1.cloneDeep(entry);
                 validations_1.validateEntryPublish(entryJSON);
-                if (data.hasOwnProperty('_content_type')) {
-                    contentType = Object.assign({ _content_type_uid: '_content_types' }, data._content_type);
-                    contentType = index_1.filterContentTypeKeys(contentType);
-                    delete entryJSON._content_type;
-                }
                 entryJSON = index_1.filterEntryKeys(entryJSON);
-                return this.db.collection(this.collection.entry)
+                return this.db.collection(index_1.getCollectionName(entryJSON))
                     .updateOne({
                     _content_type_uid: entryJSON._content_type_uid,
                     locale: entryJSON.locale,
@@ -114,23 +136,8 @@ class Mongodb {
                     upsert: true,
                 })
                     .then((entryPublishResult) => {
-                    debug(`Entry publish result ${entryPublishResult}`);
-                    if (typeof contentType === 'object') {
-                        return this.db.collection(this.collection.schema)
-                            .updateOne({
-                            _content_type_uid: contentType._content_type_uid,
-                            uid: contentType.uid,
-                        }, {
-                            $set: contentType,
-                        }, {
-                            upsert: true,
-                        })
-                            .then((contentTypeUpdateResult) => {
-                            debug(`Content type publish result ${contentTypeUpdateResult}`);
-                            return resolve(data);
-                        });
-                    }
-                    return resolve(data);
+                    debug(`Entry publish result ${JSON.stringify(entryPublishResult)}`);
+                    return resolve(entry);
                 }).catch(reject);
             }
             catch (error) {
@@ -182,16 +189,17 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 validations_1.validateEntryRemove(entry);
-                return this.db.collection(this.collection.entry)
+                return this.db.collection(index_1.getCollectionName(entry))
                     .deleteOne({
                     _content_type_uid: entry._content_type_uid,
                     locale: entry.locale,
                     uid: entry.uid,
                 })
                     .then((result) => {
-                    debug(`Delete entry result ${result}`);
+                    debug(`Delete entry result ${JSON.stringify(result)}`);
                     return resolve(entry);
-                }).catch(reject);
+                })
+                    .catch(reject);
             }
             catch (error) {
                 return reject(error);
@@ -203,13 +211,13 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 validations_1.validateEntryRemove(entry);
-                return this.db.collection(this.collection.entry)
+                return this.db.collection(index_1.getCollectionName(entry))
                     .deleteMany({
                     _content_type_uid: entry._content_type_uid,
                     uid: entry.uid,
                 })
                     .then((result) => {
-                    debug(`Delete entry result ${result}`);
+                    debug(`Delete entry result ${JSON.stringify(result)}`);
                     return resolve(entry);
                 })
                     .catch(reject);
@@ -224,7 +232,7 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 validations_1.validateAssetUnpublish(asset);
-                return this.db.collection(this.collection.asset)
+                return this.db.collection(index_1.getCollectionName(asset))
                     .findOneAndDelete({
                     _content_type_uid: asset._content_type_uid,
                     locale: asset.locale,
@@ -238,7 +246,7 @@ class Mongodb {
                     if (result.value === null) {
                         return resolve(asset);
                     }
-                    return this.db.collection(this.collection.asset)
+                    return this.db.collection(index_1.getCollectionName(asset))
                         .find({
                         _content_type_uid: asset._content_type_uid,
                         locale: asset.locale,
@@ -271,7 +279,7 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 validations_1.validateAssetDelete(asset);
-                return this.db.collection(this.collection.asset)
+                return this.db.collection(index_1.getCollectionName(asset))
                     .find({
                     _content_type_uid: '_assets',
                     uid: asset.uid,
@@ -283,7 +291,7 @@ class Mongodb {
                         debug(`Asset did not exist!`);
                         return resolve(asset);
                     }
-                    return this.db.collection(this.collection.asset)
+                    return this.db.collection(index_1.getCollectionName(asset))
                         .deleteMany({
                         _content_type_uid: '_assets',
                         uid: asset.uid,
@@ -309,19 +317,45 @@ class Mongodb {
         return new Promise((resolve, reject) => {
             try {
                 validations_1.validateContentTypeDelete(contentType);
-                return this.db.collection(this.collection.entry)
+                return this.db.listCollections({ type: 'collections' }, { nameOnly: true })
+                    .toArray()
+                    .then((collectionsResult) => {
+                    if (collectionsResult.length === 0) {
+                        return resolve();
+                    }
+                    const collections = index_1.getLocalesFromCollections(collectionsResult);
+                    console.log('@collection: ' + JSON.stringify(collections));
+                    const promisifiedBucket = [];
+                    collections.forEach((collection) => {
+                        promisifiedBucket.push(this.deleteCT(contentType.uid, collection));
+                    });
+                    return Promise.all(promisifiedBucket)
+                        .then(resolve);
+                })
+                    .catch(reject);
+            }
+            catch (error) {
+                return reject(error);
+            }
+        });
+    }
+    deleteCT(uid, collection) {
+        return new Promise((resolve, reject) => {
+            try {
+                return this.db.collection(index_1.getCollectionName({ _content_type_uid: uid, locale: collection.locale }))
                     .deleteMany({
-                    _content_type_uid: contentType.uid,
+                    _content_type_uid: uid
                 })
                     .then((entriesDeleteResult) => {
                     debug(`Delete entries result ${JSON.stringify(entriesDeleteResult)}`);
-                    return this.db.collection(this.collection.schema)
+                    return this.db.collection(collection.name)
                         .deleteOne({
-                        uid: contentType.uid,
+                        uid,
+                        _content_type_uid: '_content_types',
                     })
                         .then((contentTypeDeleteResult) => {
                         debug(`Content type delete result ${JSON.stringify(contentTypeDeleteResult)}`);
-                        return resolve(contentType);
+                        return resolve();
                     });
                 })
                     .catch(reject);

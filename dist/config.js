@@ -7,15 +7,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = {
     contentStore: {
-        dbName: 'contentstack-persistent-db',
+        dbName: 'contentstack-db',
         collection: {
             entry: 'contents',
             asset: 'contents',
             schema: 'contents'
-        },
-        indexes: {
-            _content_type_uid: 1,
-            uid: 1
         },
         options: {
             autoReconnect: true,
@@ -30,6 +26,7 @@ exports.config = {
             asset: {
                 type: true,
                 _checkpoint: true,
+                _workflow: true,
                 created_by: true,
                 _event_at: true,
                 updated_by: true,
@@ -42,10 +39,12 @@ exports.config = {
                 SYS_ACL: true,
                 abilities: true,
                 last_activity: true,
+                _workflow: true,
             },
             entry: {
                 type: true,
                 _checkpoint: true,
+                _workflow: true,
                 created_by: true,
                 _event_at: true,
                 updated_by: true,

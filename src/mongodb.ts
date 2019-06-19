@@ -1,17 +1,51 @@
 /*!
-* Contentstack Mongodb Content Connector
-* Copyright (c) 2019 Contentstack LLC
-* MIT Licensed
-*/
+ * Contentstack Mongodb Content Connector
+ * Copyright (c) 2019 Contentstack LLC
+ * MIT Licensed
+ */
 
 import Debug from 'debug'
-import { cloneDeep } from 'lodash'
-import { filterAssetKeys, filterContentTypeKeys, filterEntryKeys } from './util/index'
-import { validateAssetDelete, validateAssetPublish, validateAssetUnpublish, validateContentTypeDelete, validateEntryPublish, validateEntryRemove, } from './util/validations'
+import {
+  cloneDeep
+} from 'lodash'
+import {
+  filterAssetKeys,
+  filterContentTypeKeys,
+  filterEntryKeys,
+  getCollectionName,
+  getLocalesFromCollections,
+} from './util/index'
+import {
+  validateAssetDelete,
+  validateAssetPublish,
+  validateAssetUnpublish,
+  validateContentTypeDelete,
+  validateEntryPublish,
+  validateEntryRemove,
+  validateContentTypeUpdate
+} from './util/validations'
 
 const debug = Debug('mongodb-core')
 let mongo = null
 
+interface IAssetQuery {
+  uid: string,
+    locale: string,
+    download_id ? : string,
+    _version ? : number
+}
+
+interface IMongoConfig {
+  dbName ? : string,
+    collection ? : {
+      entry ? : string,
+      asset ? : string,
+      schema ? : string,
+    },
+    collectionName ? : string,
+    indexes ? : any,
+    [propName: string]: any
+}
 
 /**
  * @summary
@@ -22,21 +56,17 @@ let mongo = null
  * Mongodb class instance
  */
 export class Mongodb {
-  public assetStore: any
-  public db: any
-  public client: any
-  private collection: {
-    asset: string,
-    entry: string,
-    schema: string
-  }
+  public readonly assetStore: any
+  public readonly db: any
+  public readonly client: any
+  public readonly config: IMongoConfig
 
-  constructor(mongodb, assetStore, config) {
+  constructor(mongodb, assetStore: any, config: IMongoConfig) {
     if (!mongo) {
       this.assetStore = assetStore
       this.db = mongodb.db
+      this.config = config
       this.client = mongodb.client
-      this.collection = config.collection
       mongo = this
     }
 
@@ -88,7 +118,7 @@ export class Mongodb {
         // remove if any published version exists first
         return this.assetStore.download(assetJSON)
           .then((asset) => {
-            const query: any = {
+            const query: IAssetQuery = {
               uid: asset.uid,
               locale: asset.locale
             }
@@ -98,7 +128,7 @@ export class Mongodb {
               query._version = asset._version
             }
 
-            return this.db.collection(this.collection.asset)
+            return this.db.collection(getCollectionName(asset))
               .updateOne(query, {
                 $set: assetJSON,
               }, {
@@ -118,31 +148,57 @@ export class Mongodb {
   }
 
   /**
-   * @summary Entry publish method
-   * @param {Object} data - Entry to be published
+   * @summary Content type upsert method
+   * @param {Object} contentType - Content type schema object
    * @returns {Promise} Returns a promise
    */
-  public publishEntry(data) {
-    debug(`Entry publish called ${JSON.stringify(data)}`)
+  public updateContentType(contentType) {
+    debug(`Entry publish called ${JSON.stringify(contentType)}`)
 
     return new Promise((resolve, reject) => {
       try {
-        let contentType
-        let entryJSON = cloneDeep(data)
-        validateEntryPublish(entryJSON)
+        let contentTypeJSON = cloneDeep(contentType)
+        validateContentTypeUpdate(contentTypeJSON)
+        contentTypeJSON = filterContentTypeKeys(contentTypeJSON)
 
-        if (data.hasOwnProperty('_content_type')) {
-          contentType = {
-            _content_type_uid: '_content_types',
-            ...data._content_type
-          }
-          contentType = filterContentTypeKeys(contentType)
-          delete entryJSON._content_type
-        }
+        return this.db
+          .collection(getCollectionName(contentTypeJSON))
+          .updateOne({
+            _content_type_uid: contentTypeJSON._content_type_uid,
+            uid: contentTypeJSON.uid,
+          }, {
+            $set: contentTypeJSON,
+          }, {
+            upsert: true,
+          })
+          .then((contentTypeUpdateResult) => {
+            debug(`Content type update result ${JSON.stringify(contentTypeUpdateResult)}`)
+
+            return resolve(contentType)
+          })
+          .catch(reject)
+      } catch (error) {
+        return reject(error)
+      }
+    })
+  }
+
+  /**
+   * @summary Entry publish method
+   * @param {Object} entry - Entry to be published
+   * @returns {Promise} Returns a promise
+   */
+  public publishEntry(entry) {
+    debug(`Entry publish called ${JSON.stringify(entry)}`)
+
+    return new Promise((resolve, reject) => {
+      try {
+        let entryJSON = cloneDeep(entry)
+        validateEntryPublish(entryJSON)
 
         entryJSON = filterEntryKeys(entryJSON)
 
-        return this.db.collection(this.collection.entry)
+        return this.db.collection(getCollectionName(entryJSON))
           .updateOne({
             _content_type_uid: entryJSON._content_type_uid,
             locale: entryJSON.locale,
@@ -153,26 +209,9 @@ export class Mongodb {
             upsert: true,
           })
           .then((entryPublishResult) => {
-            debug(`Entry publish result ${entryPublishResult}`)
+            debug(`Entry publish result ${JSON.stringify(entryPublishResult)}`)
 
-            if (typeof contentType === 'object') {
-              return this.db.collection(this.collection.schema)
-                .updateOne({
-                  _content_type_uid: contentType._content_type_uid,
-                  uid: contentType.uid,
-                }, {
-                  $set: contentType,
-                }, {
-                  upsert: true,
-                })
-                .then((contentTypeUpdateResult) => {
-                  debug(`Content type publish result ${contentTypeUpdateResult}`)
-
-                  return resolve(data)
-                })
-            }
-
-            return resolve(data)
+            return resolve(entry)
           }).catch(reject)
       } catch (error) {
         return reject(error)
@@ -242,17 +281,18 @@ export class Mongodb {
       try {
         validateEntryRemove(entry)
 
-        return this.db.collection(this.collection.entry)
+        return this.db.collection(getCollectionName(entry))
           .deleteOne({
             _content_type_uid: entry._content_type_uid,
             locale: entry.locale,
             uid: entry.uid,
           })
           .then((result) => {
-            debug(`Delete entry result ${result}`)
+            debug(`Delete entry result ${JSON.stringify(result)}`)
 
             return resolve(entry)
-          }).catch(reject)
+          })
+          .catch(reject)
       } catch (error) {
         return reject(error)
       }
@@ -271,13 +311,13 @@ export class Mongodb {
       try {
         validateEntryRemove(entry)
 
-        return this.db.collection(this.collection.entry)
+        return this.db.collection(getCollectionName(entry))
           .deleteMany({
             _content_type_uid: entry._content_type_uid,
             uid: entry.uid,
           })
           .then((result) => {
-            debug(`Delete entry result ${result}`)
+            debug(`Delete entry result ${JSON.stringify(result)}`)
 
             return resolve(entry)
           })
@@ -300,7 +340,7 @@ export class Mongodb {
       try {
         validateAssetUnpublish(asset)
 
-        return this.db.collection(this.collection.asset)
+        return this.db.collection(getCollectionName(asset))
           .findOneAndDelete({
             _content_type_uid: asset._content_type_uid,
             locale: asset.locale,
@@ -315,7 +355,7 @@ export class Mongodb {
               return resolve(asset)
             }
 
-            return this.db.collection(this.collection.asset)
+            return this.db.collection(getCollectionName(asset))
               .find({
                 _content_type_uid: asset._content_type_uid,
                 locale: asset.locale,
@@ -357,7 +397,7 @@ export class Mongodb {
       try {
         validateAssetDelete(asset)
 
-        return this.db.collection(this.collection.asset)
+        return this.db.collection(getCollectionName(asset))
           .find({
             _content_type_uid: '_assets',
             uid: asset.uid,
@@ -371,7 +411,7 @@ export class Mongodb {
               return resolve(asset)
             }
 
-            return this.db.collection(this.collection.asset)
+            return this.db.collection(getCollectionName(asset))
               .deleteMany({
                 _content_type_uid: '_assets',
                 uid: asset.uid,
@@ -404,21 +444,52 @@ export class Mongodb {
       try {
         validateContentTypeDelete(contentType)
 
-        return this.db.collection(this.collection.entry)
+        return this.db.listCollections({type: 'collections'}, {nameOnly: true})
+          .toArray()
+          .then((collectionsResult) => {
+            if (collectionsResult.length === 0) {
+              return resolve()
+            }
+
+            const collections: {name: string, locale: string}[] = getLocalesFromCollections(collectionsResult)
+
+            console.log('@collection: ' + JSON.stringify(collections))
+
+            const promisifiedBucket: Promise<{}>[] = []
+
+            collections.forEach((collection) => {
+              promisifiedBucket.push(this.deleteCT(contentType.uid, collection))
+            })
+
+            return Promise.all(promisifiedBucket)
+              .then(resolve)
+          })
+          .catch(reject)
+      } catch (error) {
+        return reject(error)
+      }
+    })
+  }
+
+  private deleteCT(uid, collection: {name: string, locale: string}) {
+    return new Promise((resolve, reject) => {
+      try {
+        return this.db.collection(getCollectionName({_content_type_uid: uid, locale: collection.locale}))
           .deleteMany({
-            _content_type_uid: contentType.uid,
+            _content_type_uid: uid
           })
           .then((entriesDeleteResult) => {
             debug(`Delete entries result ${JSON.stringify(entriesDeleteResult)}`)
 
-            return this.db.collection(this.collection.schema)
+            return this.db.collection(collection.name)
               .deleteOne({
-                uid: contentType.uid,
+                uid,
+                _content_type_uid: '_content_types',
               })
               .then((contentTypeDeleteResult) => {
                 debug(`Content type delete result ${JSON.stringify(contentTypeDeleteResult)}`)
 
-                return resolve(contentType)
+                return resolve()
               })
           })
           .catch(reject)

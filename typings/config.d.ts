@@ -11,10 +11,6 @@ export declare const config: {
             asset: string;
             schema: string;
         };
-        indexes: {
-            _content_type_uid: number;
-            uid: number;
-        };
         options: {
             autoReconnect: boolean;
             connectTimeoutMS: number;
@@ -28,6 +24,7 @@ export declare const config: {
             asset: {
                 type: boolean;
                 _checkpoint: boolean;
+                _workflow: boolean;
                 created_by: boolean;
                 _event_at: boolean;
                 updated_by: boolean;
@@ -40,10 +37,12 @@ export declare const config: {
                 SYS_ACL: boolean;
                 abilities: boolean;
                 last_activity: boolean;
+                _workflow: boolean;
             };
             entry: {
                 type: boolean;
                 _checkpoint: boolean;
+                _workflow: boolean;
                 created_by: boolean;
                 _event_at: boolean;
                 updated_by: boolean;

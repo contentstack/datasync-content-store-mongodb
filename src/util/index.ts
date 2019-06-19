@@ -6,8 +6,22 @@
 
 import { getConfig } from '../index'
 
-export const sanitizeConfig = (config) => {
-  if (typeof config.contentStore.collectionName === 'string' && config.contentStore.length) {
+interface IContentStore {
+  collectionName?: string,
+  collection?: {
+    entry: string,
+    asset: string,
+    schema: string,
+  }
+}
+
+interface IConfig {
+  contentStore: IContentStore,
+  [propName: string]: any,
+}
+
+export const sanitizeConfig = (config: IConfig) => {
+  if (typeof config.contentStore.collectionName === 'string' && config.contentStore.collectionName.length) {
     config.contentStore.collection.entry = config.contentStore.collectionName
     config.contentStore.collection.asset = config.contentStore.collectionName
     config.contentStore.collection.schema = config.contentStore.collectionName
@@ -76,4 +90,39 @@ export const filterEntryKeys = (entry) => {
  */
 export const filterContentTypeKeys = (contentType) => {
   return filter('contentType', contentType)
+}
+
+export const getCollectionName = ({ locale, _content_type_uid }) => {
+  const collection = getConfig().contentStore.collection
+  switch (_content_type_uid) {
+    case '_assets': 
+      return `${locale}.${collection.asset}`
+    case '_content_types':
+      return `${locale}.${collection.schema}`
+    default:
+    return `${locale}.${collection.entry}`
+  }
+}
+
+export const getLocalesFromCollections = (collections: {name: string, type: string}[]) => {
+  const collectionConfig = getConfig().contentStore.collection
+  const collectionDetails: {name: string, locale: string}[] = []
+
+  collections.forEach((collection) => {
+    const name = collection.name
+    const namedArr = name.split('.')
+    const locale: string = namedArr.splice(0, 1)[0]
+    if (namedArr.length > 0) {
+      const newCollectionName = namedArr.join('.')
+
+      if (newCollectionName === collectionConfig.schema) {
+        collectionDetails.push({
+          name: collection.name,
+          locale
+        })
+      }
+    }
+  })
+
+  return collectionDetails
 }

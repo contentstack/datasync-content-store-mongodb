@@ -6,19 +6,15 @@
 
 /**
  * @summary
- *  Internal default config. This can be overriden!
+ * Internal default config. This can be overriden!
  */
 export const config = {
   contentStore: {
-    dbName: 'contentstack-persistent-db',
+    dbName: 'contentstack-db',
     collection: {
       entry: 'contents',
       asset: 'contents',
       schema: 'contents'
-    },
-    indexes: {
-      _content_type_uid: 1,
-      uid: 1
     },
     // http://mongodb.github.io/node-mongodb-native/3.1/api/MongoClient.html
     options: {
@@ -34,6 +30,7 @@ export const config = {
       asset: {
         type: true,
         _checkpoint: true,
+        _workflow: true,
         created_by: true,
         _event_at: true,
         updated_by: true,
@@ -46,10 +43,12 @@ export const config = {
         SYS_ACL: true,
         abilities: true,
         last_activity: true,
+        _workflow: true,
       },
       entry: {
         type: true,
         _checkpoint: true,
+        _workflow: true,
         created_by: true,
         _event_at: true,
         updated_by: true,

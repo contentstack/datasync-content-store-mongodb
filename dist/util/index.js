@@ -7,7 +7,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 exports.sanitizeConfig = (config) => {
-    if (typeof config.contentStore.collectionName === 'string' && config.contentStore.length) {
+    if (typeof config.contentStore.collectionName === 'string' && config.contentStore.collectionName.length) {
         config.contentStore.collection.entry = config.contentStore.collectionName;
         config.contentStore.collection.asset = config.contentStore.collectionName;
         config.contentStore.collection.schema = config.contentStore.collectionName;
@@ -54,4 +54,34 @@ exports.filterEntryKeys = (entry) => {
 };
 exports.filterContentTypeKeys = (contentType) => {
     return filter('contentType', contentType);
+};
+exports.getCollectionName = ({ locale, _content_type_uid }) => {
+    const collection = index_1.getConfig().contentStore.collection;
+    switch (_content_type_uid) {
+        case '_assets':
+            return `${locale}.${collection.asset}`;
+        case '_content_types':
+            return `${locale}.${collection.schema}`;
+        default:
+            return `${locale}.${collection.entry}`;
+    }
+};
+exports.getLocalesFromCollections = (collections) => {
+    const collectionConfig = index_1.getConfig().contentStore.collection;
+    const collectionDetails = [];
+    collections.forEach((collection) => {
+        const name = collection.name;
+        const namedArr = name.split('.');
+        const locale = namedArr.splice(0, 1)[0];
+        if (namedArr.length > 0) {
+            const newCollectionName = namedArr.join('.');
+            if (newCollectionName === collectionConfig.schema) {
+                collectionDetails.push({
+                    name: collection.name,
+                    locale
+                });
+            }
+        }
+    });
+    return collectionDetails;
 };

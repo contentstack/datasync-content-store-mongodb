@@ -3,9 +3,9 @@
  */
 
 import { cloneDeep, merge } from 'lodash'
-import { setLogger, setConfig } from '../src'
+import { setConfig } from '../src'
 import { connect } from '../src/connection'
-import { config as appConfig } from '../src/defaults'
+import { config as appConfig } from '../src/config'
 import { Mongodb } from '../src/mongodb'
 import { connector } from './mock/assetStore'
 import { config as mockConfig } from './mock/config'
@@ -21,7 +21,6 @@ let db, mongo
 
 describe('delete', () => {
   beforeAll(() => {
-    setLogger()
     setConfig(config)
 
     return connect(config).then((mongodb) => {

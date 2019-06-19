@@ -3,17 +3,13 @@
  */
 
 import { cloneDeep, merge } from 'lodash'
-import { setLogger } from '../src'
 import { connect } from '../src/connection'
-import { config as appConfig } from '../src/defaults'
+import { config as appConfig } from '../src/config'
 import { config as mockConfig } from './mock/config'
 
 const config = cloneDeep(merge({}, appConfig, mockConfig))
 let mongo = null
 describe.only('mongodb connection', () => {
-  beforeAll(() => {
-    setLogger()
-  })
   afterAll(() => {
     mongo.client.close()
   })

@@ -7,6 +7,12 @@
 const requiredUpsertKeys = ['_content_type_uid', 'locale', 'uid']
 const requiredRemoveKeys = ['_content_type_uid', 'locale', 'uid']
 
+interface IRequiredKeys {
+  _content_type_uid: string,
+  locale: string,
+  uid: string,
+}
+
 /**
  * @summary Validates app's config
  * @param {Object} config - Application config
@@ -51,7 +57,7 @@ export const validateMongodbConfig = (config: any = {}) => {
  * @summary Validate asset object on asset publish
  * @param {Object} asset - Asset json
  */
-export const validateAssetPublish = (asset) => {
+export const validateAssetPublish = (asset: IRequiredKeys) => {
   requiredUpsertKeys.forEach((key) => {
     if (!(key in asset)) {
       throw new Error(`${key} is missing in asset publish!`)
@@ -63,7 +69,7 @@ export const validateAssetPublish = (asset) => {
  * @summary Validate entry object on entry publish
  * @param {Object} entry - Entry json
  */
-export const validateEntryPublish = (entry) => {
+export const validateEntryPublish = (entry: IRequiredKeys) => {
   requiredUpsertKeys.forEach((key) => {
     if (!(key in entry)) {
       throw new Error(`${key} is missing in entry publish!`)
@@ -75,7 +81,7 @@ export const validateEntryPublish = (entry) => {
  * @summary Validate entry object on entry unpublish/delete
  * @param {Object} entry - Entry json
  */
-export const validateEntryRemove = (entry) => {
+export const validateEntryRemove = (entry: IRequiredKeys) => {
   requiredRemoveKeys.forEach((key) => {
     if (!(key in entry)) {
       throw new Error(`${key} is missing in entry unpublish/delete!`)
@@ -87,7 +93,7 @@ export const validateEntryRemove = (entry) => {
  * @summary Validate asset object on asset unpublish
  * @param {Object} asset - Asset json
  */
-export const validateAssetUnpublish = (asset) => {
+export const validateAssetUnpublish = (asset: IRequiredKeys) => {
   requiredRemoveKeys.forEach((key) => {
     if (!(key in asset)) {
       throw new Error(`${key} is missing in asset unpublish!`)
@@ -99,7 +105,7 @@ export const validateAssetUnpublish = (asset) => {
  * @summary Validate asset object on asset delete
  * @param {Object} asset - Asset json
  */
-export const validateAssetDelete = (asset) => {
+export const validateAssetDelete = (asset: IRequiredKeys) => {
   requiredRemoveKeys.forEach((key) => {
     if (!(key in asset)) {
       throw new Error(`${key} is missing in asset delete!`)
@@ -121,21 +127,14 @@ export const validateContentTypeDelete = (contentType) => {
 }
 
 /**
- * @summary Validates if the custom logger set supports required methods
- * @param {Object} instance - Custom logger instance
+ * @summary Validate content type object before entry publish
+ * @param {Object} contentType - Entry's content type schema json
  */
-export const validateLogger = (instance) => {
-  let flag = false
-  if (!instance) {
-    return flag
-  }
-  const requiredFn = ['info', 'warn', 'log', 'error']
-  requiredFn.forEach((name) => {
-    if (typeof instance[name] !== 'function') {
-      console.warn(`Unable to register custom logger since '${name}()' does not exist on ${instance}!`)
-      flag = true
+export const validateContentTypeUpdate = (contentType) => {
+  requiredUpsertKeys.forEach((key) => {
+    if (!(key in contentType)) {
+      throw new Error(`${key} is missing in content type upsert!`)
     }
   })
-
-  return !flag
 }
+

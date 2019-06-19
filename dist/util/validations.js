@@ -78,17 +78,10 @@ exports.validateContentTypeDelete = (contentType) => {
         }
     });
 };
-exports.validateLogger = (instance) => {
-    let flag = false;
-    if (!instance) {
-        return flag;
-    }
-    const requiredFn = ['info', 'warn', 'log', 'error'];
-    requiredFn.forEach((name) => {
-        if (typeof instance[name] !== 'function') {
-            console.warn(`Unable to register custom logger since '${name}()' does not exist on ${instance}!`);
-            flag = true;
+exports.validateContentTypeUpdate = (contentType) => {
+    requiredUpsertKeys.forEach((key) => {
+        if (!(key in contentType)) {
+            throw new Error(`${key} is missing in content type upsert!`);
         }
     });
-    return !flag;
 };

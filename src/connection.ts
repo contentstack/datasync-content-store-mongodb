@@ -7,7 +7,6 @@
 import Debug from 'debug'
 import { isEmpty, isPlainObject, merge } from 'lodash'
 import { Db, MongoClient } from 'mongodb'
-import { logger } from './util/logger'
 import { validateMongodbConfig } from './util/validations'
 
 const debug = Debug('connection')
@@ -57,40 +56,13 @@ export const connect = (config) => {
       return client.connect().then(() => {
         instance.db = client.db(dbName)
         instance.client = client
-        logger.info(`Mongodb connection to ${connectionUri} established successfully!`)
+        console.info(`Mongodb connection to ${connectionUri} established successfully!`)
 
-        resolve(instance)
-
-        // Create indexes in the background
-        const bucket: any = []
-
-        for (let key in mongoConfig.collection) {
-          for (let index in indexes) {
-            if (indexes[index] === 1 || indexes[index] === -1) {
-              bucket.push(createIndexes(mongoConfig.collection[key], index, indexes[index]))
-            }
-          }
-        }
-
-        Promise.all(bucket)
-          .then(() => {
-            logger.info(`Indexes created successfully`)    
-          })
+        return resolve(instance)
       })
       .catch(reject)
     } catch (error) {
       return reject(error)
     }
   })
-}
-
-const createIndexes = (collectionId, index, type) => {
-  return instance.db.collection(collectionId)
-    .createIndex({
-      [index]: type
-    })
-    .then((result) => {
-      debug(`Indexes result for ${index}: ${JSON.stringify(result)}`)
-      return
-    })
 }

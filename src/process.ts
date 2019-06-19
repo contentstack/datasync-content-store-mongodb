@@ -9,8 +9,7 @@
  * @note 'SIGSTOP' cannot have a listener installed.
  */
 
-import { mongoClient } from './'
-import { logger } from './util/logger'
+import { getMongoClient } from './'
 
 /**
  * @description Handles process exit. Stops the current application and manages a graceful shutdown
@@ -18,7 +17,7 @@ import { logger } from './util/logger'
  */
 const handleExit = (signal) => {
   const killDuration = (process.env.KILLDURATION) ? calculateKillDuration() : 15000
-  logger.info(`Received ${signal}. This will shut down the process in ${killDuration}ms..`)
+  console.info(`Received ${signal}. This will shut down the process in ${killDuration}ms..`)
   setInterval(abort, killDuration)
 }
 
@@ -30,8 +29,8 @@ const handleExit = (signal) => {
  * @param {Object} error - Unhandled error object
  */
 const unhandledErrors = (error) => {
-  logger.error('Unhandled exception caught. Locking down process for 10s to recover..')
-  logger.error(error)
+  console.error('Unhandled exception caught. Locking down process for 10s to recover..')
+  console.error(error)
 }
 
 /**
@@ -50,8 +49,9 @@ const calculateKillDuration = () => {
  * @description Aborts the current application
  */
 const abort = () => {
+  const mongoClient = getMongoClient()
   // close mongodb connection before exitting
-  mongoClient.close()
+  mongoClient.client.close()
   process.abort()
 }
 

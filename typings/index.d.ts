@@ -3,32 +3,39 @@
 * Copyright (c) 2019 Contentstack LLC
 * MIT Licensed
 */
+import { Mongodb } from './mongodb';
 interface IConnector {
-    publish(): any;
-    unpublish(): any;
-    delete(): any;
+    publish<T>(input: T): Promise<{
+        T: any;
+    }>;
+    unpublish<T>(input: T): Promise<{
+        T: any;
+    }>;
+    delete<T>(input: T): Promise<{
+        T: any;
+    }>;
 }
 interface IAssetConnector {
     start(): IConnector;
-    setLogger(): ILogger;
+}
+interface IMongoConfig {
+    dbName?: string;
+    collection?: {
+        entry?: string;
+        asset?: string;
+        schema?: string;
+    };
+    collectionName?: string;
+    indexes?: any;
+    [propName: string]: any;
 }
 interface IConfig {
-    locales?: any[];
-    contentstack?: any;
-    unwantedKeys?: any;
-    contentStore?: any;
-    syncManager?: any;
-    assetStore?: any;
-}
-interface ILogger {
-    warn(): any;
-    info(): any;
-    log(): any;
-    error(): any;
+    contentStore: IMongoConfig;
+    assetStore: any;
 }
 export declare const setAssetConnector: (instance: IAssetConnector) => void;
 export declare const setConfig: (config: IConfig) => void;
-export { setLogger } from './util/logger';
 export declare const getConfig: () => IConfig;
-export declare let mongoClient: any;
-export declare const start: (connector: IAssetConnector, config?: IConfig, logger?: ILogger) => Promise<{}>;
+export declare const getMongoClient: () => Mongodb;
+export declare const start: (connector: IAssetConnector, config?: IConfig) => Promise<{}>;
+export {};
