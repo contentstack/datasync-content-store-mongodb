@@ -37,14 +37,14 @@ interface IAssetQuery {
 
 interface IMongoConfig {
   dbName ? : string,
-    collection ? : {
-      entry ? : string,
-      asset ? : string,
-      schema ? : string,
-    },
-    collectionName ? : string,
-    indexes ? : any,
-    [propName: string]: any
+  collection ? : {
+    entry ? : string,
+    asset ? : string,
+    schema ? : string,
+  },
+  collectionName ? : string,
+  indexes ? : any,
+  [propName: string]: any  
 }
 
 /**
@@ -450,13 +450,8 @@ export class Mongodb {
             if (collectionsResult.length === 0) {
               return resolve()
             }
-
             const collections: {name: string, locale: string}[] = getLocalesFromCollections(collectionsResult)
-
-            console.log('@collection: ' + JSON.stringify(collections))
-
             const promisifiedBucket: Promise<{}>[] = []
-
             collections.forEach((collection) => {
               promisifiedBucket.push(this.deleteCT(contentType.uid, collection))
             })

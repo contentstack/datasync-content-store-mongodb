@@ -324,7 +324,6 @@ class Mongodb {
                         return resolve();
                     }
                     const collections = index_1.getLocalesFromCollections(collectionsResult);
-                    console.log('@collection: ' + JSON.stringify(collections));
                     const promisifiedBucket = [];
                     collections.forEach((collection) => {
                         promisifiedBucket.push(this.deleteCT(contentType.uid, collection));
