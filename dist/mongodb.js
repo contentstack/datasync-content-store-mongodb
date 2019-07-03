@@ -34,20 +34,13 @@ class Mongodb {
         return mongo;
     }
     publish(data) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (data._content_type_uid === '_assets') {
-                    return this.publishAsset(data)
-                        .then(resolve)
-                        .catch(reject);
-                }
-                return this.publishEntry(data)
-                    .then(resolve)
-                    .catch(reject);
+        return __awaiter(this, void 0, void 0, function* () {
+            let response;
+            if (data._content_type_uid === '_assets') {
+                response = yield this.publishAsset(data);
             }
-            catch (error) {
-                return reject(error);
-            }
+            response = yield this.publishEntry(data);
+            return response;
         });
     }
     publishAsset(data) {
@@ -60,30 +53,25 @@ class Mongodb {
                 if (assetJSON.hasOwnProperty('_version')) {
                     yield this.unpublish(data);
                 }
-                return this.assetStore.download(assetJSON)
-                    .then((asset) => {
-                    const query = {
-                        uid: asset.uid,
-                        locale: asset.locale
-                    };
-                    if (asset.hasOwnProperty('download_id')) {
-                        query.download_id = asset.download_id;
-                    }
-                    else {
-                        query._version = asset._version;
-                    }
-                    return this.db.collection(index_1.getCollectionName(asset))
-                        .updateOne(query, {
-                        $set: assetJSON,
-                    }, {
-                        upsert: true,
-                    });
-                })
-                    .then((result) => {
-                    debug(`Asset publish result ${JSON.stringify(result)}`);
-                    return resolve(data);
-                })
-                    .catch(reject);
+                const asset = yield this.assetStore.download(assetJSON);
+                const query = {
+                    locale: asset.locale,
+                    uid: asset.uid,
+                };
+                if (asset.hasOwnProperty('download_id')) {
+                    query.download_id = asset.download_id;
+                }
+                else {
+                    query._version = asset._version;
+                }
+                const result = this.db.collection(index_1.getCollectionName(asset))
+                    .updateOne(query, {
+                    $set: assetJSON,
+                }, {
+                    upsert: true,
+                });
+                debug(`Asset publish result ${JSON.stringify(result)}`);
+                return resolve(data);
             }
             catch (error) {
                 return reject(error);
@@ -92,12 +80,12 @@ class Mongodb {
     }
     updateContentType(contentType) {
         debug(`Entry publish called ${JSON.stringify(contentType)}`);
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
                 let contentTypeJSON = lodash_1.cloneDeep(contentType);
                 validations_1.validateContentTypeUpdate(contentTypeJSON);
                 contentTypeJSON = index_1.filterContentTypeKeys(contentTypeJSON);
-                return this.db
+                const contentTypeUpdateResult = yield this.db
                     .collection(index_1.getCollectionName(contentTypeJSON))
                     .updateOne({
                     _content_type_uid: contentTypeJSON._content_type_uid,
@@ -106,17 +94,14 @@ class Mongodb {
                     $set: contentTypeJSON,
                 }, {
                     upsert: true,
-                })
-                    .then((contentTypeUpdateResult) => {
-                    debug(`Content type update result ${JSON.stringify(contentTypeUpdateResult)}`);
-                    return resolve(contentType);
-                })
-                    .catch(reject);
+                });
+                debug(`Content type update result ${JSON.stringify(contentTypeUpdateResult)}`);
+                return resolve(contentType);
             }
             catch (error) {
                 return reject(error);
             }
-        });
+        }));
     }
     publishEntry(entry) {
         debug(`Entry publish called ${JSON.stringify(entry)}`);
@@ -146,20 +131,13 @@ class Mongodb {
         });
     }
     unpublish(data) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (data._content_type_uid === '_assets') {
-                    return this.unpublishAsset(data)
-                        .then(resolve)
-                        .catch(reject);
-                }
-                return this.unpublishEntry(data)
-                    .then(resolve)
-                    .catch(reject);
+        return __awaiter(this, void 0, void 0, function* () {
+            let result;
+            if (data._content_type_uid === '_assets') {
+                result = yield this.unpublishAsset(data);
             }
-            catch (error) {
-                return reject(error);
-            }
+            result = yield this.unpublishEntry(data);
+            return result;
         });
     }
     delete(data) {
@@ -235,11 +213,11 @@ class Mongodb {
                 return this.db.collection(index_1.getCollectionName(asset))
                     .findOneAndDelete({
                     _content_type_uid: asset._content_type_uid,
+                    _version: {
+                        $exists: true,
+                    },
                     locale: asset.locale,
                     uid: asset.uid,
-                    _version: {
-                        $exists: true
-                    }
                 })
                     .then((result) => {
                     debug(`Asset unpublish status: ${JSON.stringify(result)}`);
@@ -249,12 +227,12 @@ class Mongodb {
                     return this.db.collection(index_1.getCollectionName(asset))
                         .find({
                         _content_type_uid: asset._content_type_uid,
+                        download_id: {
+                            $exists: true,
+                        },
                         locale: asset.locale,
                         uid: asset.uid,
                         url: result.value.url,
-                        download_id: {
-                            $exists: true
-                        }
                     })
                         .toArray()
                         .then((assets) => {
@@ -263,7 +241,7 @@ class Mongodb {
                             return this.assetStore.unpublish(result.value)
                                 .then(() => resolve(asset));
                         }
-                        debug(`Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.`);
+                        debug('Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.');
                         return resolve(asset);
                     });
                 })
@@ -282,20 +260,20 @@ class Mongodb {
                 return this.db.collection(index_1.getCollectionName(asset))
                     .find({
                     _content_type_uid: '_assets',
+                    locale: asset.locale,
                     uid: asset.uid,
-                    locale: asset.locale
                 })
                     .toArray()
                     .then((result) => {
                     if (result.length === 0) {
-                        debug(`Asset did not exist!`);
+                        debug('Asset did not exist!');
                         return resolve(asset);
                     }
                     return this.db.collection(index_1.getCollectionName(asset))
                         .deleteMany({
                         _content_type_uid: '_assets',
+                        locale: asset.locale,
                         uid: asset.uid,
-                        locale: asset.locale
                     })
                         .then(() => {
                         return result;
@@ -314,43 +292,41 @@ class Mongodb {
     }
     deleteContentType(contentType) {
         debug(`Delete content type called ${JSON.stringify(contentType)}`);
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
                 validations_1.validateContentTypeDelete(contentType);
-                return this.db.listCollections({ type: 'collections' }, { nameOnly: true })
-                    .toArray()
-                    .then((collectionsResult) => {
-                    if (collectionsResult.length === 0) {
-                        return resolve();
-                    }
-                    const collections = index_1.getLocalesFromCollections(collectionsResult);
-                    const promisifiedBucket = [];
-                    collections.forEach((collection) => {
-                        promisifiedBucket.push(this.deleteCT(contentType.uid, collection));
-                    });
-                    return Promise.all(promisifiedBucket)
-                        .then(resolve);
-                })
-                    .catch(reject);
+                const collectionsResult = yield this.db
+                    .listCollections({}, { nameOnly: true })
+                    .toArray();
+                if (collectionsResult.length === 0) {
+                    return resolve();
+                }
+                const collections = index_1.getLocalesFromCollections(collectionsResult);
+                const promisifiedBucket = [];
+                collections.forEach((collection) => {
+                    promisifiedBucket.push(this.deleteCT(contentType.uid, collection));
+                });
+                return Promise.all(promisifiedBucket)
+                    .then(resolve);
             }
             catch (error) {
                 return reject(error);
             }
-        });
+        }));
     }
     deleteCT(uid, collection) {
         return new Promise((resolve, reject) => {
             try {
                 return this.db.collection(index_1.getCollectionName({ _content_type_uid: uid, locale: collection.locale }))
                     .deleteMany({
-                    _content_type_uid: uid
+                    _content_type_uid: uid,
                 })
                     .then((entriesDeleteResult) => {
                     debug(`Delete entries result ${JSON.stringify(entriesDeleteResult)}`);
                     return this.db.collection(collection.name)
                         .deleteOne({
-                        uid,
                         _content_type_uid: '_content_types',
+                        uid,
                     })
                         .then((contentTypeDeleteResult) => {
                         debug(`Content type delete result ${JSON.stringify(contentTypeDeleteResult)}`);

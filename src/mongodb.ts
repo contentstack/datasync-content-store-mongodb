@@ -6,7 +6,7 @@
 
 import Debug from 'debug'
 import {
-  cloneDeep
+  cloneDeep,
 } from 'lodash'
 import {
   filterAssetKeys,
@@ -20,9 +20,9 @@ import {
   validateAssetPublish,
   validateAssetUnpublish,
   validateContentTypeDelete,
+  validateContentTypeUpdate,
   validateEntryPublish,
   validateEntryRemove,
-  validateContentTypeUpdate
 } from './util/validations'
 
 const debug = Debug('mongodb-core')
@@ -30,21 +30,21 @@ let mongo = null
 
 interface IAssetQuery {
   uid: string,
-    locale: string,
-    download_id ? : string,
-    _version ? : number
+  locale: string,
+  download_id ?: string,
+  _version ?: number
 }
 
 interface IMongoConfig {
-  dbName ? : string,
-  collection ? : {
-    entry ? : string,
-    asset ? : string,
-    schema ? : string,
+  dbName ?: string,
+  collection ?: {
+    entry ?: string,
+    asset ?: string,
+    schema ?: string,
   },
-  collectionName ? : string,
-  indexes ? : any,
-  [propName: string]: any  
+  collectionName ?: string,
+  indexes ?: any,
+  [propName: string]: any,
 }
 
 /**
@@ -78,22 +78,14 @@ export class Mongodb {
    * @param {Object} data - Data to be published
    * @returns {Promise} Returns a promise
    */
-  public publish(data) {
-    return new Promise((resolve, reject) => {
-      try {
-        if (data._content_type_uid === '_assets') {
-          return this.publishAsset(data)
-            .then(resolve)
-            .catch(reject)
-        }
+  public async publish(data) {
+    let response: any
+    if (data._content_type_uid === '_assets') {
+      response = await this.publishAsset(data)
+    }
+    response = await this.publishEntry(data)
 
-        return this.publishEntry(data)
-          .then(resolve)
-          .catch(reject)
-      } catch (error) {
-        return reject(error)
-      }
-    })
+    return response
   }
 
   /**
@@ -106,7 +98,6 @@ export class Mongodb {
 
     return new Promise(async (resolve, reject) => {
       try {
-
         let assetJSON = cloneDeep(data)
         validateAssetPublish(assetJSON)
         assetJSON = filterAssetKeys(assetJSON)
@@ -116,31 +107,27 @@ export class Mongodb {
         }
 
         // remove if any published version exists first
-        return this.assetStore.download(assetJSON)
-          .then((asset) => {
-            const query: IAssetQuery = {
-              uid: asset.uid,
-              locale: asset.locale
-            }
-            if (asset.hasOwnProperty('download_id')) {
-              query.download_id = asset.download_id
-            } else {
-              query._version = asset._version
-            }
+        const asset: any = await this.assetStore.download(assetJSON)
 
-            return this.db.collection(getCollectionName(asset))
-              .updateOne(query, {
-                $set: assetJSON,
-              }, {
-                upsert: true,
-              })
-          })
-          .then((result) => {
-            debug(`Asset publish result ${JSON.stringify(result)}`)
+        const query: IAssetQuery = {
+          locale: asset.locale,
+          uid: asset.uid,
+        }
+        if (asset.hasOwnProperty('download_id')) {
+          query.download_id = asset.download_id
+        } else {
+          query._version = asset._version
+        }
 
-            return resolve(data)
-          })
-          .catch(reject)
+        const result = this.db.collection(getCollectionName(asset))
+          .updateOne(query, {
+            $set: assetJSON,
+          }, {
+            upsert: true,
+        })
+        debug(`Asset publish result ${JSON.stringify(result)}`)
+
+        return resolve(data)
       } catch (error) {
         return reject(error)
       }
@@ -155,13 +142,13 @@ export class Mongodb {
   public updateContentType(contentType) {
     debug(`Entry publish called ${JSON.stringify(contentType)}`)
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         let contentTypeJSON = cloneDeep(contentType)
         validateContentTypeUpdate(contentTypeJSON)
         contentTypeJSON = filterContentTypeKeys(contentTypeJSON)
 
-        return this.db
+        const contentTypeUpdateResult = await this.db
           .collection(getCollectionName(contentTypeJSON))
           .updateOne({
             _content_type_uid: contentTypeJSON._content_type_uid,
@@ -171,12 +158,9 @@ export class Mongodb {
           }, {
             upsert: true,
           })
-          .then((contentTypeUpdateResult) => {
-            debug(`Content type update result ${JSON.stringify(contentTypeUpdateResult)}`)
+        debug(`Content type update result ${JSON.stringify(contentTypeUpdateResult)}`)
 
-            return resolve(contentType)
-          })
-          .catch(reject)
+        return resolve(contentType)
       } catch (error) {
         return reject(error)
       }
@@ -224,22 +208,14 @@ export class Mongodb {
    * @param {Object} data - Data unpublish query info
    * @returns {Promise} Returns a promise
    */
-  public unpublish(data) {
-    return new Promise((resolve, reject) => {
-      try {
-        if (data._content_type_uid === '_assets') {
-          return this.unpublishAsset(data)
-            .then(resolve)
-            .catch(reject)
-        }
+  public async unpublish(data) {
+    let result: any
+    if (data._content_type_uid === '_assets') {
+      result = await this.unpublishAsset(data)
+    }
+    result = await this.unpublishEntry(data)
 
-        return this.unpublishEntry(data)
-          .then(resolve)
-          .catch(reject)
-      } catch (error) {
-        return reject(error)
-      }
-    })
+    return result
   }
 
   /**
@@ -343,11 +319,11 @@ export class Mongodb {
         return this.db.collection(getCollectionName(asset))
           .findOneAndDelete({
             _content_type_uid: asset._content_type_uid,
+            _version: {
+              $exists: true,
+            },
             locale: asset.locale,
             uid: asset.uid,
-            _version: {
-              $exists: true
-            }
           })
           .then((result) => {
             debug(`Asset unpublish status: ${JSON.stringify(result)}`)
@@ -358,12 +334,12 @@ export class Mongodb {
             return this.db.collection(getCollectionName(asset))
               .find({
                 _content_type_uid: asset._content_type_uid,
+                download_id: {
+                  $exists: true,
+                },
                 locale: asset.locale,
                 uid: asset.uid,
                 url: result.value.url,
-                download_id: {
-                  $exists: true
-                }
               })
               .toArray()
               .then((assets) => {
@@ -373,7 +349,7 @@ export class Mongodb {
                   return this.assetStore.unpublish(result.value)
                     .then(() => resolve(asset))
                 }
-                debug(`Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.`)
+                debug('Asset existed in pubilshed and RTE/Markdown form. Removed published asset object.')
 
                 return resolve(asset)
               })
@@ -400,13 +376,13 @@ export class Mongodb {
         return this.db.collection(getCollectionName(asset))
           .find({
             _content_type_uid: '_assets',
+            locale: asset.locale,
             uid: asset.uid,
-            locale: asset.locale
           })
           .toArray()
           .then((result) => {
             if (result.length === 0) {
-              debug(`Asset did not exist!`)
+              debug('Asset did not exist!')
 
               return resolve(asset)
             }
@@ -414,8 +390,8 @@ export class Mongodb {
             return this.db.collection(getCollectionName(asset))
               .deleteMany({
                 _content_type_uid: '_assets',
+                locale: asset.locale,
                 uid: asset.uid,
-                locale: asset.locale
               })
               .then(() => {
                 return result
@@ -440,26 +416,24 @@ export class Mongodb {
   private deleteContentType(contentType) {
     debug(`Delete content type called ${JSON.stringify(contentType)}`)
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         validateContentTypeDelete(contentType)
 
-        return this.db.listCollections({type: 'collections'}, {nameOnly: true})
+        const collectionsResult: any[] = await this.db
+          .listCollections({}, {nameOnly: true})
           .toArray()
-          .then((collectionsResult) => {
-            if (collectionsResult.length === 0) {
-              return resolve()
-            }
-            const collections: {name: string, locale: string}[] = getLocalesFromCollections(collectionsResult)
-            const promisifiedBucket: Promise<{}>[] = []
-            collections.forEach((collection) => {
-              promisifiedBucket.push(this.deleteCT(contentType.uid, collection))
-            })
+        if (collectionsResult.length === 0) {
+          return resolve()
+        }
+        const collections: Array<{name: string, locale: string}> = getLocalesFromCollections(collectionsResult)
+        const promisifiedBucket: Array<Promise<{}>> = []
+        collections.forEach((collection) => {
+          promisifiedBucket.push(this.deleteCT(contentType.uid, collection))
+        })
 
-            return Promise.all(promisifiedBucket)
-              .then(resolve)
-          })
-          .catch(reject)
+        return Promise.all(promisifiedBucket)
+          .then(resolve)
       } catch (error) {
         return reject(error)
       }
@@ -471,15 +445,15 @@ export class Mongodb {
       try {
         return this.db.collection(getCollectionName({_content_type_uid: uid, locale: collection.locale}))
           .deleteMany({
-            _content_type_uid: uid
+            _content_type_uid: uid,
           })
           .then((entriesDeleteResult) => {
             debug(`Delete entries result ${JSON.stringify(entriesDeleteResult)}`)
 
             return this.db.collection(collection.name)
               .deleteOne({
-                uid,
                 _content_type_uid: '_content_types',
+                uid,
               })
               .then((contentTypeDeleteResult) => {
                 debug(`Content type delete result ${JSON.stringify(contentTypeDeleteResult)}`)
@@ -493,4 +467,5 @@ export class Mongodb {
       }
     })
   }
+// tslint:disable-next-line: max-file-line-count
 }

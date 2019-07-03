@@ -10,15 +10,15 @@
     "mongodb": "3.1.10"
   },
   "devDependencies": {
-    "@types/debug": "^0.0.31",
-    "@types/jest": "^23.3.11",
-    "@types/lodash": "^4.14.119",
-    "@types/mongodb": "^3.1.17",
-    "@types/node": "^10.12.12",
+    "@types/debug": "0.0.31",
+    "@types/jest": "23.3.11",
+    "@types/lodash": "4.14.119",
+    "@types/mongodb": "3.1.17",
+    "@types/node": "10.12.12",
     "eslint": "6.0.1",
     "jest": "24.8.0",
-    "ts-jest": "^23.10.5",
-    "tslint": "^5.18.0",
+    "ts-jest": "24.0.2",
+    "tslint": "5.18.0",
     "typescript": "^3.2.2"
   },
   "scripts": {
