@@ -82,8 +82,9 @@ export class Mongodb {
     let response: any
     if (data._content_type_uid === '_assets') {
       response = await this.publishAsset(data)
+    } else {
+      response = await this.publishEntry(data)
     }
-    response = await this.publishEntry(data)
 
     return response
   }
@@ -212,8 +213,9 @@ export class Mongodb {
     let result: any
     if (data._content_type_uid === '_assets') {
       result = await this.unpublishAsset(data)
+    } else {
+      result = await this.unpublishEntry(data)
     }
-    result = await this.unpublishEntry(data)
 
     return result
   }
@@ -424,7 +426,7 @@ export class Mongodb {
           .listCollections({}, {nameOnly: true})
           .toArray()
         if (collectionsResult.length === 0) {
-          return resolve()
+          return resolve(contentType)
         }
         const collections: Array<{name: string, locale: string}> = getLocalesFromCollections(collectionsResult)
         const promisifiedBucket: Array<Promise<{}>> = []
@@ -433,7 +435,7 @@ export class Mongodb {
         })
 
         return Promise.all(promisifiedBucket)
-          .then(resolve)
+          .then(() => resolve(contentType))
       } catch (error) {
         return reject(error)
       }

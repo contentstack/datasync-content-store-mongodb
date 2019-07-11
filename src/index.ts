@@ -6,8 +6,8 @@
 
 import Debug from 'debug'
 import { merge } from 'lodash'
-import { connect } from './connection'
 import { config as internalConfig } from './config'
+import { connect } from './connection'
 import { Mongodb } from './mongodb'
 import { sanitizeConfig } from './util/index'
 
@@ -19,13 +19,13 @@ import {
 const debug = Debug('registration')
 
 let appConfig: any = {}
-let assetConnectorInstance
+let assetConnectorInstance: IAssetConnector
 let mongoClient: Mongodb
 
 interface IConnector {
-  publish<T>(input: T): Promise<{T}>,
-  unpublish<T>(input: T): Promise<{T}>,
-  delete<T>(input: T): Promise<{T}>,
+  publish<T>(input: T): Promise<{T: any}>,
+  unpublish<T>(input: T): Promise<{T: any}>,
+  delete<T>(input: T): Promise<{T: any}>,
 }
 
 interface IAssetConnector {

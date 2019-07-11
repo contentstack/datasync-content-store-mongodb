@@ -1,55 +1,29 @@
 export const data = [
   {
+    _content_type_uid: 'books',
     _id: 'e1',
-    content_type: {
-      schema: [],
-      title: 'New Books',
-      uid: 'books',
-    },
-    content_type_uid: 'books',
-    data: {
-      title: 'entry one',
-      uid: 'e1',
-      url: '/entry-one',
-      created_by: 'rkiyer',
-      publish_details: {
-        time: '2019-02-15T10:37:49.723Z',
-        locale: 'en-us'
-      }
-    },
+    created_by: 'rkiyer',
     locale: 'en-us',
-    uid: 'e1'
+    title: 'entry one',
+    uid: 'e1',
+    url: '/entry-one',
   },
   {
+    _content_type_uid: 'books',
     _id: 'e2',
-    content_type: {
-      schema: [],
-      title: 'New Books',
-      uid: 'books',
-    },
-    content_type_uid: 'books',
-    data: {
-      title: 'entry two',
-      uid: 'e2',
-      url: '/entry-two',
-    },
+    created_by: 'rkiyer',
     locale: 'en-us',
+    title: 'entry two',
     uid: 'e2',
+    url: '/entry-two',
   },
   {
+    _content_type_uid: 'books',
     _id: 'e3',
-    content_type: {
-      schema: [],
-      title: 'New Books',
-      uid: 'books',
-    },
-    content_type_uid: 'books',
-    data: {
-      title: 'entry three',
-      uid: 'e3',
-      url: '/entry-three',
-    },
+    created_by: 'arjuniyer',
     locale: 'en-us',
+    title: 'entry three',
     uid: 'e3',
+    url: '/entry-three',
   },
 ]

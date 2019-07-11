@@ -3,9 +3,9 @@
  */
 
 import { cloneDeep, merge } from 'lodash'
-import { setLogger, setConfig } from '../src'
+import { setConfig } from '../src'
+import { config as appConfig } from '../src/config'
 import { connect } from '../src/connection'
-import { config as appConfig } from '../src/defaults'
 import { Mongodb } from '../src/mongodb'
 import { connector } from './mock/assetStore'
 import { config as mockConfig } from './mock/config'
@@ -16,16 +16,16 @@ const config = cloneDeep(merge({}, appConfig, mockConfig))
 config.contentStore.collectionName = 'unpublishing'
 
 let mongoClient
+// tslint:disable-next-line: one-variable-per-declaration
 let db, mongo
 
 describe('unpublish', () => {
   beforeAll(() => {
-    setLogger()
     setConfig(config)
 
     return connect(config).then((mongodb) => {
       mongo = mongodb
-      mongoClient = new Mongodb(mongodb, connector)
+      mongoClient = new Mongodb(mongodb, connector, config.contentStore)
       db = mongoClient
     }).catch(console.error)
   })
@@ -95,7 +95,7 @@ describe('unpublish', () => {
       return db.unpublish().then((result) => {
         expect(result).toBeUndefined()
       }).catch((error) => {
-        expect(error.message).toEqual("Cannot read property 'content_type_uid' of undefined")
+        expect(error.message).toEqual("Cannot read property '_content_type_uid' of undefined")
       })
     })
   })

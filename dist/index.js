@@ -10,8 +10,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug_1 = __importDefault(require("debug"));
 const lodash_1 = require("lodash");
-const connection_1 = require("./connection");
 const config_1 = require("./config");
+const connection_1 = require("./connection");
 const mongodb_1 = require("./mongodb");
 const index_1 = require("./util/index");
 const validations_1 = require("./util/validations");

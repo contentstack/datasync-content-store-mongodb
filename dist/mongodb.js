@@ -39,7 +39,9 @@ class Mongodb {
             if (data._content_type_uid === '_assets') {
                 response = yield this.publishAsset(data);
             }
-            response = yield this.publishEntry(data);
+            else {
+                response = yield this.publishEntry(data);
+            }
             return response;
         });
     }
@@ -136,7 +138,9 @@ class Mongodb {
             if (data._content_type_uid === '_assets') {
                 result = yield this.unpublishAsset(data);
             }
-            result = yield this.unpublishEntry(data);
+            else {
+                result = yield this.unpublishEntry(data);
+            }
             return result;
         });
     }
@@ -299,7 +303,7 @@ class Mongodb {
                     .listCollections({}, { nameOnly: true })
                     .toArray();
                 if (collectionsResult.length === 0) {
-                    return resolve();
+                    return resolve(contentType);
                 }
                 const collections = index_1.getLocalesFromCollections(collectionsResult);
                 const promisifiedBucket = [];
@@ -307,7 +311,7 @@ class Mongodb {
                     promisifiedBucket.push(this.deleteCT(contentType.uid, collection));
                 });
                 return Promise.all(promisifiedBucket)
-                    .then(resolve);
+                    .then(() => resolve(contentType));
             }
             catch (error) {
                 return reject(error);

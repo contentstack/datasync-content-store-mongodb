@@ -2,7 +2,7 @@
  * @description Test contentstack-mongodb-content-store module export methods
  */
 
-import { getConfig, mongoClient, setAssetConnector, setConfig, setLogger, start } from '../src'
+import { getConfig, getMongoClient, setAssetConnector, setConfig, start } from '../src'
 import { assetConnector, connector } from './mock/assetStore'
 import { config as mockConfig } from './mock/config'
 
@@ -16,17 +16,13 @@ describe('core', () => {
     expect(setAssetConnector((assetConnector as any))).toBeUndefined()
   })
 
-  test('set custom logger', () => {
-    expect(setLogger()).toEqual(console)
-  })
-
   test('start mongo driver without successfully', () => {
     setAssetConnector((connector as any))
 
     return start((connector as any), mockConfig).then((mongo: any) => {
       expect(mongo).toHaveProperty('db')
       expect(mongo).toHaveProperty('client')
-      expect(mongo).toEqual(mongoClient)
+      expect(mongo).toEqual(getMongoClient())
       mongo.client.close()
     }).catch((error) => {
       expect(error).toBeNull()

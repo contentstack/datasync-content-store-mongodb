@@ -17,6 +17,7 @@ import { getMongoClient } from './'
  */
 const handleExit = (signal) => {
   const killDuration = (process.env.KILLDURATION) ? calculateKillDuration() : 15000
+  // tslint:disable-next-line: no-console
   console.info(`Received ${signal}. This will shut down the process in ${killDuration}ms..`)
   setInterval(abort, killDuration)
 }
