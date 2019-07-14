@@ -5,12 +5,12 @@
 */
 export declare const config: {
     contentStore: {
-        dbName: string;
         collection: {
-            entry: string;
             asset: string;
+            entry: string;
             schema: string;
         };
+        dbName: string;
         options: {
             autoReconnect: boolean;
             connectTimeoutMS: number;
@@ -22,31 +22,31 @@ export declare const config: {
         };
         unwantedKeys: {
             asset: {
-                type: boolean;
                 _checkpoint: boolean;
+                _event_at: boolean;
                 _workflow: boolean;
                 created_by: boolean;
-                _event_at: boolean;
-                updated_by: boolean;
                 publish_details: boolean;
+                type: boolean;
+                updated_by: boolean;
             };
             contentType: {
-                created_by: boolean;
-                updated_by: boolean;
                 DEFAULT_ACL: boolean;
                 SYS_ACL: boolean;
-                abilities: boolean;
-                last_activity: boolean;
                 _workflow: boolean;
+                abilities: boolean;
+                created_by: boolean;
+                last_activity: boolean;
+                updated_by: boolean;
             };
             entry: {
-                type: boolean;
                 _checkpoint: boolean;
+                _event_at: boolean;
                 _workflow: boolean;
                 created_by: boolean;
-                _event_at: boolean;
-                updated_by: boolean;
                 publish_details: boolean;
+                type: boolean;
+                updated_by: boolean;
             };
         };
         uri: string;

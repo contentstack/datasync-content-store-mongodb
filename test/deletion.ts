@@ -4,8 +4,8 @@
 
 import { cloneDeep, merge } from 'lodash'
 import { setConfig } from '../src'
-import { connect } from '../src/connection'
 import { config as appConfig } from '../src/config'
+import { connect } from '../src/connection'
 import { Mongodb } from '../src/mongodb'
 import { connector } from './mock/assetStore'
 import { config as mockConfig } from './mock/config'
@@ -17,6 +17,7 @@ const config = cloneDeep(merge({}, appConfig, mockConfig))
 config.contentStore.collectionName = 'deletion'
 
 let mongoClient
+// tslint:disable-next-line: one-variable-per-declaration
 let db, mongo
 
 describe('delete', () => {
@@ -25,9 +26,10 @@ describe('delete', () => {
 
     return connect(config).then((mongodb) => {
       mongo = mongodb
-      mongoClient = new Mongodb(mongodb, connector)
+      mongoClient = new Mongodb(mongodb, connector, config.contentStore)
       db = mongoClient
-    }).catch(console.error)
+    })
+    .catch(console.error)
   })
 
   afterAll(() => {
@@ -104,6 +106,7 @@ describe('delete', () => {
 
       return db.publish(entry1).then((result1) => {
         expect(result1).toEqual(entry1)
+
         return db.publish(entry2)
       })
       .then((result2) => {
@@ -118,6 +121,7 @@ describe('delete', () => {
       })
       .then((result4) => {
         expect(result4).toEqual(contentType)
+
         return mongoClient.db.collection('contents').findOne({
           $or: [
             {
@@ -134,7 +138,7 @@ describe('delete', () => {
       })
       .then((data1) => {
         expect(data1).toEqual(null)
-        
+
         return mongoClient.db.collection('contents').findOne({
           uid: contentType.uid,
         })
@@ -150,7 +154,7 @@ describe('delete', () => {
     test('delete entry with error', () => {
 
       return db.delete().catch((error) => {
-        expect(error.message).toEqual("Cannot read property 'content_type_uid' of undefined")
+        expect(error.message).toEqual("Cannot read property '_content_type_uid' of undefined")
       })
     })
   })

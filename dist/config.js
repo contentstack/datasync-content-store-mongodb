@@ -7,12 +7,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = {
     contentStore: {
-        dbName: 'contentstack-db',
         collection: {
-            entry: 'contents',
             asset: 'contents',
-            schema: 'contents'
+            entry: 'contents',
+            schema: 'contents',
         },
+        dbName: 'contentstack-db',
         options: {
             autoReconnect: true,
             connectTimeoutMS: 15000,
@@ -24,31 +24,31 @@ exports.config = {
         },
         unwantedKeys: {
             asset: {
-                type: true,
                 _checkpoint: true,
+                _event_at: true,
                 _workflow: true,
                 created_by: true,
-                _event_at: true,
-                updated_by: true,
                 publish_details: true,
+                type: true,
+                updated_by: true,
             },
             contentType: {
-                created_by: true,
-                updated_by: true,
                 DEFAULT_ACL: true,
                 SYS_ACL: true,
-                abilities: true,
-                last_activity: true,
                 _workflow: true,
+                abilities: true,
+                created_by: true,
+                last_activity: true,
+                updated_by: true,
             },
             entry: {
-                type: true,
                 _checkpoint: true,
+                _event_at: true,
                 _workflow: true,
                 created_by: true,
-                _event_at: true,
-                updated_by: true,
                 publish_details: true,
+                type: true,
+                updated_by: true,
             },
         },
         uri: 'mongodb://localhost:27017',

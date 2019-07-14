@@ -15,7 +15,6 @@
     "@types/lodash": "4.14.119",
     "@types/mongodb": "3.1.17",
     "@types/node": "10.12.12",
-    "eslint": "6.0.1",
     "jest": "24.8.0",
     "ts-jest": "24.0.2",
     "tslint": "5.18.0",

@@ -1,6 +1,8 @@
 import { cloneDeep, merge } from 'lodash'
-import { config as appConfig } from '../src/defaults'
-import { validateAssetDelete, validateAssetPublish, validateAssetUnpublish, validateAssetConnectorInstance, validateConfig, validateLogger, validateEntryPublish, validateEntryRemove, validateMongodbConfig } from '../src/util/validations'
+import { config as appConfig } from '../src/config'
+import { validateAssetConnectorInstance, validateAssetDelete,
+  validateAssetPublish, validateAssetUnpublish, validateConfig,
+  validateEntryPublish, validateEntryRemove, validateMongodbConfig } from '../src/util/validations'
 import { connector } from './mock/assetStore'
 import { config as mockConfig } from './mock/config'
 
@@ -54,23 +56,21 @@ describe('validations', () => {
 
 describe('Negative validations', () => {
   test('publish entry: mandatory-key not present, should throw error', () => {
-    const entry = {
+    const entry: any = {
       locale: 'en-us',
-      data: {},
-      uid: 'e1'
+      uid: 'e1',
     }
     expect(() => {
       validateEntryPublish(entry)
     })
-    .toThrow('content_type_uid is missing in entry publish!')
+    .toThrow('_content_type_uid is missing in entry publish!')
   })
 
   test('publish asset: mandatory-key not present, should throw error', () => {
-    const asset = {
-      content_type_uid: '_assets',
+    const asset: any = {
+      _content_type_uid: '_assets',
       // locale: 'en-us',
-      data: {},
-      uid: 'e1'
+      uid: 'e1',
     }
     expect(() => {
       validateAssetPublish(asset)
@@ -79,23 +79,21 @@ describe('Negative validations', () => {
   })
 
   test('unpublish entry: mandatory-key not present, should throw error', () => {
-    const entry = {
+    const entry: any = {
       locale: 'en-us',
-      data: {},
-      uid: 'e1'
+      uid: 'e1',
     }
     expect(() => {
       validateEntryRemove(entry)
     })
-    .toThrow('content_type_uid is missing in entry unpublish/delete!')
+    .toThrow('_content_type_uid is missing in entry unpublish/delete!')
   })
 
   test('unpublish asset: mandatory-key not present, should throw error', () => {
-    const asset = {
-      content_type_uid: '_assets',
+    const asset: any = {
+      _content_type_uid: '_assets',
       // locale: 'en-us',
-      data: {},
-      uid: 'e1'
+      uid: 'e1',
     }
     expect(() => {
       validateAssetUnpublish(asset)
@@ -104,31 +102,13 @@ describe('Negative validations', () => {
   })
 
   test('delete asset: mandatory-key not present, should throw error', () => {
-    const asset = {
-      content_type_uid: '_assets',
-      // locale: 'en-us',
-      data: {},
-      uid: 'e1'
+    const asset: any = {
+      _content_type_uid: '_assets',
+      uid: 'e1',
     }
     expect(() => {
       validateAssetDelete(asset)
     })
     .toThrow('locale is missing in asset delete!')
-  })
-
-  test('validate logger: mandatory-key not present, should throw error', () => {
-    const instance = {
-      info: () => {
-        return 
-      },
-      warn: () => {
-        return
-      },
-      log: () => {
-        return
-      },
-    }
-    expect(validateLogger(instance))
-    .toEqual(false)
   })
 })
