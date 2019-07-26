@@ -1,12 +1,6 @@
 # Source files
 src
 
-# Typescript configurations
-tsconfig.json
-
-# Test configurations
-jest.config.js
-
 # Data
 _contents
 
@@ -17,3 +11,13 @@ node_modules
 .vscode
 package-lock.json
 coverage
+
+# Example details
+example/*
+!example/index.js
+!example/config.js
+
+# Config files
+jest.config.js
+tsconfig.json
+.jsbeautifyrc

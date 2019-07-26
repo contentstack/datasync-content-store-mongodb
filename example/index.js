@@ -1,16 +1,28 @@
-const assetStore = require('contentstack-asset-store-filesystem')
-const contentStore = require('contentstack-content-store-filesystem')
-const listener = require('contentstack-webhook-listener')
-const syncManager = require('contentstack-sync-manager')
-const config = require('./mock/config')
+const assetStore = require('@contentstack/datasync-asset-store-filesystem')
+const contentStore = require('../dist/index')
+const listener = require('@contentstack/webhook-listener')
+const syncManager = require('@contentstack/datasync-manager')
+const config = require('./config')
 
 syncManager.setAssetStore(assetStore)
 syncManager.setContentStore(contentStore)
 syncManager.setListener(listener)
 syncManager.setConfig(config)
 
-syncManager.start()
-  .then(() => {
-    console.log('Contentstack sync started successfully!')
+syncManager.start().then(() => {
+  console.log('Example: DataSync utility started successfully!')
+}).catch(console.error)
+
+syncManager.notifications
+  .on('publish', (obj) => {
+    // console.log('SYNC-PUBLISH: ', obj)
   })
-  .catch(console.error)
+  .on('unpublish', (obj) => {
+    // console.log('SYNC-UNPUBLISH: ', obj)
+  })
+  .on('delete', (obj) => {
+    // console.log('SYNC-DELETE: ', obj)
+  })
+  .on('error', (obj) => {
+    // console.log('SYNC-ERROR: ', obj)
+  })

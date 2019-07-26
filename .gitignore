@@ -4,3 +4,13 @@ package-lock.json
 
 # Exclude coverage informations
 coverage
+
+# Example details
+example/*
+!example/index.js
+!example/config.js
+
+# Config files
+jest.config.js
+tsconfig.json
+.jsbeautifyrc
