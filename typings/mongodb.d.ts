@@ -21,11 +21,11 @@ export declare class Mongodb {
     readonly config: IMongoConfig;
     constructor(mongodb: any, assetStore: any, config: IMongoConfig);
     publish(data: any): Promise<any>;
-    publishAsset(data: any): Promise<{}>;
-    updateContentType(contentType: any): Promise<{}>;
-    publishEntry(entry: any): Promise<{}>;
+    publishAsset(data: any): Promise<unknown>;
+    updateContentType(contentType: any): Promise<unknown>;
+    publishEntry(entry: any): Promise<unknown>;
     unpublish(data: any): Promise<any>;
-    delete(data: any): Promise<{}>;
+    delete(data: any): Promise<unknown>;
     private unpublishEntry;
     private deleteEntry;
     private unpublishAsset;

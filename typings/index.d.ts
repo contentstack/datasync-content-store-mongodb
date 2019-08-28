@@ -37,5 +37,5 @@ export declare const setAssetConnector: (instance: IAssetConnector) => void;
 export declare const setConfig: (config: IConfig) => void;
 export declare const getConfig: () => IConfig;
 export declare const getMongoClient: () => Mongodb;
-export declare const start: (connector: IAssetConnector, config?: IConfig) => Promise<{}>;
+export declare const start: (connector: IAssetConnector, config?: IConfig) => Promise<unknown>;
 export {};

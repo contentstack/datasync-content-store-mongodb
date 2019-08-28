@@ -47,7 +47,7 @@ export const config = {
         _workflow: true,
         created_by: true,
         publish_details: true,
-        type: true,
+        _type: true,
         updated_by: true,
       },
       contentType: {
@@ -65,7 +65,7 @@ export const config = {
         _workflow: true,
         created_by: true,
         publish_details: true,
-        type: true,
+        _type: true,
         updated_by: true,
       },
     },

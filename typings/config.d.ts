@@ -27,7 +27,7 @@ export declare const config: {
                 _workflow: boolean;
                 created_by: boolean;
                 publish_details: boolean;
-                type: boolean;
+                _type: boolean;
                 updated_by: boolean;
             };
             contentType: {
@@ -45,7 +45,7 @@ export declare const config: {
                 _workflow: boolean;
                 created_by: boolean;
                 publish_details: boolean;
-                type: boolean;
+                _type: boolean;
                 updated_by: boolean;
             };
         };
