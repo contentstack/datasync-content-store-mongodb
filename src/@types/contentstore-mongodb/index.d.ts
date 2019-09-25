@@ -3,7 +3,7 @@
 * copyright (c) Contentstack LLC
 * MIT Licensed
 */
-declare module "mongoDbContentStoreModule" {
+declare module 'contentstore-mongodb' {
 	
 	interface IContentStore {
     collectionName?: string;
@@ -17,7 +17,7 @@ declare module "mongoDbContentStoreModule" {
     	contentStore: IContentStore;
     	[propName: string]: any;
 	}
-	export declare const sanitizeConfig: (config: IConfig) => IConfig;
+	export  const sanitizeConfig: (config: IConfig) => IConfig;
 
 	interface IMongoConfig {
     	dbName?: string;
@@ -30,7 +30,7 @@ declare module "mongoDbContentStoreModule" {
     	indexes?: any;
     	[propName: string]: any;
 	}
-	export declare class Mongodb {
+	export class Mongodb {
     	readonly assetStore: any;
 	    readonly db: any;
 	    readonly client: any;
@@ -79,11 +79,11 @@ declare module "mongoDbContentStoreModule" {
 	    contentStore: IMongoConfig;
 	    assetStore: any;
 	}
-	export declare const setAssetConnector: (instance: IAssetConnector) => void;
-	export declare const setConfig: (config: IConfig) => void;
-	export declare const getConfig: () => IConfig;
-	export declare const getMongoClient: () => Mongodb;
-	export declare const start: (connector: IAssetConnector, config?: IConfig) => Promise<unknown>;
+	export const setAssetConnector: (instance: IAssetConnector) => void;
+	export const setConfig: (config: IConfig) => void;
+	export const getConfig: () => IConfig;
+	export const getMongoClient: () => Mongodb;
+	export const start: (connector: IAssetConnector, config?: IConfig) => Promise<unknown>;
 
 
 }
