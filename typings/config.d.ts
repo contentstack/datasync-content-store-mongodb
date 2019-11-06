@@ -24,10 +24,10 @@ export declare const config: {
             asset: {
                 _checkpoint: boolean;
                 _event_at: boolean;
+                _type: boolean;
                 _workflow: boolean;
                 created_by: boolean;
                 publish_details: boolean;
-                _type: boolean;
                 updated_by: boolean;
             };
             contentType: {
@@ -42,10 +42,10 @@ export declare const config: {
             entry: {
                 _checkpoint: boolean;
                 _event_at: boolean;
+                _type: boolean;
                 _workflow: boolean;
                 created_by: boolean;
                 publish_details: boolean;
-                _type: boolean;
                 updated_by: boolean;
             };
         };

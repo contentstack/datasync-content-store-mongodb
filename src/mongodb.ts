@@ -79,6 +79,8 @@ export class Mongodb {
    * @returns {Promise} Returns a promise
    */
   public async publish(data) {
+    const time = new Date().toISOString()
+    data._synced_at = time
     let response: any
     if (data._content_type_uid === '_assets') {
       response = await this.publishAsset(data)
@@ -147,6 +149,8 @@ export class Mongodb {
       try {
         let contentTypeJSON = cloneDeep(contentType)
         validateContentTypeUpdate(contentTypeJSON)
+        const time = new Date().toISOString()
+        contentTypeJSON._synced_at = time
         contentTypeJSON = filterContentTypeKeys(contentTypeJSON)
 
         const contentTypeUpdateResult = await this.db

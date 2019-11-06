@@ -26,10 +26,10 @@ exports.config = {
             asset: {
                 _checkpoint: true,
                 _event_at: true,
+                _type: true,
                 _workflow: true,
                 created_by: true,
                 publish_details: true,
-                _type: true,
                 updated_by: true,
             },
             contentType: {
@@ -44,10 +44,10 @@ exports.config = {
             entry: {
                 _checkpoint: true,
                 _event_at: true,
+                _type: true,
                 _workflow: true,
                 created_by: true,
                 publish_details: true,
-                _type: true,
                 updated_by: true,
             },
         },

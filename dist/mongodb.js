@@ -35,6 +35,8 @@ class Mongodb {
     }
     publish(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            const time = new Date().toISOString();
+            data._synced_at = time;
             let response;
             if (data._content_type_uid === '_assets') {
                 response = yield this.publishAsset(data);
@@ -86,6 +88,8 @@ class Mongodb {
             try {
                 let contentTypeJSON = lodash_1.cloneDeep(contentType);
                 validations_1.validateContentTypeUpdate(contentTypeJSON);
+                const time = new Date().toISOString();
+                contentTypeJSON._synced_at = time;
                 contentTypeJSON = index_1.filterContentTypeKeys(contentTypeJSON);
                 const contentTypeUpdateResult = yield this.db
                     .collection(index_1.getCollectionName(contentTypeJSON))
