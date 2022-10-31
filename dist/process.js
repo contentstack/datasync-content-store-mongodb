@@ -23,7 +23,7 @@ const calculateKillDuration = () => {
     return killDuration;
 };
 const abort = () => {
-    const mongoClient = _1.getMongoClient();
+    const mongoClient = (0, _1.getMongoClient)();
     mongoClient.client.close();
     process.abort();
 };

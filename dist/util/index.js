@@ -5,8 +5,9 @@
 * MIT Licensed
 */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getLocalesFromCollections = exports.getCollectionName = exports.filterContentTypeKeys = exports.filterEntryKeys = exports.filterAssetKeys = exports.sanitizeConfig = void 0;
 const index_1 = require("../index");
-exports.sanitizeConfig = (config) => {
+const sanitizeConfig = (config) => {
     if (typeof config.contentStore.collectionName === 'string' && config.contentStore.collectionName.length) {
         config.contentStore.collection.entry = config.contentStore.collectionName;
         config.contentStore.collection.asset = config.contentStore.collectionName;
@@ -15,6 +16,7 @@ exports.sanitizeConfig = (config) => {
     }
     return config;
 };
+exports.sanitizeConfig = sanitizeConfig;
 const maskKeys = (json, arr, pos) => {
     const key = arr[pos];
     if (json.hasOwnProperty(key)) {
@@ -33,7 +35,7 @@ const maskKeys = (json, arr, pos) => {
     }
 };
 const filter = (type, json) => {
-    const contentStore = index_1.getConfig().contentStore;
+    const contentStore = (0, index_1.getConfig)().contentStore;
     const unwantedKeys = contentStore.unwantedKeys;
     if (unwantedKeys && unwantedKeys[type] && Object.keys(unwantedKeys[type]).length !== 0) {
         const keyConfig = unwantedKeys[type];
@@ -46,17 +48,20 @@ const filter = (type, json) => {
     }
     return json;
 };
-exports.filterAssetKeys = (asset) => {
+const filterAssetKeys = (asset) => {
     return filter('asset', asset);
 };
-exports.filterEntryKeys = (entry) => {
+exports.filterAssetKeys = filterAssetKeys;
+const filterEntryKeys = (entry) => {
     return filter('entry', entry);
 };
-exports.filterContentTypeKeys = (contentType) => {
+exports.filterEntryKeys = filterEntryKeys;
+const filterContentTypeKeys = (contentType) => {
     return filter('contentType', contentType);
 };
-exports.getCollectionName = ({ locale, _content_type_uid }) => {
-    const collection = index_1.getConfig().contentStore.collection;
+exports.filterContentTypeKeys = filterContentTypeKeys;
+const getCollectionName = ({ locale, _content_type_uid }) => {
+    const collection = (0, index_1.getConfig)().contentStore.collection;
     switch (_content_type_uid) {
         case '_assets':
             return `${locale}.${collection.asset}`;
@@ -66,8 +71,9 @@ exports.getCollectionName = ({ locale, _content_type_uid }) => {
             return `${locale}.${collection.entry}`;
     }
 };
-exports.getLocalesFromCollections = (collections) => {
-    const collectionConfig = index_1.getConfig().contentStore.collection;
+exports.getCollectionName = getCollectionName;
+const getLocalesFromCollections = (collections) => {
+    const collectionConfig = (0, index_1.getConfig)().contentStore.collection;
     const collectionDetails = [];
     collections.forEach((collection) => {
         const name = collection.name;
@@ -85,3 +91,4 @@ exports.getLocalesFromCollections = (collections) => {
     });
     return collectionDetails;
 };
+exports.getLocalesFromCollections = getLocalesFromCollections;
