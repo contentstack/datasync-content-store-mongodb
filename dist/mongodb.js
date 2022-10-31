@@ -5,10 +5,11 @@
  * MIT Licensed
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -16,11 +17,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Mongodb = void 0;
 const debug_1 = __importDefault(require("debug"));
 const lodash_1 = require("lodash");
 const index_1 = require("./util/index");
 const validations_1 = require("./util/validations");
-const debug = debug_1.default('mongodb-core');
+const debug = (0, debug_1.default)('mongodb-core');
 let mongo = null;
 class Mongodb {
     constructor(mongodb, assetStore, config) {
@@ -49,9 +51,9 @@ class Mongodb {
         debug(`Asset publish called ${JSON.stringify(data)}`);
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                let assetJSON = lodash_1.cloneDeep(data);
-                validations_1.validateAssetPublish(assetJSON);
-                assetJSON = index_1.filterAssetKeys(assetJSON);
+                let assetJSON = (0, lodash_1.cloneDeep)(data);
+                (0, validations_1.validateAssetPublish)(assetJSON);
+                assetJSON = (0, index_1.filterAssetKeys)(assetJSON);
                 if (assetJSON.hasOwnProperty('_version')) {
                     yield this.unpublish(data);
                 }
@@ -66,7 +68,7 @@ class Mongodb {
                 else {
                     query._version = asset._version;
                 }
-                const result = this.db.collection(index_1.getCollectionName(asset))
+                const result = this.db.collection((0, index_1.getCollectionName)(asset))
                     .updateOne(query, {
                     $set: assetJSON,
                 }, {
@@ -84,11 +86,11 @@ class Mongodb {
         debug(`Entry publish called ${JSON.stringify(contentType)}`);
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                let contentTypeJSON = lodash_1.cloneDeep(contentType);
-                validations_1.validateContentTypeUpdate(contentTypeJSON);
-                contentTypeJSON = index_1.filterContentTypeKeys(contentTypeJSON);
+                let contentTypeJSON = (0, lodash_1.cloneDeep)(contentType);
+                (0, validations_1.validateContentTypeUpdate)(contentTypeJSON);
+                contentTypeJSON = (0, index_1.filterContentTypeKeys)(contentTypeJSON);
                 const contentTypeUpdateResult = yield this.db
-                    .collection(index_1.getCollectionName(contentTypeJSON))
+                    .collection((0, index_1.getCollectionName)(contentTypeJSON))
                     .updateOne({
                     _content_type_uid: contentTypeJSON._content_type_uid,
                     uid: contentTypeJSON.uid,
@@ -109,10 +111,10 @@ class Mongodb {
         debug(`Entry publish called ${JSON.stringify(entry)}`);
         return new Promise((resolve, reject) => {
             try {
-                let entryJSON = lodash_1.cloneDeep(entry);
-                validations_1.validateEntryPublish(entryJSON);
-                entryJSON = index_1.filterEntryKeys(entryJSON);
-                return this.db.collection(index_1.getCollectionName(entryJSON))
+                let entryJSON = (0, lodash_1.cloneDeep)(entry);
+                (0, validations_1.validateEntryPublish)(entryJSON);
+                entryJSON = (0, index_1.filterEntryKeys)(entryJSON);
+                return this.db.collection((0, index_1.getCollectionName)(entryJSON))
                     .updateOne({
                     _content_type_uid: entryJSON._content_type_uid,
                     locale: entryJSON.locale,
@@ -146,32 +148,27 @@ class Mongodb {
     }
     delete(data) {
         return new Promise((resolve, reject) => {
-            try {
-                if (data._content_type_uid === '_assets') {
-                    return this.deleteAsset(data)
-                        .then(resolve)
-                        .catch(reject);
-                }
-                else if (data._content_type_uid === '_content_types') {
-                    return this.deleteContentType(data)
-                        .then(resolve)
-                        .catch(reject);
-                }
-                return this.deleteEntry(data)
+            if (data._content_type_uid === '_assets') {
+                return this.deleteAsset(data)
                     .then(resolve)
                     .catch(reject);
             }
-            catch (error) {
-                return reject(error);
+            else if (data._content_type_uid === '_content_types') {
+                return this.deleteContentType(data)
+                    .then(resolve)
+                    .catch(reject);
             }
+            return this.deleteEntry(data)
+                .then(resolve)
+                .catch(reject);
         });
     }
     unpublishEntry(entry) {
         debug(`Delete entry called ${JSON.stringify(entry)}`);
         return new Promise((resolve, reject) => {
             try {
-                validations_1.validateEntryRemove(entry);
-                return this.db.collection(index_1.getCollectionName(entry))
+                (0, validations_1.validateEntryRemove)(entry);
+                return this.db.collection((0, index_1.getCollectionName)(entry))
                     .deleteOne({
                     _content_type_uid: entry._content_type_uid,
                     locale: entry.locale,
@@ -192,8 +189,8 @@ class Mongodb {
         debug(`Delete entry called ${JSON.stringify(entry)}`);
         return new Promise((resolve, reject) => {
             try {
-                validations_1.validateEntryRemove(entry);
-                return this.db.collection(index_1.getCollectionName(entry))
+                (0, validations_1.validateEntryRemove)(entry);
+                return this.db.collection((0, index_1.getCollectionName)(entry))
                     .deleteMany({
                     _content_type_uid: entry._content_type_uid,
                     uid: entry.uid,
@@ -213,8 +210,8 @@ class Mongodb {
         debug(`Unpublish asset called ${JSON.stringify(asset)}`);
         return new Promise((resolve, reject) => {
             try {
-                validations_1.validateAssetUnpublish(asset);
-                return this.db.collection(index_1.getCollectionName(asset))
+                (0, validations_1.validateAssetUnpublish)(asset);
+                return this.db.collection((0, index_1.getCollectionName)(asset))
                     .findOneAndDelete({
                     _content_type_uid: asset._content_type_uid,
                     _version: {
@@ -228,7 +225,7 @@ class Mongodb {
                     if (result.value === null) {
                         return resolve(asset);
                     }
-                    return this.db.collection(index_1.getCollectionName(asset))
+                    return this.db.collection((0, index_1.getCollectionName)(asset))
                         .find({
                         _content_type_uid: asset._content_type_uid,
                         download_id: {
@@ -260,8 +257,8 @@ class Mongodb {
         debug(`Delete asset called ${JSON.stringify(asset)}`);
         return new Promise((resolve, reject) => {
             try {
-                validations_1.validateAssetDelete(asset);
-                return this.db.collection(index_1.getCollectionName(asset))
+                (0, validations_1.validateAssetDelete)(asset);
+                return this.db.collection((0, index_1.getCollectionName)(asset))
                     .find({
                     _content_type_uid: '_assets',
                     locale: asset.locale,
@@ -273,7 +270,7 @@ class Mongodb {
                         debug('Asset did not exist!');
                         return resolve(asset);
                     }
-                    return this.db.collection(index_1.getCollectionName(asset))
+                    return this.db.collection((0, index_1.getCollectionName)(asset))
                         .deleteMany({
                         _content_type_uid: '_assets',
                         locale: asset.locale,
@@ -298,14 +295,14 @@ class Mongodb {
         debug(`Delete content type called ${JSON.stringify(contentType)}`);
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                validations_1.validateContentTypeDelete(contentType);
+                (0, validations_1.validateContentTypeDelete)(contentType);
                 const collectionsResult = yield this.db
                     .listCollections({}, { nameOnly: true })
                     .toArray();
                 if (collectionsResult.length === 0) {
                     return resolve(contentType);
                 }
-                const collections = index_1.getLocalesFromCollections(collectionsResult);
+                const collections = (0, index_1.getLocalesFromCollections)(collectionsResult);
                 const promisifiedBucket = [];
                 collections.forEach((collection) => {
                     promisifiedBucket.push(this.deleteCT(contentType.uid, collection));
@@ -321,7 +318,7 @@ class Mongodb {
     deleteCT(uid, collection) {
         return new Promise((resolve, reject) => {
             try {
-                return this.db.collection(index_1.getCollectionName({ _content_type_uid: uid, locale: collection.locale }))
+                return this.db.collection((0, index_1.getCollectionName)({ _content_type_uid: uid, locale: collection.locale }))
                     .deleteMany({
                     _content_type_uid: uid,
                 })
@@ -334,7 +331,7 @@ class Mongodb {
                     })
                         .then((contentTypeDeleteResult) => {
                         debug(`Content type delete result ${JSON.stringify(contentTypeDeleteResult)}`);
-                        return resolve();
+                        return resolve('');
                     });
                 })
                     .catch(reject);

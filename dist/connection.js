@@ -8,24 +8,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.connect = void 0;
 const debug_1 = __importDefault(require("debug"));
 const lodash_1 = require("lodash");
 const mongodb_1 = require("mongodb");
 const validations_1 = require("./util/validations");
-const debug = debug_1.default('connection');
+const debug = (0, debug_1.default)('connection');
 let indexes = {
     _content_type_uid: 1,
     uid: 1,
 };
 const instance = {};
-exports.connect = (config) => {
+const connect = (config) => {
     return new Promise((resolve, reject) => {
         try {
             if (Object.keys(instance).length !== 0) {
                 return resolve(instance);
             }
             const mongoConfig = config.contentStore;
-            validations_1.validateMongodbConfig(mongoConfig);
+            (0, validations_1.validateMongodbConfig)(mongoConfig);
             const connectionUri = mongoConfig.url || mongoConfig.uri;
             const dbName = mongoConfig.dbName;
             const options = mongoConfig.options;
@@ -33,8 +34,8 @@ exports.connect = (config) => {
             debug('db name', dbName);
             debug('collection names', mongoConfig.collection);
             debug('db options', JSON.stringify(options));
-            if (mongoConfig.indexes && lodash_1.isPlainObject(mongoConfig.indexes) && !(lodash_1.isEmpty(mongoConfig.indexes))) {
-                indexes = lodash_1.merge(indexes, mongoConfig.indexes);
+            if (mongoConfig.indexes && (0, lodash_1.isPlainObject)(mongoConfig.indexes) && !((0, lodash_1.isEmpty)(mongoConfig.indexes))) {
+                indexes = (0, lodash_1.merge)(indexes, mongoConfig.indexes);
             }
             const client = new mongodb_1.MongoClient(connectionUri, options);
             return client.connect().then(() => {
@@ -50,3 +51,4 @@ exports.connect = (config) => {
         }
     });
 };
+exports.connect = connect;

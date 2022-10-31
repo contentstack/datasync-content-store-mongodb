@@ -5,9 +5,10 @@
 * MIT Licensed
 */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateContentTypeUpdate = exports.validateContentTypeDelete = exports.validateAssetDelete = exports.validateAssetUnpublish = exports.validateEntryRemove = exports.validateEntryPublish = exports.validateAssetPublish = exports.validateMongodbConfig = exports.validateAssetConnectorInstance = exports.validateConfig = void 0;
 const requiredUpsertKeys = ['_content_type_uid', 'locale', 'uid'];
 const requiredRemoveKeys = ['_content_type_uid', 'locale', 'uid'];
-exports.validateConfig = (config) => {
+const validateConfig = (config) => {
     if (typeof config.contentStore.options !== 'object' || Object.keys(config.contentStore.options).length
         === 0) {
         throw new Error('Content connector options cannot be empty!');
@@ -16,7 +17,8 @@ exports.validateConfig = (config) => {
         throw new Error('Content connector uri should be of type string and not empty!');
     }
 };
-exports.validateAssetConnectorInstance = (instance) => {
+exports.validateConfig = validateConfig;
+const validateAssetConnectorInstance = (instance) => {
     const keys = ['download', 'delete', 'unpublish'];
     keys.forEach((fn) => {
         if (!(fn in instance) || typeof instance[fn] !== 'function') {
@@ -24,7 +26,8 @@ exports.validateAssetConnectorInstance = (instance) => {
         }
     });
 };
-exports.validateMongodbConfig = (config = {}) => {
+exports.validateAssetConnectorInstance = validateAssetConnectorInstance;
+const validateMongodbConfig = (config = {}) => {
     if (typeof config.uri !== 'string' || config.uri.length === 0) {
         throw new Error("Mongodb config 'uri' should be of type string and not empty!");
     }
@@ -35,42 +38,48 @@ exports.validateMongodbConfig = (config = {}) => {
         throw new Error("Mongodb config 'option' should be of type object and not empty!");
     }
 };
-exports.validateAssetPublish = (asset) => {
+exports.validateMongodbConfig = validateMongodbConfig;
+const validateAssetPublish = (asset) => {
     requiredUpsertKeys.forEach((key) => {
         if (!(key in asset)) {
             throw new Error(`${key} is missing in asset publish!`);
         }
     });
 };
-exports.validateEntryPublish = (entry) => {
+exports.validateAssetPublish = validateAssetPublish;
+const validateEntryPublish = (entry) => {
     requiredUpsertKeys.forEach((key) => {
         if (!(key in entry)) {
             throw new Error(`${key} is missing in entry publish!`);
         }
     });
 };
-exports.validateEntryRemove = (entry) => {
+exports.validateEntryPublish = validateEntryPublish;
+const validateEntryRemove = (entry) => {
     requiredRemoveKeys.forEach((key) => {
         if (!(key in entry)) {
             throw new Error(`${key} is missing in entry unpublish/delete!`);
         }
     });
 };
-exports.validateAssetUnpublish = (asset) => {
+exports.validateEntryRemove = validateEntryRemove;
+const validateAssetUnpublish = (asset) => {
     requiredRemoveKeys.forEach((key) => {
         if (!(key in asset)) {
             throw new Error(`${key} is missing in asset unpublish!`);
         }
     });
 };
-exports.validateAssetDelete = (asset) => {
+exports.validateAssetUnpublish = validateAssetUnpublish;
+const validateAssetDelete = (asset) => {
     requiredRemoveKeys.forEach((key) => {
         if (!(key in asset)) {
             throw new Error(`${key} is missing in asset delete!`);
         }
     });
 };
-exports.validateContentTypeDelete = (contentType) => {
+exports.validateAssetDelete = validateAssetDelete;
+const validateContentTypeDelete = (contentType) => {
     const keys = ['_content_type_uid', 'uid'];
     keys.forEach((key) => {
         if (!(key in contentType)) {
@@ -78,10 +87,12 @@ exports.validateContentTypeDelete = (contentType) => {
         }
     });
 };
-exports.validateContentTypeUpdate = (contentType) => {
+exports.validateContentTypeDelete = validateContentTypeDelete;
+const validateContentTypeUpdate = (contentType) => {
     requiredUpsertKeys.forEach((key) => {
         if (!(key in contentType)) {
             throw new Error(`${key} is missing in content type upsert!`);
         }
     });
 };
+exports.validateContentTypeUpdate = validateContentTypeUpdate;

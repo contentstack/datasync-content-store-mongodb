@@ -456,7 +456,7 @@ export class Mongodb {
               .then((contentTypeDeleteResult) => {
                 debug(`Content type delete result ${JSON.stringify(contentTypeDeleteResult)}`)
 
-                return resolve()
+                return resolve('');
               })
           })
           .catch(reject)
