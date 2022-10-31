@@ -227,23 +227,19 @@ export class Mongodb {
    */
   public delete(data) {
     return new Promise((resolve, reject) => {
-      try {
-        if (data._content_type_uid === '_assets') {
-          return this.deleteAsset(data)
-            .then(resolve)
-            .catch(reject)
-        } else if (data._content_type_uid === '_content_types') {
-          return this.deleteContentType(data)
-            .then(resolve)
-            .catch(reject)
-        }
-
-        return this.deleteEntry(data)
+      if (data._content_type_uid === '_assets') {
+        return this.deleteAsset(data)
           .then(resolve)
           .catch(reject)
-      } catch (error) {
-        return reject(error)
+      } else if (data._content_type_uid === '_content_types') {
+        return this.deleteContentType(data)
+          .then(resolve)
+          .catch(reject)
       }
+
+      return this.deleteEntry(data)
+        .then(resolve)
+        .catch(reject);
     })
   }
 

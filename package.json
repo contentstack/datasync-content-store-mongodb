@@ -1,22 +1,21 @@
 {
   "name": "@contentstack/datasync-content-store-mongodb",
   "author": "Contentstack Ecosystem <ecosystem@contentstack.com>",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Contentstack datasync's mongodb library. Helps to store contents in mongodb",
   "main": "dist/index.js",
   "dependencies": {
-    "debug": "4.1.1",
+    "debug": "^4.3.4",
     "lodash": "^4.17.15",
-    "mongodb": "3.1.10"
+    "mongodb": "^4.9.0"
   },
   "devDependencies": {
     "@types/debug": "0.0.31",
     "@types/jest": "23.3.11",
     "@types/lodash": "4.14.119",
-    "@types/mongodb": "3.1.17",
     "@types/node": "10.12.12",
-    "jest": "24.8.0",
-    "ts-jest": "24.0.2",
+    "jest": "^29.0.3",
+    "ts-jest": "^29.0.1",
     "tslint": "5.18.0",
     "typescript": "^3.2.2"
   },
