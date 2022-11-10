@@ -12,12 +12,9 @@ export declare const config: {
         };
         dbName: string;
         options: {
-            autoReconnect: boolean;
             connectTimeoutMS: number;
             keepAlive: boolean;
             noDelay: boolean;
-            reconnectInterval: number;
-            reconnectTries: number;
             useNewUrlParser: boolean;
         };
         unwantedKeys: {
