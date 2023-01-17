@@ -43,6 +43,10 @@
     "datasync",
     "mongodb-content-store"
   ],
+  "files": [
+    "/dist",
+    "/typings"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/contentstack/datasync-content-store-mongodb"

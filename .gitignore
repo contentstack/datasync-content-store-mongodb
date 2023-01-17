@@ -13,3 +13,5 @@ example/*
 jest.config.js
 tsconfig.json
 .jsbeautifyrc
+
+dist/
