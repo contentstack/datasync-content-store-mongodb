@@ -7,7 +7,7 @@
   "dependencies": {
     "debug": "^4.3.4",
     "lodash": "^4.17.15",
-    "mongodb": "^4.9.0"
+    "mongodb": "^5.7.0"
   },
   "devDependencies": {
     "@types/debug": "0.0.31",
