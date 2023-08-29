@@ -11,5 +11,6 @@ example/*
 
 # Config files
 jest.config.js
-tsconfig.json
 .jsbeautifyrc
+
+dist/
