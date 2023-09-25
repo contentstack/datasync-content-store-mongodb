@@ -1,13 +1,13 @@
 {
   "name": "@contentstack/datasync-content-store-mongodb",
   "author": "Contentstack Ecosystem <ecosystem@contentstack.com>",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Contentstack datasync's mongodb library. Helps to store contents in mongodb",
   "main": "dist/index.js",
   "dependencies": {
     "debug": "^4.3.4",
     "lodash": "^4.17.15",
-    "mongodb": "^5.7.0"
+    "mongodb": "^5.8.0"
   },
   "devDependencies": {
     "@types/debug": "0.0.31",
