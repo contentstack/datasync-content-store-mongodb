@@ -13,9 +13,7 @@ export declare const config: {
         dbName: string;
         options: {
             connectTimeoutMS: number;
-            keepAlive: boolean;
             noDelay: boolean;
-            useNewUrlParser: boolean;
         };
         unwantedKeys: {
             asset: {
