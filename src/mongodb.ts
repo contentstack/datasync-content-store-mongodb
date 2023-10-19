@@ -325,7 +325,7 @@ export class Mongodb {
           })
           .then((result) => {
             debug(`Asset unpublish status: ${JSON.stringify(result)}`)
-            if (result.value === null) {
+            if (result === null) {
               return resolve(asset)
             }
 
@@ -337,7 +337,7 @@ export class Mongodb {
                 },
                 locale: asset.locale,
                 uid: asset.uid,
-                url: result.value.url,
+                url: result.url,
               })
               .toArray()
               .then((assets) => {
