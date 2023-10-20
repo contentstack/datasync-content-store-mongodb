@@ -337,7 +337,7 @@ export class Mongodb {
                 },
                 locale: asset.locale,
                 uid: asset.uid,
-                url: result.value.url,
+                url: result.url,
               })
               .toArray()
               .then((assets) => {
