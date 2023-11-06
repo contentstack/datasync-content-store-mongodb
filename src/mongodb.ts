@@ -325,7 +325,7 @@ export class Mongodb {
           })
           .then((result) => {
             debug(`Asset unpublish status: ${JSON.stringify(result)}`)
-            if (result === null) {
+            if (!result?.value) {
               return resolve(asset)
             }
 
