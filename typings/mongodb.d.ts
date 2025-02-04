@@ -19,7 +19,8 @@ export declare class Mongodb {
     readonly db: any;
     readonly client: any;
     readonly config: IMongoConfig;
-    constructor(mongodb: any, assetStore: any, config: IMongoConfig);
+    readonly _config: any;
+    constructor(mongodb: any, assetStore: any, config: IMongoConfig, appConfig: any);
     publish(data: any): Promise<any>;
     publishAsset(data: any): Promise<unknown>;
     updateContentType(contentType: any): Promise<unknown>;
@@ -32,5 +33,7 @@ export declare class Mongodb {
     private deleteAsset;
     private deleteContentType;
     private deleteCT;
+    private _updateReferenceFields;
+    private _updateAssetFields;
 }
 export {};
