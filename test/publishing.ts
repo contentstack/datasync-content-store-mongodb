@@ -25,7 +25,7 @@ describe('publish', () => {
 
     return connect(config).then((mongodb) => {
       mongo = mongodb
-      mongoClient = new Mongodb(mongodb, connector, config.contentStore)
+      mongoClient = new Mongodb(mongodb, connector, config.contentStore, config)
       db = mongoClient
     })
     .catch(console.error)
@@ -64,7 +64,7 @@ describe('publish', () => {
   describe('publish should throw an error', () => {
     test('publish entry successfully', () => {
       return db.publish().catch((error) => {
-        expect(error.message).toEqual('Cannot read property \'_content_type_uid\' of undefined')
+        expect(error.message).toContain('Cannot read properties of undefined (reading \'_content_type_uid\')')
       })
     })
   })
