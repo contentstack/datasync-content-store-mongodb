@@ -12,7 +12,7 @@ The Cotentstack MongoDB Content Store is part of Contentstack DataSync's content
 
 ###  Prerequisite
 
-- Nodejs v8 or above
+- Nodejs v20 or above
 - Mongodb v3.6 or above
 
 ### Usage
