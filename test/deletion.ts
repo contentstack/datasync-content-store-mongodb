@@ -26,7 +26,7 @@ describe('delete', () => {
 
     return connect(config).then((mongodb) => {
       mongo = mongodb
-      mongoClient = new Mongodb(mongodb, connector, config.contentStore)
+      mongoClient = new Mongodb(mongodb, connector, config.contentStore, config)
       db = mongoClient
     })
     .catch(console.error)
@@ -154,7 +154,7 @@ describe('delete', () => {
     test('delete entry with error', () => {
 
       return db.delete().catch((error) => {
-        expect(error.message).toEqual("Cannot read property '_content_type_uid' of undefined")
+        expect(error.message).toEqual("Cannot read properties of undefined (reading \'_content_type_uid\')")
       })
     })
   })
