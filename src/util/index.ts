@@ -7,6 +7,8 @@
 
 import { getConfig } from '../index'
 
+export { MESSAGES } from './messages'
+
 interface IContentStore {
   collectionName?: string,
   collection?: {
