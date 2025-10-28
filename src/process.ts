@@ -10,6 +10,7 @@
  */
 
 import { getMongoClient } from './'
+import { MESSAGES } from './util/messages'
 
 /**
  * @description Handles process exit. Stops the current application and manages a graceful shutdown
@@ -18,7 +19,7 @@ import { getMongoClient } from './'
 const handleExit = (signal) => {
   const killDuration = (process.env.KILLDURATION) ? calculateKillDuration() : 15000
   // tslint:disable-next-line: no-console
-  console.info(`Received ${signal}. This will shut down the process in ${killDuration}ms..`)
+  console.info(MESSAGES.PROCESS.SHUTDOWN(signal, killDuration))
   setInterval(abort, killDuration)
 }
 
@@ -30,7 +31,7 @@ const handleExit = (signal) => {
  * @param {Object} error - Unhandled error object
  */
 const unhandledErrors = (error) => {
-  console.error('Unhandled exception caught. Locking down process for 10s to recover..')
+  console.error(MESSAGES.PROCESS.UNHANDLED_ERROR)
   console.error(error)
 }
 

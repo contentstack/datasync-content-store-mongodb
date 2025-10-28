@@ -31,4 +31,5 @@ export declare const getLocalesFromCollections: (collections: {
     name: string;
     locale: string;
 }[];
+export { MESSAGES } from './messages';
 export {};
