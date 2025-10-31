@@ -4,6 +4,7 @@
 * MIT Licensed
 *
 */
+export { MESSAGES } from './messages';
 interface IContentStore {
     collectionName?: string;
     collection?: {
@@ -31,5 +32,3 @@ export declare const getLocalesFromCollections: (collections: {
     name: string;
     locale: string;
 }[];
-export { MESSAGES } from './messages';
-export {};
