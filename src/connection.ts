@@ -8,6 +8,7 @@ import Debug from 'debug'
 import { isEmpty, isPlainObject, merge } from 'lodash'
 import { Db, MongoClient } from 'mongodb'
 import { validateMongodbConfig } from './util/validations'
+import { MESSAGES } from './util/messages'
 
 const debug = Debug('connection')
 interface IMongo {
@@ -42,10 +43,10 @@ export const connect = (config) => {
       const dbName = mongoConfig.dbName
       const options = mongoConfig.options
 
-      debug('connection url', connectionUri)
-      debug('db name', dbName)
-      debug('collection names', mongoConfig.collection)
-      debug('db options', JSON.stringify(options))
+      debug(MESSAGES.CONNECTION.URL, connectionUri)
+      debug(MESSAGES.CONNECTION.DB_NAME, dbName)
+      debug(MESSAGES.CONNECTION.COLLECTION_NAMES, mongoConfig.collection)
+      debug(MESSAGES.CONNECTION.DB_OPTIONS, JSON.stringify(options))
 
       if (mongoConfig.indexes && isPlainObject(mongoConfig.indexes) && !(isEmpty(mongoConfig.indexes))) {
         indexes = merge(indexes, mongoConfig.indexes)
@@ -56,7 +57,7 @@ export const connect = (config) => {
       return client.connect().then(() => {
         instance.db = client.db(dbName)
         instance.client = client
-        console.info(`Mongodb connection to ${connectionUri} established successfully!`)
+        console.info(MESSAGES.CONNECTION.SUCCESS(connectionUri))
 
         return resolve(instance)
       })
