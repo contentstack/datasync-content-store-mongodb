@@ -13,6 +13,7 @@ import {
   getCollectionName,
   getLocalesFromCollections,
 } from "./util/index";
+import { MESSAGES } from "./util/messages";
 import {
   validateAssetDelete,
   validateAssetPublish,
@@ -93,7 +94,7 @@ export class Mongodb {
    * @returns {Promise} Returns a promise
    */
   public publishAsset(data) {
-    debug(`Asset publish called ${JSON.stringify(data)}`);
+    debug(MESSAGES.ASSET.PUBLISH_INITIATED(data));
 
     return new Promise(async (resolve, reject) => {
       try {
@@ -127,7 +128,7 @@ export class Mongodb {
             upsert: true,
           }
         );
-        debug(`Asset publish result ${JSON.stringify(result)}`);
+        debug(MESSAGES.ASSET.PUBLISH_RESULT(result));
 
         return resolve(data);
       } catch (error) {
@@ -142,7 +143,7 @@ export class Mongodb {
    * @returns {Promise} Returns a promise
    */
   public updateContentType(contentType) {
-    debug(`Entry publish called ${JSON.stringify(contentType)}`);
+    debug(MESSAGES.ENTRY.PUBLISH_INITIATED(contentType));
 
     return new Promise(async (resolve, reject) => {
       try {
@@ -164,11 +165,7 @@ export class Mongodb {
               upsert: true,
             }
           );
-        debug(
-          `Content type update result ${JSON.stringify(
-            contentTypeUpdateResult
-          )}`
-        );
+        debug(MESSAGES.CONTENT_TYPE.UPDATE_RESULT(contentTypeUpdateResult));
 
         return resolve(contentType);
       } catch (error) {
@@ -183,7 +180,7 @@ export class Mongodb {
    * @returns {Promise} Returns a promise
    */
   public publishEntry(entry) {
-    debug(`Entry publish called ${JSON.stringify(entry)}`);
+    debug(MESSAGES.ENTRY.PUBLISH_INITIATED(entry));
 
     return new Promise((resolve, reject) => {
       try {
@@ -220,7 +217,7 @@ export class Mongodb {
             }
           )
           .then((entryPublishResult) => {
-            debug(`Entry publish result ${JSON.stringify(entryPublishResult)}`);
+            debug(MESSAGES.ENTRY.PUBLISH_RESULT(entryPublishResult));
 
             return resolve(entry);
           })
@@ -270,7 +267,7 @@ export class Mongodb {
    * @returns {Promise} Returns a promise
    */
   private unpublishEntry(entry) {
-    debug(`Delete entry called ${JSON.stringify(entry)}`);
+    debug(MESSAGES.ENTRY.DELETE_INITIATED(entry));
 
     return new Promise((resolve, reject) => {
       try {
@@ -284,7 +281,7 @@ export class Mongodb {
             uid: entry.uid,
           })
           .then((result) => {
-            debug(`Delete entry result ${JSON.stringify(result)}`);
+            debug(MESSAGES.ENTRY.DELETE_RESULT(result));
 
             return resolve(entry);
           })
@@ -301,7 +298,7 @@ export class Mongodb {
    * @returns {Promise} Returns a promise
    */
   private deleteEntry(entry) {
-    debug(`Delete entry called ${JSON.stringify(entry)}`);
+    debug(MESSAGES.ENTRY.DELETE_INITIATED(entry));
 
     return new Promise((resolve, reject) => {
       try {
@@ -314,7 +311,7 @@ export class Mongodb {
             uid: entry.uid,
           })
           .then((result) => {
-            debug(`Delete entry result ${JSON.stringify(result)}`);
+            debug(MESSAGES.ENTRY.DELETE_RESULT(result));
 
             return resolve(entry);
           })
@@ -331,7 +328,7 @@ export class Mongodb {
    * @returns {Promise} Returns a promise
    */
   private unpublishAsset(asset) {
-    debug(`Unpublish asset called ${JSON.stringify(asset)}`);
+    debug(MESSAGES.ASSET.UNPUBLISH_INITIATED(asset));
 
     return new Promise((resolve, reject) => {
       try {
@@ -348,7 +345,7 @@ export class Mongodb {
             uid: asset.uid,
           })
           .then((result) => {
-            debug(`Asset unpublish status: ${JSON.stringify(result)}`);
+            debug(MESSAGES.ASSET.UNPUBLISH_RESULT(result));
             if (!result?.value) {
               return resolve(asset);
             }
@@ -367,19 +364,13 @@ export class Mongodb {
               .toArray()
               .then((assets) => {
                 if (assets.length === 0) {
-                  debug(
-                    `Only published object of ${JSON.stringify(
-                      asset
-                    )} was present`
-                  );
+                  debug(MESSAGES.ASSET.ONLY_PUBLISHED_PRESENT(asset));
 
                   return this.assetStore
                     .unpublish(result.value)
                     .then(() => resolve(asset));
                 }
-                debug(
-                  "Asset existed in pubilshed and RTE/Markdown form. Removed published asset object."
-                );
+                debug(MESSAGES.ASSET.EXISTED_IN_MULTIPLE_FORMS);
 
                 return resolve(asset);
               });
@@ -397,7 +388,7 @@ export class Mongodb {
    * @returns {Promise} Returns a promise
    */
   private deleteAsset(asset) {
-    debug(`Delete asset called ${JSON.stringify(asset)}`);
+    debug(MESSAGES.ASSET.DELETE_INITIATED(asset));
 
     return new Promise((resolve, reject) => {
       try {
@@ -413,7 +404,7 @@ export class Mongodb {
           .toArray()
           .then((result) => {
             if (result.length === 0) {
-              debug("Asset did not exist!");
+              debug(MESSAGES.ASSET.DOES_NOT_EXIST);
 
               return resolve(asset);
             }
@@ -445,7 +436,7 @@ export class Mongodb {
    * @returns {Promise} Returns a promise
    */
   private deleteContentType(contentType) {
-    debug(`Delete content type called ${JSON.stringify(contentType)}`);
+    debug(MESSAGES.CONTENT_TYPE.DELETE_INITIATED(contentType));
 
     return new Promise(async (resolve, reject) => {
       try {
@@ -485,9 +476,7 @@ export class Mongodb {
             _content_type_uid: uid,
           })
           .then((entriesDeleteResult) => {
-            debug(
-              `Delete entries result ${JSON.stringify(entriesDeleteResult)}`
-            );
+            debug(MESSAGES.CONTENT_TYPE.DELETE_ENTRIES_RESULT(entriesDeleteResult));
 
             return this.db
               .collection(collection.name)
@@ -496,11 +485,7 @@ export class Mongodb {
                 uid,
               })
               .then((contentTypeDeleteResult) => {
-                debug(
-                  `Content type delete result ${JSON.stringify(
-                    contentTypeDeleteResult
-                  )}`
-                );
+                debug(MESSAGES.CONTENT_TYPE.DELETE_RESULT(contentTypeDeleteResult));
 
                 return resolve(0);
               });

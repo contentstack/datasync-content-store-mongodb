@@ -10,6 +10,7 @@ import { config as internalConfig } from './config'
 import { connect } from './connection'
 import { Mongodb } from './mongodb'
 import { sanitizeConfig } from './util/index'
+import { MESSAGES } from './util/messages'
 
 import {
   validateAssetConnectorInstance,
@@ -103,7 +104,7 @@ export const start = (connector: IAssetConnector, config?: IConfig) => {
       return connect(appConfig)
         .then((mongo) => {
           mongoClient = new Mongodb(mongo, assetConnectorInstance, appConfig.contentStore, appConfig)
-          debug('Mongo connector instance created successfully!')
+          debug(MESSAGES.CONNECTOR.INSTANCE_CREATED)
 
           return resolve(mongoClient)
         })
