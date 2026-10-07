@@ -1,7 +1,7 @@
 {
   "name": "@contentstack/datasync-content-store-mongodb",
   "author": "Contentstack Ecosystem <ecosystem@contentstack.com>",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Contentstack datasync's mongodb library. Helps to store contents in mongodb",
   "main": "dist/index.js",
   "dependencies": {
@@ -12,14 +12,14 @@
   "devDependencies": {
     "@types/debug": "0.0.31",
     "@types/jest": "23.3.14",
-    "@types/lodash": "4.17.24",
+    "@types/lodash": "4.17.25",
     "@types/node": "10.17.60",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-config": "^29.7.0",
     "node-notifier": "^10.0.1",
-    "rimraf": "^6.0.1",
-    "ts-jest": "^29.2.5",
+    "rimraf": "^6.1.3",
+    "ts-jest": "^29.4.12",
     "tslint": "5.20.1",
     "typescript": "^4.9.5"
   },
@@ -57,5 +57,9 @@
   "bugs": {
     "url": "https://github.com/contentstack/datasync-content-store-mongodb#readme/issues"
   },
-  "homepage": "https://www.contentstack.com/docs/guide/synchronization/contentstack-datasync"
+  "homepage": "https://www.contentstack.com/docs/guide/synchronization/contentstack-datasync",
+  "overrides": {
+    "@babel/core": "7.29.6",
+    "js-yaml": "3.15.1"
+  }
 }
