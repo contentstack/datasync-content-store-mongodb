@@ -5,5 +5,5 @@ fileignoreconfig:
 - filename: package-lock.json
   checksum: b9989022679f3ffdc44f7bae43618855ee966f41561bd0a804bff91fe9c370b2
 - filename: .github/workflows/check-version-bump.yml
-  checksum: b33b47fae4e126cd9a3489a9324e8b2cf30b38ebdb3dd99e2d453d4bfc0922ad
+  checksum: 30a90ef45ab0a11b74040163e6baff12c922c47139c09dd7a62eb69f7b551c1f
 version: ""

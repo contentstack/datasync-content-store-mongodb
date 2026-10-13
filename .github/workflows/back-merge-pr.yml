@@ -27,11 +27,10 @@ jobs:
           set -euo pipefail
           git fetch origin development master
 
-          master_SHA=$(git rev-parse origin/master)
-          DEV_SHA=$(git rev-parse origin/development)
-
-          if [ "$master_SHA" = "$DEV_SHA" ]; then
-            echo "master and development are at the same commit; nothing to back-merge."
+          # Different tips do not mean master has commits development lacks — after a back-merge,
+          # development contains master and moves ahead. Skip whenever master is already contained.
+          if git merge-base --is-ancestor origin/master origin/development; then
+            echo "development already contains master; nothing to back-merge."
             exit 0
           fi
 
