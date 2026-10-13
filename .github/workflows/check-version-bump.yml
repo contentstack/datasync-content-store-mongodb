@@ -1,0 +1,88 @@
+# Catches when developers forget to bump package.json for release-affecting changes.
+# Library changes (src/, typings/, package.json) require a version above the latest v* release tag.
+# Skips for: test-only, docs and .github changes, and back-merge PRs from master (already released).
+name: Check Version Bump
+
+on:
+  pull_request:
+
+jobs:
+  version-bump:
+    name: Version bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect release-affecting changes
+        id: detect
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$HEAD_REF" = "master" ]; then
+            echo "Back-merge from master carries released code; skipping version-bump check."
+            echo "code_changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Only what this PR introduces: diff from where it branched off, not from the base branch tip.
+          MERGE_BASE=$(git merge-base "$BASE_SHA" "$HEAD_SHA")
+          FILES=$(git diff --name-only "$MERGE_BASE" "$HEAD_SHA")
+          # Library source, published typings and the manifest; test/, docs and .github/ do not count.
+          CODE_CHANGED=false
+          echo "$FILES" | grep -qE '^src/|^typings/|^package\.json$' && CODE_CHANGED=true
+          echo "code_changed=$CODE_CHANGED" >> "$GITHUB_OUTPUT"
+
+      - name: Skip when only test/docs/.github changed
+        if: steps.detect.outputs.code_changed != 'true'
+        run: echo "No release-affecting files changed. Skipping version-bump check."
+
+      - name: Setup Node
+        if: steps.detect.outputs.code_changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Check version is above the latest release
+        if: steps.detect.outputs.code_changed == 'true'
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -e
+          git fetch --tags --force 2>/dev/null || true
+          HEAD_VERSION=$(git show "$HEAD_SHA:package.json" | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).version")
+          cat > "$RUNNER_TEMP/version-check.js" <<'EOF'
+          const [head, ...tags] = process.argv.slice(2);
+          const parse = (v) => {
+            const m = /^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+.*)?$/.exec(v);
+            return m ? { raw: v, core: [+m[1], +m[2], +m[3]], pre: m[4] ? m[4].split('.') : [] } : null;
+          };
+          // SemVer 2.0.0 precedence: major.minor.patch first; a pre-release ranks below its release.
+          const cmp = (a, b) => {
+            for (let i = 0; i < 3; i++) if (a.core[i] !== b.core[i]) return a.core[i] - b.core[i];
+            if (!a.pre.length || !b.pre.length) return b.pre.length - a.pre.length;
+            for (let i = 0; i < Math.max(a.pre.length, b.pre.length); i++) {
+              const x = a.pre[i], y = b.pre[i];
+              if (x === undefined) return -1;
+              if (y === undefined) return 1;
+              const nx = /^\d+$/.test(x), ny = /^\d+$/.test(y);
+              if (nx && ny) { if (+x !== +y) return +x - +y; }
+              else if (nx !== ny) return nx ? -1 : 1;
+              else if (x !== y) return x < y ? -1 : 1;
+            }
+            return 0;
+          };
+          const current = parse(head);
+          if (!current) { console.log(`::error::package.json version "${head}" is not valid SemVer`); process.exit(1); }
+          const latest = tags.map(parse).filter(Boolean).sort(cmp).pop();
+          if (!latest) { console.log('No v* release tags yet; skipping (first release).'); process.exit(0); }
+          if (cmp(current, latest) <= 0) {
+            console.log(`::error::Version bump required: package.json is at ${head}, which is not above the latest release ${latest.raw}. Please bump the version in package.json.`);
+            process.exit(1);
+          }
+          console.log(`Version bump check passed: package.json is at ${head} (latest release: ${latest.raw}).`);
+          EOF
+          node "$RUNNER_TEMP/version-check.js" "$HEAD_VERSION" $(git tag --list 'v*')
