@@ -60,6 +60,6 @@
   "homepage": "https://www.contentstack.com/docs/guide/synchronization/contentstack-datasync",
   "overrides": {
     "@babel/core": "7.29.6",
-    "js-yaml": "3.15.1"
+    "js-yaml": "3.15.2"
   }
 }
