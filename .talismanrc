@@ -6,4 +6,6 @@ fileignoreconfig:
 - filename: .github/workflows/secrets-scan.yml
   ignore_detectors:
     - filecontent
+- filename: .github/workflows/check-version-bump.yml
+  checksum: 30a90ef45ab0a11b74040163e6baff12c922c47139c09dd7a62eb69f7b551c1f
 version: ""
